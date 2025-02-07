@@ -1,16 +1,26 @@
+<!-- @module/Learning/views/Question.svelte -->
 <script lang="ts">
+	import Button from '$lib/components/forms/Button.svelte';
 	import { QuestionVM, type UIQuestion } from './QuestionVM.svelte';
 
 	type Props = {
 		question: UIQuestion;
 	};
 	let { question }: Props = $props();
-
 	let vm = new QuestionVM(question);
+	$inspect('INSPECT', vm.answerSelection);
 </script>
 
-<p>{vm.content}</p>
-{#each vm.answers as answer}
-  <button onclick={() => vm.toggleSelect(answer)}>{answer}</button>
-{/each}
-<button onclick={() => vm.answer()}>Submit</button>
+<p class="mx-auto my-4 max-w-[80%] text-center text-2xl font-bold">{vm.prompt}</p>
+<ul class="space-y-4">
+	{#each vm.options as option}
+		<li>
+			{#key vm.answerSelection.get(option)}
+				<Button accent={vm.isOptionSelected(option)} onclick={() => vm.toggleSelect(option)}>
+					{option}
+				</Button>
+			{/key}
+		</li>
+	{/each}
+</ul>
+<Button onclick={() => vm.answer} class="mt-4 font-bold" primary>Submit</Button>

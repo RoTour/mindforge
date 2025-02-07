@@ -21,7 +21,10 @@ export const CreateQuestionDto = QuestionSchema.omit({
 	lastAttemptDate: true,
 	successStreak: true,
 	intervalModifier: true
+}).extend({
+	id: z.string().uuid().optional(),
 });
 
+export type QuestionType = z.infer<typeof QuestionType>;
 export type Question = z.infer<typeof QuestionSchema>;
 export type CreateQuestionDto = z.infer<typeof CreateQuestionDto>;

@@ -8,9 +8,14 @@ export const QuestionBuilder = (dto: CreateQuestionDto) => {
       generatedOptions = await generateOptions(dto);
       return this;
     },
+    safeGenerateId() {
+      if (!dto.id) dto.id = crypto.randomUUID();
+      return this;
+    },
     build(): Question {
+      if (!dto.id) this.safeGenerateId();
       return {
-        id: crypto.randomUUID(),
+        id: dto.id!, // called safeGenerateId() earlier
         answer: dto.answer,
         conceptId: undefined, // To be implemented later
         lastAttemptDate: undefined,

@@ -3,12 +3,14 @@
 	import { QuestionBuilder } from '@modules/Learning/constructors/QuestionBuilder';
 	import { questionCreated } from '@modules/Learning/events/QuestionActions';
 	import { createQuestion } from '@modules/Learning/usecases/createQuestion';
+	import Question from '@modules/Learning/views/Question.svelte';
 	import { RuneStore } from '@redux/runesStore.svelte';
 	import { onMount } from 'svelte';
+	import { QuestionToUI } from '@modules/Learning/mappers/QuestionToUI';
 
 	const runeStore = new RuneStore(store);
 	const questions = $derived.by(() => {
-		return Object.values(runeStore.state.questions);
+		return Object.values(runeStore.state.questions).map(QuestionToUI);
 	});
 
   onMount(() => {
@@ -30,15 +32,9 @@
   });
 </script>
 
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
-{#each questions as question}
-	<p>{question.prompt}</p>
-	{#if question.options}
-		{#each question.options as option}
-			<p>{option}</p>
-		{/each}
-  {:else}
-    <p>No options</p>
-	{/if}
-{/each}
+<h1>MindForge</h1>
+<main class="px-4 py-6">
+  {#each questions as question}
+    <Question question={question} />
+  {/each}
+</main>

@@ -1,33 +1,58 @@
+// @module/Learning/views/QuestionVM.svelte.ts
+import { SvelteMap } from 'svelte/reactivity';
+import { QuestionType } from '../entities/Question';
+
 export type UIQuestion = {
-	id: string
-	content: string
-	answers: string[]
-}
+	id: string;
+	prompt: string;
+	options: string[];
+	type: QuestionType;
+};
 
 export class QuestionVM {
 	private question: UIQuestion;
-	private answerSelection: Map<string, boolean> = new Map();
+	answerSelection: Map<string, boolean> = new SvelteMap();
 
 	constructor(question: UIQuestion) {
 		this.question = question;
-		question.answers.forEach(answer => this.answerSelection.set(answer, false));
+		question.options.forEach((option) => this.answerSelection.set(option, false));
 	}
 
-	get content() {
-		return this.question.content;
+	get prompt() {
+		return this.question.prompt;
 	}
 
-	get answers() {
-		return this.question.answers;
+	get options() {
+		return this.question.options;
 	}
 
-	toggleSelect(answer: string) {
-		this.answerSelection.set(answer, !this.answerSelection.get(answer));
+	get type() {
+		return this.question.type;
 	}
 
-	answer() {
-		return Array.from(this.answerSelection.entries())
+	isOptionSelected(option: string) {
+		console.debug('isOptionSelected', option, this.answerSelection.get(option));
+		return this.answerSelection.get(option) ?? false;
+	}
+
+	toggleSelect(option: string) {
+		console.debug('toggleSelect', option);
+		if (this.type === 'SIMPLE') {
+			// Reset options before setting new one
+			this.answerSelection.entries().forEach(([optionToReset, value]) => {
+				if (!value) return;
+				this.answerSelection.set(optionToReset, false);
+			});
+		}
+		this.answerSelection.set(option, !this.answerSelection.get(option));
+	}
+
+	get answer() {
+		const result = Object.entries(this.answerSelection)
 			.filter(([, isSelected]) => isSelected)
-			.map(([answer, ]) => answer);
+			.map(([option]) => option);
+
+		console.debug('answer', result);
+		return result;
 	}
 }
