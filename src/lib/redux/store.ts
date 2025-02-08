@@ -1,11 +1,17 @@
-import { configureStore } from '@reduxjs/toolkit';
+// @redux/store.ts
 import { questionReducer } from '@modules/Learning/events/QuestionReducer';
-
+import { errorReducer } from '@modules/Stats/events/ErrorReducer';
+import { InAppNotificationsMiddleware } from '@redux/InAppNotifications/InAppNotificationsMiddleware';
+import { configureStore } from '@reduxjs/toolkit';
+import { InAppNotificationsSlice } from './InAppNotifications/InAppNotificationsSlice';
 
 export const store = configureStore({
 	reducer: {
 		questions: questionReducer,
+		errors: errorReducer,
+		inApp: InAppNotificationsSlice.reducer
 	},
+	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(InAppNotificationsMiddleware),
 	enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(),
 });
 

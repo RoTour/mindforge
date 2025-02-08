@@ -1,6 +1,12 @@
 // @module/Learning/views/QuestionVM.svelte.ts
 import { SvelteMap } from 'svelte/reactivity';
 import { QuestionType } from '../entities/Question';
+import { ValidateQuestion } from '../usecases/ValidateQuestion/ValidateQuestion';
+import { JSONValidateQuestionRepository } from '../usecases/ValidateQuestion/repositories/JSONValidateQuestionRepository';
+import type { AppStore } from '@redux/store';
+import { store } from '@redux/store';
+import { errorHandled } from '@modules/Stats/events/ErrorActions';
+import { questionAnswered } from '../events/QuestionActions';
 
 export type UIQuestion = {
 	id: string;
@@ -9,13 +15,20 @@ export type UIQuestion = {
 	type: QuestionType;
 };
 
+type QuestionVMProps = {
+	question: UIQuestion;
+	reduxStore?: AppStore;
+};
+
 export class QuestionVM {
 	private question: UIQuestion;
-	answerSelection: Map<string, boolean> = new SvelteMap();
+	propositionsSelection: Map<string, boolean> = new SvelteMap();
+	private reduxStore: AppStore;
 
-	constructor(question: UIQuestion) {
+	constructor({ question, reduxStore = store }: QuestionVMProps) {
 		this.question = question;
-		question.options.forEach((option) => this.answerSelection.set(option, false));
+		this.reduxStore = reduxStore;
+		question.options.forEach((option) => this.propositionsSelection.set(option, false));
 	}
 
 	get prompt() {
@@ -31,28 +44,46 @@ export class QuestionVM {
 	}
 
 	isOptionSelected(option: string) {
-		console.debug('isOptionSelected', option, this.answerSelection.get(option));
-		return this.answerSelection.get(option) ?? false;
+		return this.propositionsSelection.get(option) ?? false;
 	}
 
 	toggleSelect(option: string) {
-		console.debug('toggleSelect', option);
 		if (this.type === 'SIMPLE') {
 			// Reset options before setting new one
-			this.answerSelection.entries().forEach(([optionToReset, value]) => {
-				if (!value) return;
-				this.answerSelection.set(optionToReset, false);
+			Array.from(this.propositionsSelection).forEach(([optionToReset]) => {
+				if (!this.propositionsSelection.get(optionToReset)) return;
+				this.propositionsSelection.set(optionToReset, false);
 			});
 		}
-		this.answerSelection.set(option, !this.answerSelection.get(option));
+		this.propositionsSelection.set(option, !this.propositionsSelection.get(option));
 	}
 
-	get answer() {
-		const result = Object.entries(this.answerSelection)
+	get propositions() {
+		return Array.from(this.propositionsSelection)
 			.filter(([, isSelected]) => isSelected)
 			.map(([option]) => option);
+	}
 
-		console.debug('answer', result);
-		return result;
+	async submit() {
+		const repository = JSONValidateQuestionRepository();
+		const result = await ValidateQuestion({
+			getQuestionAnswer: repository.getQuestionToValidate
+		}).execute({
+			questionId: this.question.id,
+			propositions: this.propositions
+		});
+		if (!result.isSuccess) {
+			this.reduxStore.dispatch(errorHandled({ message: result.message }));
+			return;
+		}
+		this.reduxStore.dispatch(
+			questionAnswered({
+				userId: '',
+				questionId: this.question.id,
+				conceptId: '',
+				wasCorrect: result.data.isCorrect,
+				occurredAt: new Date().toISOString()
+			})
+		);
 	}
 }

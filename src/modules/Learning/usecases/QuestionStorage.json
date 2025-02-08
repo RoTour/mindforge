@@ -1,0 +1,16 @@
+[
+  {
+    "id": "f63f1b5b-7135-41c9-a9fe-e7d24844a5b3",
+    "prompt": "What is the capital of France?",
+    "options": [
+      "Paris",
+      "London",
+      "Berlin",
+      "Rome"
+    ],
+    "answer": "Paris",
+    "type": "SIMPLE",
+    "successStreak": 0,
+    "intervalModifier": 0
+  }
+]

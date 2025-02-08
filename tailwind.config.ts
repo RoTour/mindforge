@@ -17,7 +17,12 @@ export default {
 				'surface': colors.zinc['800'],
 				'contrast-surface': colors.zinc['200'],
 				'accent': colors.emerald['500'],
-				'contrast-accent': colors.emerald['900']
+				'contrast-accent': colors.emerald['900'],
+
+				"success": colors.emerald['500'],
+				"contrast-success": colors.emerald['900'],
+				"error": colors.red['500'],
+				"contrast-error": colors.red['900'],
 			},
 			fontFamily: {
 				'space-mono': ['Space Mono', 'monospace'],

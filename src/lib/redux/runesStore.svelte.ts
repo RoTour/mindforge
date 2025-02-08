@@ -1,4 +1,4 @@
-// $lib/redux/RuneStore.svelte.ts
+// @redux/runesStore.svelte.ts
 import { onDestroy } from 'svelte';
 import type { RootState, AppStore } from './store';
 
