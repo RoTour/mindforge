@@ -1,4 +1,4 @@
-import type { Question } from '../entities/Question';
+import type { Question } from '../../../entities/Question';
 
 export const MultipleChoicesQuestionValidationService = (separator: string = '|||') => {
 	return {

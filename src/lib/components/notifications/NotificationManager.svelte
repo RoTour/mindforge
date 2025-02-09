@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { InAppNotification } from '@redux/InAppNotifications/InAppNotificationsSlice';
-	import { elasticIn } from 'svelte/easing';
+	import { elasticIn, elasticOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
+
 	type Props = {
 		notifications: InAppNotification[];
 		notificationRemoved: (id: string) => void;
@@ -11,13 +12,12 @@
 	let displayedNotifications: InAppNotification[] = $derived(notifications.slice(-3).toReversed()); // 3 lasts
 	const removeNotification = (id: string) => {
 		notifications = notifications.filter((n) => n.id !== id);
-    notificationRemoved(id);
+		notificationRemoved(id);
 	};
 </script>
 
 {#snippet Notification({ id, message, type }: InAppNotification)}
 	<div
-    in:fly={{ y: -20, duration: 200, easing: elasticIn }}
 		class="
     relative w-full rounded-md px-4
     py-2
@@ -33,8 +33,8 @@
 
 <ul class="fixed left-0 top-0 w-full space-y-2 p-4">
 	{#each displayedNotifications as notification}
-		<li class="">
-			{@render Notification(notification)}
-		</li>
+			<li in:fly={{ y: -20, duration: 700, easing: elasticOut }}>
+				{@render Notification(notification)}
+			</li>
 	{/each}
 </ul>

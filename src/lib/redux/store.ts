@@ -4,15 +4,25 @@ import { errorReducer } from '@modules/Stats/events/ErrorReducer';
 import { InAppNotificationsMiddleware } from '@redux/InAppNotifications/InAppNotificationsMiddleware';
 import { configureStore } from '@reduxjs/toolkit';
 import { InAppNotificationsSlice } from './InAppNotifications/InAppNotificationsSlice';
+import { appLifecycleReducer } from './AppLifecycle/AppLifecycleReducer';
+import { AppLifecycleDebugMiddleware } from './AppLifecycle/AppLifecycleDebugMiddleware';
+import { QuestionMiddleware } from '@modules/Learning/events/QuestionMiddleware';
 
 export const store = configureStore({
 	reducer: {
 		questions: questionReducer,
 		errors: errorReducer,
-		inApp: InAppNotificationsSlice.reducer
+		inApp: InAppNotificationsSlice.reducer,
+		appLifecycle: appLifecycleReducer
 	},
-	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(InAppNotificationsMiddleware),
+	middleware: (getDefaultMiddleware) =>
+		getDefaultMiddleware().concat(
+			AppLifecycleDebugMiddleware,
+			InAppNotificationsMiddleware,
+			QuestionMiddleware
+		),
 	enhancers: (getDefaultEnhancers) => getDefaultEnhancers().concat(),
+	devTools: true
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

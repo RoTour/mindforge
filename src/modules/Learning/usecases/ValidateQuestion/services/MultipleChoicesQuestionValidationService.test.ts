@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import type { Question } from '../entities/Question';
+import type { Question } from '../../../entities/Question';
 import { MultipleChoicesQuestionValidationService } from './MultipleChoicesQuestionValidationService';
 
 describe('MultipleChoicesQuestionValidationService', () => {

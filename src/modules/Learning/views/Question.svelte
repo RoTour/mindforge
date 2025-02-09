@@ -3,8 +3,6 @@
 	import Button from '$lib/components/forms/Button.svelte';
 	import { store } from '@redux/store';
 	import { QuestionVM, type UIQuestion } from './QuestionVM.svelte';
-	import { errorHandled } from '@modules/Stats/events/ErrorActions';
-	import { questionAnswered } from '../events/QuestionActions';
 
 	type Props = {
 		question: UIQuestion;

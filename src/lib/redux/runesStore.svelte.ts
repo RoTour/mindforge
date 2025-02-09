@@ -1,6 +1,6 @@
 // @redux/runesStore.svelte.ts
 import { onDestroy } from 'svelte';
-import type { RootState, AppStore } from './store';
+import { type AppStore, type RootState } from './store';
 
 export class RuneStore {
 	// Using Svelte’s $state rune to create a reactive proxy for the Redux state
@@ -21,7 +21,7 @@ export class RuneStore {
 
 		// Clean up the subscription when the component using this class is destroyed.
 		onDestroy(() => {
-			this.$unsubscribe();
+			this?.$unsubscribe?.();
 		});
 	}
 }

@@ -1,16 +1,18 @@
-// $lib/modules/Learning/events/QuestionReducer.ts
+// @modules/Learning/events/QuestionReducer.ts
 import { createReducer } from '@reduxjs/toolkit';
 import type { Question } from '../entities/Question';
-import { questionCreated } from './QuestionActions';
+import { questionPendingLoaded } from './QuestionActions';
 
 interface QuestionState {
-  [questionId: string]: Question
+	pendingQuestions: Question[];
 }
 
-const initialState: QuestionState = {};
+const initialState: QuestionState = {
+	pendingQuestions: []
+};
 
 export const questionReducer = createReducer(initialState, (builder) => {
-  builder.addCase(questionCreated, (state, action) => {
-    state[action.payload.id] = action.payload;
-  });
+  builder.addCase(questionPendingLoaded, (state, action) => {
+		state.pendingQuestions = action.payload;
+	});
 });

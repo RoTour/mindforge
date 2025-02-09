@@ -12,7 +12,7 @@ type InAppNotificationsState = {
 };
 
 const initialState: InAppNotificationsState = {
-	notifications: [],
+	notifications: []
 };
 
 export const InAppNotificationsSlice = createSlice({
@@ -23,7 +23,7 @@ export const InAppNotificationsSlice = createSlice({
 			state.notifications.push(action.payload);
 		},
 		notificationRemoved: (state, action: PayloadAction<string>) => {
-			state.notifications = state.notifications.filter(n => n.id !== action.payload);
+			state.notifications = state.notifications.filter((n) => n.id !== action.payload);
 		}
 	}
 });
