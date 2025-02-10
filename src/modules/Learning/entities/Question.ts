@@ -8,7 +8,7 @@ export const QuestionSchema = z.object({
 	conceptId: z.string().uuid().optional(),
 	prompt: z.string(),
 	answer: z.string(),
-	lastAttemptDate: z.string().date().optional(),
+	lastAttemptDate: z.string().datetime().optional().or(z.number().int()),
 	successStreak: z.number(),
 	intervalModifier: z.number(),
 	options: z.array(z.string()).optional(),

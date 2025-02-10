@@ -1,12 +1,9 @@
 // @module/Learning/views/QuestionVM.svelte.ts
-import { SvelteMap } from 'svelte/reactivity';
-import { QuestionType } from '../entities/Question';
-import { ValidateQuestion } from '../usecases/ValidateQuestion/ValidateQuestion';
-import { JSONValidateQuestionRepository } from '../usecases/ValidateQuestion/repositories/JSONValidateQuestionRepository';
 import type { AppStore } from '@redux/store';
 import { store } from '@redux/store';
-import { errorHandled } from '@modules/Stats/events/ErrorActions';
-import { questionAnswered } from '../events/QuestionActions';
+import { SvelteMap } from 'svelte/reactivity';
+import { QuestionType } from '../entities/Question';
+import { questionAnswerSubmitted } from '../events/QuestionActions';
 
 export type UIQuestion = {
 	id: string;
@@ -65,25 +62,20 @@ export class QuestionVM {
 	}
 
 	async submit() {
-		const repository = JSONValidateQuestionRepository();
-		const result = await ValidateQuestion({
-			getQuestionAnswer: repository.getQuestionToValidate
-		}).execute({
-			questionId: this.question.id,
-			propositions: this.propositions
-		});
-		if (!result.isSuccess) {
-			this.reduxStore.dispatch(errorHandled({ message: result.message }));
-			return;
-		}
-		this.reduxStore.dispatch(
-			questionAnswered({
-				userId: '',
-				questionId: this.question.id,
-				conceptId: '',
-				wasCorrect: result.data.isCorrect,
-				occurredAt: new Date().toISOString()
-			})
-		);
+		console.debug("Submit question called")
+		this.reduxStore.dispatch(questionAnswerSubmitted({ questionId: this.question.id, propositions: this.propositions }));
+		// const repository = JSONValidateQuestionRepository();
+		// const result = await ValidateQuestion({
+		// 	getQuestionAnswer: repository.getQuestionToValidate
+		// }).execute({
+		// 	questionId: this.question.id,
+		// 	propositions: this.propositions
+		// });
+		// if (!result.isSuccess) {
+		// 	this.reduxStore.dispatch(errorHandled({ message: result.message }));
+		// 	return;
+		// }
+		// this.reduxStore.dispatch(questionAnswerSubmitted({ question: this.question, success: true }));
+		
 	}
 }

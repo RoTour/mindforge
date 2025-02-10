@@ -25,7 +25,9 @@ export const GetPendingQuestions: UseCase<Input, Output> = ({ getUserQuestions }
 	return {
 		execute: async ({ userId }) => {
 			const questions = await getUserQuestions(userId);
-			return UseCaseResponseBuilder.success(200, { pendingQuestions: questions });
+			const results = questions.filter((question) => !question.lastAttemptDate);
+			console.debug('GetPendingQuestions - Questions:', { questions, results });
+			return UseCaseResponseBuilder.success(200, { pendingQuestions: results });
 		}
 	};
 };
