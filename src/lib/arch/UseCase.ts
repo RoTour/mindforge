@@ -1,3 +1,4 @@
+// $lib/arch/UseCase.ts
 export type InfoStatusCode = 100 | 101 | 102 | 103;
 export type SuccessStatusCode = 200 | 201 | 202 | 203 | 204 | 205 | 206 | 207 | 208 | 226;
 export type DeprecatedStatusCode = 305 | 306;

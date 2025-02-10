@@ -30,6 +30,7 @@ export const ValidateQuestion: UseCase<Input, Output> = ({ getQuestionAnswer, se
 	return {
 		execute: async ({ questionId, propositions }) => {
 			const question = await getQuestionAnswer(questionId);
+			if (!question) return UseCaseResponseBuilder.error(404, "Question to validate not found");
 			const validationService = serviceProvider ? serviceProvider(question.type) : defaultServiceProvider(question.type);
 			const isCorrect = validationService.validate(question, propositions.join('|||'));
 			return UseCaseResponseBuilder.success(200, { isCorrect });

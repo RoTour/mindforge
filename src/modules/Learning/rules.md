@@ -34,7 +34,7 @@ Given I have a pool of questions for different concepts
 When I am asked a question from the pool
 And I provide the correct answer
 Then the application should acknowledge my correct answer
-And increase the interval before that specific question is asked aga**in**
+And increase the interval before that specific question is asked again**
 
 2. **Answering a Question Incorrectly**
 Given I have a pool of questions for different concepts

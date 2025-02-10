@@ -15,7 +15,7 @@ export const QuestionSchema = z.object({
 	type: QuestionType
 });
 
-export const CreateQuestionDto = QuestionSchema.omit({
+export const CreateQuestionDtoSchema = QuestionSchema.omit({
 	id: true,
 	conceptId: true,
 	lastAttemptDate: true,
@@ -27,4 +27,4 @@ export const CreateQuestionDto = QuestionSchema.omit({
 
 export type QuestionType = z.infer<typeof QuestionType>;
 export type Question = z.infer<typeof QuestionSchema>;
-export type CreateQuestionDto = z.infer<typeof CreateQuestionDto>;
+export type CreateQuestionDto = z.infer<typeof CreateQuestionDtoSchema>;

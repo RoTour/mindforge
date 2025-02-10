@@ -2,9 +2,9 @@
 import { AppDate } from '$lib/conversion/Dates';
 import { errorHandled } from '@modules/Stats/events/ErrorActions';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { TRPCLearningGateways } from '../gateways/TRPCLearningGateways';
 import { AnswerQuestion } from '../usecases/AnswerQuestion/AnswerQuestion';
 import * as IAnswerQuestionRepository from '../usecases/AnswerQuestion/repositories/IAnswerQuestionRepository';
-import { JSONValidateQuestionRepository } from '../usecases/ValidateQuestion/repositories/JSONValidateQuestionRepository';
 import { ValidateQuestion } from '../usecases/ValidateQuestion/ValidateQuestion';
 import { questionAnswered } from './QuestionActions';
 
@@ -17,9 +17,9 @@ type _QuestionAnswerSubmittedEventHandler = {
 export const QuestionAnswerSubmittedEventHandler =
 	({ saveQuestion, getQuestion, dispatch }: _QuestionAnswerSubmittedEventHandler) =>
 	async ({ questionId, propositions }: { questionId: string; propositions: string[] }) => {
-		const validateRepository = JSONValidateQuestionRepository();
+		const trpcGateway = TRPCLearningGateways();
 		const validateUseCase = ValidateQuestion({
-			getQuestionAnswer: validateRepository.getQuestionToValidate
+			getQuestionAnswer: trpcGateway.getQuestionToValidate
 		});
 		const validationResult = await validateUseCase.execute({
 			questionId,

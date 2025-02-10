@@ -34,12 +34,12 @@ export const AnswerQuestion: UseCase<Input, Output> = ({ getQuestion, saveQuesti
 			} catch {
 				return UseCaseResponseBuilder.error(404, new Error("Question not found").message);
 			}
-
+			
 			// Update question
 			question.lastAttemptDate = AppDate.now();
 			if (success) question.successStreak++;
 			else question.successStreak = 0;
-
+			
 			// Save question
 			try {
 				await saveQuestion(question);
