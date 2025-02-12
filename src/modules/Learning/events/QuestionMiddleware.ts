@@ -7,9 +7,12 @@ import { GetPendingQuestions } from '../usecases/GetPendingQuestions/GetPendingQ
 import {
 	questionAnswered,
 	questionAnswerSubmitted,
+	questionCreated,
 	questionPendingLoaded
 } from './QuestionActions';
 import { QuestionAnswerSubmittedEventHandler } from './QuestionAnswerSubmittedEventHandler';
+import { notificationAdded } from '@redux/InAppNotifications/InAppNotificationsSlice';
+import { v4 as uuid } from 'uuid';
 
 export const QuestionMiddleware: Middleware = (storeAPI) => (next) => async (action) => {
 	const trpcLearningGateway = TRPCLearningGateways();
@@ -41,5 +44,12 @@ export const QuestionMiddleware: Middleware = (storeAPI) => (next) => async (act
 		});
 	}
 
+	if (questionCreated.match(action)) {
+		storeAPI.dispatch(notificationAdded({
+			id: uuid(),
+			message: 'Question created!',
+			type: 'success'
+		}));
+	}
 	return next(action);
 };

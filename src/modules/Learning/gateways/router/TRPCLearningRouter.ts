@@ -36,4 +36,8 @@ export const TRPCLearningRouter = t.router({
 		const repository = PrismaValidateQuestionRepository(prisma);
 		return repository.getQuestionToValidate(input);
 	}),
+	storeQuestion: t.procedure.input(QuestionSchema).mutation(async ({ input }) => {
+		const repository = PrismaCreateQuestionRepository(prisma);
+		return repository.storeQuestion(input);
+	})
 });

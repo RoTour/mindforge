@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import type { Question } from '../../../entities/Question';
+import { QuestionAnswerSeparator, type Question } from '../../../entities/Question';
 import { MultipleChoicesQuestionValidationService } from './MultipleChoicesQuestionValidationService';
 
 describe('MultipleChoicesQuestionValidationService', () => {
@@ -17,8 +17,8 @@ describe('MultipleChoicesQuestionValidationService', () => {
 
 	test("Given a question expecting multiple answers, should return true if the answer contains all of them", () => {
 		// Given
-		const question = { answer: 'Paris|||Berlin' } as Question;
-		const answer = 'Berlin|||Paris';
+		const question = { answer: `Berlin${QuestionAnswerSeparator}Paris`} as Question;
+		const answer = `Berlin${QuestionAnswerSeparator}Paris`;
 
 		// When
 		const result = MultipleChoicesQuestionValidationService().validate(question, answer);

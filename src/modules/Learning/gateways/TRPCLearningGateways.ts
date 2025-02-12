@@ -20,6 +20,9 @@ export const TRPCLearningGateways = (init?: TRPCClientInit): ILearningGateway =>
 		},
 		getQuestionToValidate: async (questionId) => {
 			return client.learning.getQuestionToValidate.query(questionId);
+		},
+		storeQuestion: async (question) => {
+			return client.learning.storeQuestion.mutate(question);
 		}
 	};
 };

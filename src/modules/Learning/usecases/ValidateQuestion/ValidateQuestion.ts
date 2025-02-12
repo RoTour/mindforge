@@ -1,5 +1,5 @@
 import { UseCaseResponseBuilder, type InputFactory, type OutputFactory, type UseCase } from '$lib/arch/UseCase';
-import type { QuestionType } from '@modules/Learning/entities/Question';
+import { QuestionAnswerSeparator, type QuestionType } from '@modules/Learning/entities/Question';
 import * as IValidateQuestionRepository from './repositories/IValidateQuestionRepository';
 import { MultipleChoicesQuestionValidationService } from './services/MultipleChoicesQuestionValidationService';
 import { SimpleQuestionValidationService } from './services/SimpleQuestionValidationService';
@@ -32,7 +32,7 @@ export const ValidateQuestion: UseCase<Input, Output> = ({ getQuestionAnswer, se
 			const question = await getQuestionAnswer(questionId);
 			if (!question) return UseCaseResponseBuilder.error(404, "Question to validate not found");
 			const validationService = serviceProvider ? serviceProvider(question.type) : defaultServiceProvider(question.type);
-			const isCorrect = validationService.validate(question, propositions.join('|||'));
+			const isCorrect = validationService.validate(question, propositions.join(QuestionAnswerSeparator));
 			return UseCaseResponseBuilder.success(200, { isCorrect });
 		}
 	};

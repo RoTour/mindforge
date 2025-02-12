@@ -1,4 +1,4 @@
-import type { Question } from '../entities/Question';
+import type { CreateQuestionDto, Question } from '../entities/Question';
 
 export const QuestionBuilder = (dto: CreateQuestionDto) => {
   let generatedOptions: string[] = dto.options ?? [];

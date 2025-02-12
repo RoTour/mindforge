@@ -25,6 +25,8 @@ export const CreateQuestionDtoSchema = QuestionSchema.omit({
 	id: z.string().uuid().optional(),
 });
 
+export const QuestionAnswerSeparator = "|||"
+
 export type QuestionType = z.infer<typeof QuestionType>;
 export type Question = z.infer<typeof QuestionSchema>;
 export type CreateQuestionDto = z.infer<typeof CreateQuestionDtoSchema>;

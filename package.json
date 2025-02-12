@@ -59,7 +59,9 @@
 		"@reduxjs/toolkit": "^2.5.1",
 		"@trpc/client": "^10.45.2",
 		"@trpc/server": "^10.45.2",
+		"lucide-svelte": "^0.475.0",
 		"prisma": "^6.3.1",
+		"sveltekit-superforms": "^2.23.1",
 		"trpc-sveltekit": "^3.6.2",
 		"uuid": "^11.0.5",
 		"zod": "^3.24.1"

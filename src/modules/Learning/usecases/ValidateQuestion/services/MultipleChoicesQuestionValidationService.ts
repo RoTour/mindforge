@@ -1,6 +1,6 @@
-import type { Question } from '../../../entities/Question';
+import { QuestionAnswerSeparator, type Question } from '../../../entities/Question';
 
-export const MultipleChoicesQuestionValidationService = (separator: string = '|||') => {
+export const MultipleChoicesQuestionValidationService = (separator: string = QuestionAnswerSeparator) => {
 	return {
 		validate: (question: Question, answer: string) => {
 			const expectedAnswers = question.answer.split(separator);

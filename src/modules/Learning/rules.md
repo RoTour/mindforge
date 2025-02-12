@@ -48,3 +48,8 @@ Given I have multiple concepts with questions in the pool
 When I am asked questions throughout the day
 Then I should be able to answer multiple questions
 And each question should follow its own interval for review
+
+4. **No pending questions**
+Given I have answered all the question that needed to be asked
+Then I should be congratulated
+And I should be asked if I want to create a new question
