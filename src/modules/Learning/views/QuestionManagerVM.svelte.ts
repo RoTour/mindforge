@@ -6,8 +6,11 @@ import { store } from '@redux/store';
 
 export class QuestionManagerVM {
 	private $runeStore = new RuneStore(store);
-	public pendingQuestions: UIQuestion[] = $derived(
+	private pendingQuestions: UIQuestion[] = $derived(
 		this.$runeStore.state.questions.pendingQuestions.map(QuestionToUI)
+	)
+	public displayedQuestion: UIQuestion | null = $derived(
+		this.pendingQuestions.length > 0 ? this.pendingQuestions[0] : null
 	)
 
 	constructor() {}
