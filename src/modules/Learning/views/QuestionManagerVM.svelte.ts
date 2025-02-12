@@ -9,9 +9,10 @@ export class QuestionManagerVM {
 	private pendingQuestions: UIQuestion[] = $derived(
 		this.$runeStore.state.questions.pendingQuestions.map(QuestionToUI)
 	)
-	public displayedQuestion: UIQuestion | null = $derived(
-		this.pendingQuestions.length > 0 ? this.pendingQuestions[0] : null
+	public displayedQuestion: UIQuestion | undefined = $derived(
+		this.$runeStore.state.questions.pendingQuestions.map(QuestionToUI)[0]
 	)
+	
 
 	constructor() {}
 }
