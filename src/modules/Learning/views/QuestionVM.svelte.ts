@@ -64,18 +64,5 @@ export class QuestionVM {
 	async submit() {
 		console.debug("Submit question called")
 		this.reduxStore.dispatch(questionAnswerSubmitted({ questionId: this.question.id, propositions: this.propositions }));
-		// const repository = JSONValidateQuestionRepository();
-		// const result = await ValidateQuestion({
-		// 	getQuestionAnswer: repository.getQuestionToValidate
-		// }).execute({
-		// 	questionId: this.question.id,
-		// 	propositions: this.propositions
-		// });
-		// if (!result.isSuccess) {
-		// 	this.reduxStore.dispatch(errorHandled({ message: result.message }));
-		// 	return;
-		// }
-		// this.reduxStore.dispatch(questionAnswerSubmitted({ question: this.question, success: true }));
-		
 	}
 }

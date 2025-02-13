@@ -3,3 +3,4 @@ import type { IQuestionValidationService } from '../services/IQuestionValidation
 
 export type GetQuestionToValidate = (questionId: string) => Promise<Question | undefined>;
 export type QuestionValidationServiceProvider = (type?: QuestionType) => IQuestionValidationService;
+export type ExpectedAnswerFormatter = (question: Question) => string;

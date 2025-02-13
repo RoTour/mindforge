@@ -13,6 +13,7 @@ export const questionAnswered = createAction<{
   conceptId: string;
   wasCorrect: boolean;
   occurredAt: string;
+  expectedAnswer: string;
 }>('QUESTION_ANSWERED');
 
 export const questionAnswerSubmitted = createAction<{

@@ -10,15 +10,17 @@ type Input = InputFactory<{
 }, {
 	getQuestionAnswer: IValidateQuestionRepository.GetQuestionToValidate;
 	serviceProvider?: IValidateQuestionRepository.QuestionValidationServiceProvider;
+	expectedAnswerFormatter?: IValidateQuestionRepository.ExpectedAnswerFormatter
 }>;
 
 export type ValidateQuestionOutput = {
 	isCorrect: boolean;
+	expectedAnswer: string;
 };
 type Output = OutputFactory<ValidateQuestionOutput>;
 
 
-export const ValidateQuestion: UseCase<Input, Output> = ({ getQuestionAnswer, serviceProvider })  => {
+export const ValidateQuestion: UseCase<Input, Output> = ({ getQuestionAnswer, serviceProvider, expectedAnswerFormatter })  => {
 	const defaultServiceProvider = (type: QuestionType) => {
 		switch (type) {
 			case 'MULTIPLE_CHOICES':
@@ -33,7 +35,9 @@ export const ValidateQuestion: UseCase<Input, Output> = ({ getQuestionAnswer, se
 			if (!question) return UseCaseResponseBuilder.error(404, "Question to validate not found");
 			const validationService = serviceProvider ? serviceProvider(question.type) : defaultServiceProvider(question.type);
 			const isCorrect = validationService.validate(question, propositions.join(QuestionAnswerSeparator));
-			return UseCaseResponseBuilder.success(200, { isCorrect });
+			return UseCaseResponseBuilder.success(200, { 
+				isCorrect,
+				expectedAnswer: expectedAnswerFormatter ? expectedAnswerFormatter(question) : question.answer });
 		}
 	};
 }

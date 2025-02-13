@@ -1,7 +1,9 @@
 // @modules/Learning/events/QuestionMiddleware.ts
 import { errorHandled } from '@modules/Stats/events/ErrorActions';
 import { AppOpened } from '@redux/AppLifecycle/AppActions';
+import { notificationAdded } from '@redux/InAppNotifications/InAppNotificationsSlice';
 import type { Middleware } from '@reduxjs/toolkit';
+import { v4 as uuid } from 'uuid';
 import { TRPCLearningGateways } from '../gateways/TRPCLearningGateways';
 import { GetPendingQuestions } from '../usecases/GetPendingQuestions/GetPendingQuestions';
 import {
@@ -11,8 +13,6 @@ import {
 	questionPendingLoaded
 } from './QuestionActions';
 import { QuestionAnswerSubmittedEventHandler } from './QuestionAnswerSubmittedEventHandler';
-import { notificationAdded } from '@redux/InAppNotifications/InAppNotificationsSlice';
-import { v4 as uuid } from 'uuid';
 
 export const QuestionMiddleware: Middleware = (storeAPI) => (next) => async (action) => {
 	const trpcLearningGateway = TRPCLearningGateways();
@@ -32,6 +32,17 @@ export const QuestionMiddleware: Middleware = (storeAPI) => (next) => async (act
 		storeAPI.dispatch(questionPendingLoaded(ucResult.data.pendingQuestions));
 	}
 
+	// If a question was answered, show success notification
+	if (questionAnswered.match(action)) {
+		storeAPI.dispatch(
+			notificationAdded({
+				id: uuid(),
+				message: action.payload.wasCorrect ? 'Correct! 🎉' : `You got it wrong 😔\n ${action.payload.expectedAnswer}`,
+				type: action.payload.wasCorrect ? 'success' : 'error'
+			})
+		);
+	}
+
 	if (questionAnswerSubmitted.match(action)) {
 		const eventHandler = QuestionAnswerSubmittedEventHandler({
 			getQuestion: trpcLearningGateway.getQuestion,
@@ -45,11 +56,13 @@ export const QuestionMiddleware: Middleware = (storeAPI) => (next) => async (act
 	}
 
 	if (questionCreated.match(action)) {
-		storeAPI.dispatch(notificationAdded({
-			id: uuid(),
-			message: 'Question created!',
-			type: 'success'
-		}));
+		storeAPI.dispatch(
+			notificationAdded({
+				id: uuid(),
+				message: 'Question created!',
+				type: 'success'
+			})
+		);
 	}
 	return next(action);
 };

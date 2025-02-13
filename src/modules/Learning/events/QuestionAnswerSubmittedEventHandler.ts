@@ -7,6 +7,7 @@ import { AnswerQuestion } from '../usecases/AnswerQuestion/AnswerQuestion';
 import * as IAnswerQuestionRepository from '../usecases/AnswerQuestion/repositories/IAnswerQuestionRepository';
 import { ValidateQuestion } from '../usecases/ValidateQuestion/ValidateQuestion';
 import { questionAnswered } from './QuestionActions';
+import { ExpectedAnswerBuilder } from '../constructors/ExpectedAnswerBuilder';
 
 type _QuestionAnswerSubmittedEventHandler = {
 	saveQuestion: IAnswerQuestionRepository.SaveQuestion;
@@ -19,7 +20,8 @@ export const QuestionAnswerSubmittedEventHandler =
 	async ({ questionId, propositions }: { questionId: string; propositions: string[] }) => {
 		const trpcGateway = TRPCLearningGateways();
 		const validateUseCase = ValidateQuestion({
-			getQuestionAnswer: trpcGateway.getQuestionToValidate
+			getQuestionAnswer: trpcGateway.getQuestionToValidate,
+			expectedAnswerFormatter: (question) => ExpectedAnswerBuilder(question).build()
 		});
 		const validationResult = await validateUseCase.execute({
 			questionId,
@@ -39,13 +41,15 @@ export const QuestionAnswerSubmittedEventHandler =
 			success: validationResult.data.isCorrect
 		});
 
+
 		dispatch(
 			questionAnswered({
 				userId: '',
 				questionId,
 				conceptId: '',
 				wasCorrect: validationResult.data.isCorrect,
-				occurredAt: AppDate.now().toString()
+				occurredAt: AppDate.now().toString(),
+				expectedAnswer: validationResult.data.expectedAnswer
 			})
 		);
 	};
