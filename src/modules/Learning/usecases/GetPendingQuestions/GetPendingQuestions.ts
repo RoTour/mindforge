@@ -23,6 +23,7 @@ type Output = OutputFactory<{
 }>;
 
 const durationsByStreak: Record<string, { days: number }> = {
+	'0': { days: 1 },
 	'1': { days: 1 },
 	'2': { days: 2 },
 	'3': { days: 3 },
@@ -43,12 +44,17 @@ export const GetPendingQuestions: UseCase<Input, Output> = ({ getUserQuestions }
 				if (!question.lastAttemptDate) return true;
 				const lastAttemptDate = DateTime.fromISO(new Date(question.lastAttemptDate).toISOString());
 				const daysSinceLastAttempt = DateTime.now().diff(lastAttemptDate, 'days').days;
+				const timeToWait = durationsByStreak[`${question.successStreak}`].days;
 				console.debug('GetPendingQuestions - Question:', {
 					question,
 					daysSinceLastAttempt,
 					days: durationsByStreak[`${question.successStreak}`],
 					bool: daysSinceLastAttempt > durationsByStreak[`${question.successStreak}`].days
 				});
+				if (timeToWait === undefined) {
+					console.warn('GetPendingQuestions - No duration found for question:', question);
+					return false;
+				}
 				return daysSinceLastAttempt >= durationsByStreak[`${question.successStreak}`].days;
 			});
 			console.debug('GetPendingQuestions - Questions:', { questions, results });
