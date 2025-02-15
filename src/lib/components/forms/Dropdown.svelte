@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ChevronDown } from 'lucide-svelte';
-	import { clickOutside } from '$lib/directives/clickOutside';
+	import { clickOutside } from '$lib/svelte/directives/clickOutside';
 
 	type Item = { value: string; label: string };
 	type Props = {

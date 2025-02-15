@@ -12,6 +12,9 @@
 		<Question question={vm.displayedQuestion} />
 	{/key}
 {:else}
+<div class="space-y-4">
 	<Button href={'/create-question'} primary class="m-auto max-w-[80%] font-bold">NEW</Button>
+	<Button href={'/generator'} primary class="m-auto max-w-[80%] font-bold">GENERATOR</Button>
 	<p class="mx-auto my-4 max-w-[80%] text-center text-2xl font-bold">No pending questions</p>
+</div>
 {/if}

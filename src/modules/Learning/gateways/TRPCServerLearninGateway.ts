@@ -32,6 +32,10 @@ export const TRPCServerLearningGateway = (event: RequestEvent): ILearningGateway
 		storeQuestion: async (question) => {
 			const caller = await buildCaller();
 			return caller.learning.storeQuestion(question);
+		},
+		generateQuestions: async (topic) => {
+			const caller = await buildCaller();
+			return caller.learning.generateQuestions(topic);
 		}
 	}
 }

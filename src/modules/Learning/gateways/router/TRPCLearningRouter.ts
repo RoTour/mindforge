@@ -6,6 +6,9 @@ import { CreateQuestionDtoSchema, QuestionSchema } from '@modules/Learning/entit
 import { PrismaAnswerQuestionRepository } from '@modules/Learning/usecases/AnswerQuestion/repositories/PrismaAnswerQuestionRepository';
 import { CreateQuestion } from '@modules/Learning/usecases/CreateQuestion/CreateQuestion';
 import { PrismaCreateQuestionRepository } from '@modules/Learning/usecases/CreateQuestion/repositories/PrismaCreateQuestionRepository';
+import { GenerateQuestions } from '@modules/Learning/usecases/GenerateQuestion/GenerateQuestion';
+import { AIProviderRepository } from '@modules/Learning/usecases/GenerateQuestion/repositories/AIProviderRepository';
+import { AnthropicAIGenerateQuestionService } from '@modules/Learning/usecases/GenerateQuestion/services/AnthropicAIGenerateQuestion';
 import { PrismaGetPendingQuestionsRepository } from '@modules/Learning/usecases/GetPendingQuestions/repositories/PrismaGetPendingQuestionsRepository';
 import { PrismaValidateQuestionRepository } from '@modules/Learning/usecases/ValidateQuestion/repositories/PrismaValidateQuestionRepository';
 import { z } from 'zod';
@@ -39,5 +42,13 @@ export const TRPCLearningRouter = t.router({
 	storeQuestion: t.procedure.input(QuestionSchema).mutation(async ({ input }) => {
 		const repository = PrismaCreateQuestionRepository(prisma);
 		return repository.storeQuestion(input);
+	}),
+	generateQuestions: t.procedure.input(z.string()).mutation(async ({ input }) => {
+		const repository = AIProviderRepository(AnthropicAIGenerateQuestionService())
+		const usecase = GenerateQuestions({
+			generateQuestions: repository.generateQuestions,
+			maxTries: 3
+		})
+		return usecase.execute({ topic: input });
 	})
 });

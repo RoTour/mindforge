@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { AddCss } from "$lib/utils/svelte.utils";
+	import type { AddCss } from "$lib/svelte/Utils";
 
 	type Props = {
 		value: number;
