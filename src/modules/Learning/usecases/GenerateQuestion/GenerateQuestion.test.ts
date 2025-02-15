@@ -8,9 +8,9 @@ describe('GenerateQuestion', () => {
 		const topic = 'test';
 		const maxTries = 3;
 		let nbAttempts = 0;
-		const generateQuestions = () => new Promise<CreateQuestionDto[]>(resolve => {
+		const generateQuestions = () => new Promise<CreateQuestionDto[]>((_, reject) => {
 			nbAttempts++;
-			resolve([] as CreateQuestionDto[]);
+			reject([] as CreateQuestionDto[]);
 		})
 		const usecase = GenerateQuestions({ generateQuestions, maxTries });
 
