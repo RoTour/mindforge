@@ -1,5 +1,5 @@
 // $modules/Learning/gateways/router/TRPCLearningRouter.ts
-import { prisma } from '$lib/prisma/client';
+import prisma from '$lib/prisma/client';
 import { t } from '$lib/trpc/t';
 import { QuestionBuilder } from '@modules/Learning/constructors/QuestionBuilder';
 import { CreateQuestionDtoSchema, QuestionSchema } from '@modules/Learning/entities/Question';
