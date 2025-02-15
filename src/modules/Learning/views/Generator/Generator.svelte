@@ -5,19 +5,16 @@
 	import IconWrapper from '$lib/components/IconWrapper.svelte';
 	import type { CreateQuestionDto } from '@modules/Learning/entities/Question';
 	import { AlertTriangle, Check, Sparkles, Trash } from 'lucide-svelte';
-	import { GeneratorVM } from './GeneratorVM.svelte';
 	import { fly } from 'svelte/transition';
-	import { vine } from 'sveltekit-superforms/adapters';
+	import { GeneratorVM } from './GeneratorVM.svelte';
 
 	const vm = new GeneratorVM($page);
-
-  $inspect('INSPECT', vm.propositions);
 </script>
 
 {#if vm.generating}
 	<p>Generating...</p>
 {:else}
-	<div class="flex flex-col">
+	<div class="flex flex-col gap-4">
 		<Input label="Topic" name="topic" bind:value={vm.prompt} required class="bg-transparent" />
 		<Button onclick={vm.startGeneration} class="flex w-fit gap-2">
 			Generate

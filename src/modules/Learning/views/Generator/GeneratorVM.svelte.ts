@@ -18,38 +18,6 @@ export class GeneratorVM {
 
 	constructor(init?: TRPCClientInit) {
 		this.gateway = TRPCLearningGateways(init);
-		console.debug("GeneratorVM", this.gateway)
-		this.propositions = [
-			{
-				prompt: 'In French folklore, Mélusine is a legendary creature known as a:',
-				answer: "Fairy with a serpent's tail",
-				options: ['Mermaid', "Fairy with a serpent's tail", 'Dragon', 'Witch'],
-				type: 'MULTIPLE_CHOICES'
-			},
-			{
-				prompt:
-					'According to the legend, what happens to Mélusine when her husband breaks a specific promise?',
-				answer: 'She disappears forever',
-				options: [
-					'She turns into a bird',
-					'She disappears forever',
-					'She becomes mortal',
-					'She loses her magical powers'
-				],
-				type: 'MULTIPLE_CHOICES'
-			},
-			{
-				prompt: "Mélusine is associated with which noble family's origin story?",
-				answer: 'The House of Lusignan',
-				options: [
-					'The Plantagenets',
-					'The House of Luxembourg',
-					'The House of Lusignan',
-					'The Bourbon dynasty'
-				],
-				type: 'MULTIPLE_CHOICES'
-			}
-		];
 	}
 
 	startGeneration = async () => {
@@ -59,7 +27,6 @@ export class GeneratorVM {
 			this.error = ucResult.message;
 		} else {
 			this.propositions = ucResult.data.questionDtos;
-			console.debug('ucResult', ucResult.data.questionDtos);
 		}
 		this.generating = false;
 	};
@@ -105,7 +72,9 @@ export class GeneratorVM {
 		this.savingStatus =
 			failed.length === 0 ? 'success' : succeeded.length === 0 ? 'failed' : 'partial';
 
-		this.propositions = this.propositions.filter((proposition) => !succeeded.some((s) => s.prompt === proposition.prompt));
+		this.propositions = this.propositions.filter(
+			(proposition) => !succeeded.some((s) => s.prompt === proposition.prompt)
+		);
 		this.saving = false;
 	}
 }

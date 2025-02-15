@@ -31,10 +31,12 @@
 	</div>
 {/snippet}
 
-<ul class="fixed left-0 top-0 w-full space-y-2 px-8 py-4">
-	{#each displayedNotifications as notification}
-		<li in:fly={{ y: -20, duration: 700, easing: elasticOut }}>
-			{@render Notification(notification)}
-		</li>
-	{/each}
-</ul>
+{#if displayedNotifications.length > 0}
+	<ul class="fixed left-0 top-0 w-full space-y-2 px-8 py-4">
+		{#each displayedNotifications as notification}
+			<li in:fly={{ y: -20, duration: 700, easing: elasticOut }}>
+				{@render Notification(notification)}
+			</li>
+		{/each}
+	</ul>
+{/if}
