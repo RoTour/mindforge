@@ -9,6 +9,7 @@
 	};
 
 	let { notifications = [], notificationRemoved }: Props = $props();
+
 	let displayedNotifications: InAppNotification[] = $derived(notifications.slice(-3).toReversed()); // 3 lasts
 	const removeNotification = (id: string) => {
 		notifications = notifications.filter((n) => n.id !== id);

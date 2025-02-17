@@ -23,4 +23,7 @@ export const questionAnswerSubmitted = createAction<{
 
 export const questionCreated = createAction<Question>('QUESTION_CREATED');
 
-export const questionPendingLoaded = createAction<Question[]>('QUESTION_PENDING_LOADED');
+export const questionPendingLoaded = createAction<{
+  pendingQuestions: Question[];
+  timeBeforeNextQuestion: { days: number; hours: number; minutes: number } | null;
+}>('QUESTION_PENDING_LOADED');

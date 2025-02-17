@@ -29,7 +29,15 @@ export const QuestionMiddleware: Middleware = (storeAPI) => (next) => async (act
 			return;
 		}
 
-		storeAPI.dispatch(questionPendingLoaded(ucResult.data.pendingQuestions));
+		const { pendingQuestions, timeBeforeNextQuestion } = ucResult.data;
+		storeAPI.dispatch(
+			questionPendingLoaded({
+				pendingQuestions,
+				timeBeforeNextQuestion: timeBeforeNextQuestion
+					? timeBeforeNextQuestion
+					: null
+			})
+		);
 	}
 
 	// If a question was answered, show success notification
@@ -37,7 +45,9 @@ export const QuestionMiddleware: Middleware = (storeAPI) => (next) => async (act
 		storeAPI.dispatch(
 			notificationAdded({
 				id: uuid(),
-				message: action.payload.wasCorrect ? 'Correct! 🎉' : `You got it wrong 😔\n ${action.payload.expectedAnswer}`,
+				message: action.payload.wasCorrect
+					? 'Correct! 🎉'
+					: `You got it wrong 😔\n ${action.payload.expectedAnswer}`,
 				type: action.payload.wasCorrect ? 'success' : 'error'
 			})
 		);

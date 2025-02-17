@@ -70,4 +70,51 @@ describe('GetPendingQuestions', () => {
 		if (!result.isSuccess) throw new Error('Usecase failed: ' + result.message);
 		expect(result.data.pendingQuestions).toContainEqual(questions[0]);
 	});
+
+	test('Given only pending question, should return next pending question count down', async () => {
+		const questions: Question[] = [
+			{
+				id: '1',
+				lastAttemptDate: baseDate.minus({ day: 1 }).toISODate() ?? undefined,
+				successStreak: 8
+			} as Question
+		];
+
+		const result = await GetPendingQuestions({
+			getUserQuestions: async () => questions
+		}).execute({ userId: '' });
+
+		if (!result.isSuccess) throw new Error('Usecase failed: ' + result.message);
+		expect(result.data.timeBeforeNextQuestion).toEqual({
+			days: 33,
+			hours: 0,
+			minutes: 0
+		});
+	});
+
+	test("Given only pending questions, should only return the count down for the nearest question", async () => {
+		const questions: Question[] = [
+			{
+				id: '2',
+				lastAttemptDate: baseDate.minus({ day: 1 }).toISODate() ?? undefined,
+				successStreak: 5
+			} as Question,
+			{
+				id: '1',
+				lastAttemptDate: baseDate.minus({ day: 1 }).toISODate() ?? undefined,
+				successStreak: 8
+			} as Question
+		];
+
+		const result = await GetPendingQuestions({
+			getUserQuestions: async () => questions
+		}).execute({ userId: '' });
+
+		if (!result.isSuccess) throw new Error('Usecase failed: ' + result.message);
+		expect(result.data.timeBeforeNextQuestion).toEqual({
+			days: 7,
+			hours: 0,
+			minutes: 0
+		});
+	})
 });
