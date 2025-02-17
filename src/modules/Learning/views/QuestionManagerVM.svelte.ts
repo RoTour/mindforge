@@ -5,11 +5,26 @@ import { DateTime } from 'luxon';
 import { QuestionToUI } from '../mappers/QuestionToUI';
 import type { UIQuestion } from './QuestionVM.svelte';
 
+const shuffle = <T>(array: T[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
 export class QuestionManagerVM {
 	private $runeStore = new RuneStore(store);
-	public displayedQuestion: UIQuestion | undefined = $derived(
-		this.$runeStore.state.questions.pendingQuestions.map(QuestionToUI)[0]
-	);
+	public displayedQuestion: UIQuestion | undefined = $derived.by(() => {
+		const question = this.$runeStore.state.questions.pendingQuestions.map(QuestionToUI)[0];
+		if (!question) return undefined;
+		return {
+			id: question.id,
+			prompt: question.prompt,
+			options: shuffle([...question.options]),
+			type: question.type
+		};
+	});
 
 	private dateForNextQuestion: DateTime | null = $derived.by(() => {
 		const duration = this.$runeStore.state.questions.timeBeforeNextQuestion;
