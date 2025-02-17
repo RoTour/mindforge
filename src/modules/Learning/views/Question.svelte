@@ -12,7 +12,6 @@
 		question,
 		reduxStore: store
 	});
-	$inspect('INSPECT', vm.propositionsSelection);
 </script>
 
 <p class="mx-auto my-4 max-w-[80%] text-center text-2xl font-bold">{vm.prompt}</p>

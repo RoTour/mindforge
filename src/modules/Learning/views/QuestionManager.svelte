@@ -4,7 +4,6 @@
 	import { QuestionManagerVM } from './QuestionManagerVM.svelte';
 
 	const vm = new QuestionManagerVM();
-	$inspect('INSPECT', vm.displayedQuestion);
 </script>
 
 {#if vm.displayedQuestion}
