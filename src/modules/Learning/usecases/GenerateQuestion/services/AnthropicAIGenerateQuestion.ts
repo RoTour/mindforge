@@ -50,7 +50,7 @@ export const AnthropicAIGenerateQuestionService = (): IAIGenerateQuestionService
 				schema: GenerationSchema,
 				prompt: topic,
 				system:
-					'Create several quiz questions with options for multiple choices. Create a prompt, and a list of options where each option is an object with the text and a property called correct which is a boolean. Keep options short. The prompt should be given the following topic :'
+					'Create several quiz questions with options for multiple choices. Create a prompt, and a list of options where each option is an object with the text and a property called correct which is a boolean. Keep options short. Write every prompt and options in french. The prompt should be given the following topic :'
 			});
 			console.debug('Object:', object);
 			const result = CreateQuestionDtoSchema.array().parse(object.questions.map(convertToDto));
