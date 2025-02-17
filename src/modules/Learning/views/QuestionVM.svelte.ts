@@ -18,9 +18,11 @@ type QuestionVMProps = {
 };
 
 export class QuestionVM {
-	private question: UIQuestion;
-	propositionsSelection: Map<string, boolean> = new SvelteMap();
 	private reduxStore: AppStore;
+	private question: UIQuestion;
+	private showOptions: boolean = $state(false);
+
+	propositionsSelection: Map<string, boolean> = new SvelteMap();
 
 	constructor({ question, reduxStore = store }: QuestionVMProps) {
 		this.question = question;
@@ -64,5 +66,13 @@ export class QuestionVM {
 	async submit() {
 		console.debug("Submit question called")
 		this.reduxStore.dispatch(questionAnswerSubmitted({ questionId: this.question.id, propositions: this.propositions }));
+	}
+
+	openOptions() {
+		this.showOptions = true;
+	}
+
+	get questionOpened() {
+		return this.showOptions;
 	}
 }

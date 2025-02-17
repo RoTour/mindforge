@@ -21,10 +21,20 @@
 		<li>
 			{#key vm.propositionsSelection.get(option)}
 				<Button accent={vm.isOptionSelected(option)} onclick={() => vm.toggleSelect(option)}>
-					{option}
+					{#if vm.questionOpened}
+						{option}
+					{:else}
+						???
+					{/if}
 				</Button>
 			{/key}
 		</li>
 	{/each}
 </ul>
-<Button onclick={() => vm.submit()} class="mt-4 font-bold" primary>Submit</Button>
+{#if !vm.questionOpened}
+	<!-- Step 1 -->
+	<Button onclick={() => vm.openOptions()} class="mt-4 font-bold" primary>Show options</Button>
+{:else}
+	<!-- Step 2 -->
+	<Button onclick={() => vm.submit()} class="mt-4 font-bold" primary>Submit</Button>
+{/if}
