@@ -44,10 +44,10 @@ export class QuestionManagerVM {
 				duration
 			});
 			this.countdown = {
-				days: duration.days,
-				hours: duration.hours,
-				minutes: duration.minutes,
-				seconds: duration.seconds
+				days: Math.floor(duration.days),
+				hours: Math.floor(duration.hours),
+				minutes: Math.floor(duration.minutes),
+				seconds: Math.floor(duration.seconds),
 			};
 
 	clearInterval(this.countdownInterval);
