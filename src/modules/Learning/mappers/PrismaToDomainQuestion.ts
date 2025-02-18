@@ -7,7 +7,7 @@ export const PrismaToDomainQuestion = (question: PrismaQuestion): DomainQuestion
 		prompt: question.prompt,
 		answer: question.answer,
 		type: question.questionType,
-		options: question.options.map((option) => option.split(',')).flat(),
+		options: question.options,
 		intervalModifier: question.intervalModifier,
 		successStreak: question.successStreak,
 		lastAttemptDate: question.lastAttemptDate?.toISOString()
