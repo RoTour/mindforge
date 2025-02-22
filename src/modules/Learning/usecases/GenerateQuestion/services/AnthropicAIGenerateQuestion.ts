@@ -43,14 +43,19 @@ export const AnthropicAIGenerateQuestionService = (): IAIGenerateQuestionService
 		apiKey: env.ANTHROPIC_API_KEY ?? 'No API key set'
 	});
 
+	const systemPrompt = `Create between 5 and 10 questions with options for multiple choices.
+
+Create a prompt, and a list of options where each option is an object with the text and a property called correct which is a boolean. Write every prompt and options in french. The options should be progressively close
+
+Keep options short. The prompt should be given the following topic :`
+
 	return {
 		generateQuestions: async (topic: string) => {
 			const { object } = await generateObject({
 				model: anthropic('claude-3-5-haiku-20241022'),
 				schema: GenerationSchema,
 				prompt: topic,
-				system:
-					'Create several quiz questions with options for multiple choices. Create a prompt, and a list of options where each option is an object with the text and a property called correct which is a boolean. Keep options short. Write every prompt and options in french. The prompt should be given the following topic :'
+				system: systemPrompt,
 			});
 			console.debug('Object:', object);
 			const result = CreateQuestionDtoSchema.array().parse(object.questions.map(convertToDto));
