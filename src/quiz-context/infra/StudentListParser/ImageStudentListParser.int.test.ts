@@ -47,23 +47,7 @@ describe('ImageStudentListParser integration tests', () => {
 				expect(typeof firstStudent.email).toBe('string');
 			}
 
-			console.log('Parsed students:', students);
-
-			// 5. Assert the content of the result
-			// TODO: For a more robust test, replace these examples with names you expect from your image.
-			// For example, if your image contains "John Doe" and "Jane Smith":
-			/*
-			const fullNames = students.map(s => `${s.name} ${s.lastName || ''}`.trim());
-			expect(fullNames).toContain('John Doe');
-			expect(fullNames).toContain('Jane Smith');
-			*/
-
-			// Example for checking just first names:
-			/*
-			const firstNames = students.map(s => s.name);
-			expect(firstNames).toContain('John');
-			expect(firstNames).toContain('Jane');
-			*/
+			expect(students.length).toBe(23);
 		},
 		{ timeout: 30000 } // Increase timeout for network requests
 	);

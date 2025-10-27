@@ -1,19 +1,30 @@
 import { AggregateRoot } from '$lib/ddd/interfaces/AggregateRoot';
-import type { StudentId } from './StudentId.valueObject';
+import { StudentId } from './StudentId.valueObject';
+
+type StudentProps = {
+	id: StudentId;
+	name: string;
+	lastName?: string;
+	email?: string;
+};
 
 export class Student extends AggregateRoot<StudentId> {
-	email: string;
-	firstName: string;
-	lastName: string;
+	email: string | undefined;
+	name: string;
+	lastName: string | undefined;
 
-	private constructor(id: StudentId, email: string, firstName: string, lastName: string) {
+	private constructor(props: StudentProps) {
+		const { id, email, name, lastName } = props;
 		super(id);
+		this.name = name;
 		this.email = email;
-		this.firstName = firstName;
 		this.lastName = lastName;
 	}
 
-	static create(id: StudentId, email: string, firstName: string, lastName: string) {
-		return new Student(id, email, firstName, lastName);
+	static create(props: Omit<StudentProps, 'id'>) {
+		return new Student({
+			id: new StudentId(),
+			...props
+		});
 	}
 }
