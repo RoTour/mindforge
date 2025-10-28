@@ -1,8 +1,9 @@
 <script lang="ts">
 	import ImageUploader from '$lib/components/ImageUploader.svelte';
 	import { CreatePromotionVM } from './CreatePromotionVM.svelte';
+	import StudentTable from './StudentTable.svelte';
 
-	const vm = new CreatePromotionVM();
+	const vm = new CreatePromotionVM(true);
 </script>
 
 <div class="container mx-auto p-8">
@@ -28,17 +29,7 @@
 			<h2 class="mb-4 text-xl font-semibold">
 				2. Review Parsed Students ({vm.parsedStudents.length})
 			</h2>
-			<ul class="space-y-2 rounded-lg border p-4">
-				{#each vm.parsedStudents as student (student.id)}
-					<li class="bg-secondary/50 rounded-md p-2">
-						{student.name}
-						{student.lastName || ''}
-						{#if student.email}
-							<span class="text-muted-foreground ml-4 text-sm">({student.email})</span>
-						{/if}
-					</li>
-				{/each}
-			</ul>
+			<StudentTable students={vm.parsedStudents} />
 		</div>
 	{/if}
 </div>

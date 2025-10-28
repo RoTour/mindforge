@@ -52,7 +52,11 @@
 		class="hover:border-primary flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors"
 	>
 		{#if previewUrl}
-			<img src={previewUrl} alt="Image preview" class="max-h-full max-w-full object-contain" />
+			<img
+				src={previewUrl}
+				alt="Uploaded file preview"
+				class="max-h-full max-w-full object-contain"
+			/>
 		{:else}
 			<div class="text-muted-foreground">
 				<svg

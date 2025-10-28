@@ -11,10 +11,10 @@ export const StudentDTOSchema = z.object({
 
 export class StudentDTO {
 	constructor(
-		readonly id: string,
-		readonly name: string,
-		readonly lastName?: string,
-		readonly email?: string
+		public id: string,
+		public name: string,
+		public lastName?: string,
+		public email?: string
 	) {}
 	static toDomain(dto: z.infer<typeof StudentDTOSchema>): Student {
 		const { name, email, lastName, id } = dto;
