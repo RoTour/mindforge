@@ -21,9 +21,9 @@ export class Student extends AggregateRoot<StudentId> {
 		this.lastName = lastName;
 	}
 
-	static create(props: Omit<StudentProps, 'id'>) {
+	static create(props: Omit<StudentProps, 'id'> & Partial<Pick<StudentProps, 'id'>>) {
 		return new Student({
-			id: new StudentId(),
+			id: props.id ?? new StudentId(),
 			...props
 		});
 	}

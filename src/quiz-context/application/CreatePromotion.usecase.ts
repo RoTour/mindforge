@@ -3,7 +3,7 @@ import { BadRequestError } from './errors/BadRequestError';
 import { Period } from '$quiz/domain/Period.valueObject';
 import { Promotion } from '$quiz/domain/Promotion.entity';
 import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRepository';
-import { StudentDTO, StudentDTOSchema } from './dtos/StudentsDTO';
+import { StudentDTO, StudentDTOSchema } from './dtos/StudentDTO';
 
 const CreatePromotionCommandSchema = z.object({
 	students: StudentDTOSchema.array(),

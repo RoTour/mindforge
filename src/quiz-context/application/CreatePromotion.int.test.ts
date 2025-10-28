@@ -50,6 +50,7 @@ describe('CreatePromotionUsecase integration tests', () => {
 		};
 
 		// Act & Assert
-		expect(usecase.execute(invalidCommand as any)).rejects.toThrowError(BadRequestError);
+		// @ts-expect-error Testing invalid command
+		await expect(usecase.execute(invalidCommand)).rejects.toThrowError(BadRequestError);
 	});
 });

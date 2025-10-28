@@ -50,8 +50,8 @@ Provide the output as a structured JSON object that conforms to the following sc
 
 For each student you identify, please provide:
 1. The student's first name (\`name\`) if no firstName is found, a name.
-2. The student's last name (\`lastName\`), if you can identify it separately. If you can only find a full name, put the full name in the \`name\` field and leave \`lastName\` empty.
-3. The student's email address (\`email\`), if it is present.
+2. The student's last name (\`lastName\`), if you can identify it separately. If you can only find a full name, put the full name in the \`name\` field and do not include \`lastName\` field.
+3. The student's email address (\`email\`), if it is present. If not, do not include this field.
 
 Pay close attention to the required JSON structure. The top-level key must be "studentData", and its value must be an array of student objects.`
 					},
