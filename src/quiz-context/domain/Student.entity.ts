@@ -27,4 +27,8 @@ export class Student extends AggregateRoot<StudentId> {
 			...props
 		});
 	}
+
+	static rehydrate(props: StudentProps): Student {
+		return new Student(props);
+	}
 }

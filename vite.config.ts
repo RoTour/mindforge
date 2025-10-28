@@ -5,6 +5,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
+	server: {
+		watch: {
+			ignored: ['**/generated/**', '**/.prisma/**', './prisma/generated']
+		}
+	},
 	test: {
 		projects: [
 			{
@@ -23,6 +28,15 @@ export default defineConfig({
 					environment: 'node',
 					include: ['src/**/*.int.{test,spec}.{js,ts}'],
 					exclude: ['src/**/*.svelte.test.{js,ts}'],
+					setupFiles: ['./test/setupIntegration.ts']
+				}
+			},
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'long-running',
+					environment: 'node',
+					include: ['src/**/*.long.{test,spec}.{js,ts}'],
 					setupFiles: ['./test/setupIntegration.ts']
 				}
 			}

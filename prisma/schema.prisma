@@ -1,0 +1,44 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Promotion {
+  id        String @id @default(cuid())
+  name      String
+  baseYear  Int
+
+  // Relation to the join table
+  students  StudentsOnPromotions[]
+}
+
+model Student {
+  id        String  @id @default(cuid())
+  name      String
+  lastName  String?
+  email     String? @unique
+
+  // Relation to the join table
+  promotions StudentsOnPromotions[]
+}
+
+// Explicit many-to-many join table
+model StudentsOnPromotions {
+  promotion   Promotion @relation(fields: [promotionId], references: [id])
+  promotionId String
+  student     Student   @relation(fields: [studentId], references: [id])
+  studentId   String
+
+  @@id([promotionId, studentId])
+}

@@ -1,4 +1,4 @@
-import type { IStudentListParser, StudentData } from '$quiz/domain/interfaces/IStudentParser';
+import type { IStudentListParser, StudentParsed } from '$quiz/domain/interfaces/IStudentParser';
 import { createOpenRouter, type OpenRouterProvider } from '@openrouter/ai-sdk-provider';
 import { env } from '$env/dynamic/private';
 import z from 'zod';
@@ -27,7 +27,7 @@ export class ImageStudentListParser implements IStudentListParser {
 		});
 	}
 
-	async parse(file: File): Promise<StudentData[]> {
+	async parse(file: File): Promise<StudentParsed[]> {
 		if (!(file instanceof File)) {
 			throw new BadRequestError(
 				`Input of ImageStudentListParser should be a file, got [${typeof file}]`

@@ -1,28 +1,32 @@
 // /Users/rotour/projects/mindforge/src/quiz-context/application/CreatePromotion.int.test.ts
-import type { StudentData } from '$quiz/domain/interfaces/IStudentParser';
+import { StudentId } from '$quiz/domain/StudentId.valueObject';
+import { InMemoryStudentRepository } from '$quiz/infra/StudentRepository/InMemoryStudentRepository';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { InMemoryPromotionRepository } from '../infra/PromotionRepository/InMemoryPromotionRepository';
-import { CreatePromotionUsecase } from './CreatePromotion.usecase';
+import { CreatePromotionUsecase, type CreatePromotionCommand } from './CreatePromotion.usecase';
+import type { StudentDTO } from './dtos/StudentDTO';
 import { BadRequestError } from './errors/BadRequestError';
 
-const studentStubData: StudentData[] = [
-	{ name: 'Sarah', lastName: 'Barrabé' },
-	{ name: 'Anthony', lastName: 'Cavagné' },
-	{ name: 'Robin', lastName: 'Tourné' }
+const studentStubData: StudentDTO[] = [
+	{ id: new StudentId().id(), name: 'Sarah', lastName: 'Barrabé' },
+	{ id: new StudentId().id(), name: 'Anthony', lastName: 'Cavagné' },
+	{ id: new StudentId().id(), name: 'Robin', lastName: 'Tourné' }
 ];
 
 describe('CreatePromotionUsecase integration tests', () => {
 	let usecase: CreatePromotionUsecase;
-	let repository: InMemoryPromotionRepository;
+	let promotionRepository: InMemoryPromotionRepository;
+	let studentRepository: InMemoryStudentRepository;
 
 	beforeEach(() => {
-		repository = new InMemoryPromotionRepository();
-		usecase = new CreatePromotionUsecase(repository);
+		promotionRepository = new InMemoryPromotionRepository();
+		studentRepository = new InMemoryStudentRepository();
+		usecase = new CreatePromotionUsecase(promotionRepository, studentRepository);
 	});
 
 	it('should create a promotion with a list of students and save it', async () => {
 		// Arrange
-		const command = {
+		const command: CreatePromotionCommand = {
 			name: 'B3 DevOps 2024',
 			baseYear: 2024,
 			students: studentStubData
@@ -32,7 +36,7 @@ describe('CreatePromotionUsecase integration tests', () => {
 		await usecase.execute(command);
 
 		// Assert
-		const promotions = await repository.findAll();
+		const promotions = await promotionRepository.findAll();
 		expect(promotions.length).toBe(1);
 
 		const createdPromotion = promotions[0];

@@ -19,6 +19,17 @@ export class Promotion extends AggregateRoot<PromotionId> {
 		return new Promotion(id, name, period);
 	}
 
+	public static rehydrate(props: {
+		id: PromotionId;
+		name: string;
+		period: Period;
+		studentIds: StudentId[];
+	}): Promotion {
+		const promotion = new Promotion(props.id, props.name, props.period);
+		promotion.studentIds = props.studentIds;
+		return promotion;
+	}
+
 	public addStudents(newStudentIds: StudentId[]) {
 		const allIds = [...this.studentIds.map((it) => it.id()), ...newStudentIds.map((it) => it.id())];
 		const deduplicatedIds = Array.from(new Set(allIds)).map((id) => new StudentId(id));

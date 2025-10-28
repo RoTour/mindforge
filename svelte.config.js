@@ -10,7 +10,9 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			$ddd: 'src/lib/ddd',
-			$quiz: 'src/quiz-context'
+			$quiz: 'src/quiz-context',
+			$prisma: 'prisma/generated',
+			$test: 'src/test'
 		}
 	}
 };

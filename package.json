@@ -15,6 +15,7 @@
 		"test:all": "vitest",
 		"test:unit": "vitest --project unit",
 		"test:integration": "vitest --project integration",
+		"test:long": "vitest --project long-running",
 		"test:e2e": "playwright test",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build"
@@ -64,13 +65,16 @@
 	},
 	"dependencies": {
 		"@openrouter/ai-sdk-provider": "^1.2.0",
+		"@prisma/client": "^6.18.0",
 		"@testcontainers/postgresql": "^11.7.2",
 		"@trpc/client": "^11.7.0",
 		"@trpc/server": "^11.7.0",
 		"ai": "^5.0.81",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
+		"dotenv": "^17.2.3",
 		"lucide-react": "^0.548.0",
+		"prisma": "6.18.0",
 		"tailwind-merge": "^3.3.1",
 		"zod": "^4.1.12",
 		"zod-form-data": "^3.0.1"

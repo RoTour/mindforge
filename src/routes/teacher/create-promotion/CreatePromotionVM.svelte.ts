@@ -8,7 +8,7 @@ export class CreatePromotionVM {
 	students: StudentDTO[] = $state([]);
 	isLoading = $state(false);
 	errorMessage = $state('');
-	promotionName = $state('New Promotion');
+	promotionName = $state('');
 	baseYear = $state(new SvelteDate().getFullYear());
 	private trpc = createTRPC();
 

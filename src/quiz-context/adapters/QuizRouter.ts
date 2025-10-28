@@ -9,7 +9,10 @@ export const QuizRouter = router({
 	createPromotion: publicProcedure
 		.input(CreatePromotionCommandSchema)
 		.mutation(async ({ input }) => {
-			const usecase = new CreatePromotionUsecase(ServiceProvider.PromotionRepository);
+			const usecase = new CreatePromotionUsecase(
+				ServiceProvider.PromotionRepository,
+				ServiceProvider.StudentRepository
+			);
 			await usecase.execute(input);
 		})
 });
