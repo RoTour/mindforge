@@ -10,6 +10,14 @@
 
 	let previewUrl: string | null = $state(null);
 
+	$effect(() => {
+		return () => {
+			if (previewUrl) {
+				URL.revokeObjectURL(previewUrl);
+			}
+		};
+	});
+
 	function handleFile(file: File | null | undefined) {
 		console.debug('Handling file:', file);
 		if (!file || !file.type.startsWith('image/')) {
@@ -36,11 +44,12 @@
 	}
 </script>
 
+<svelte:window onpaste={handlePaste} />
+
 <div class="mx-auto w-full max-w-lg text-center">
 	<Label
 		for="image-upload"
 		class="hover:border-primary flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-colors"
-		onpaste={handlePaste}
 	>
 		{#if previewUrl}
 			<img src={previewUrl} alt="Image preview" class="max-h-full max-w-full object-contain" />
