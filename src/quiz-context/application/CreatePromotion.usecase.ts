@@ -5,7 +5,7 @@ import { Promotion } from '$quiz/domain/Promotion.entity';
 import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRepository';
 import { StudentDTO, StudentDTOSchema } from './dtos/StudentDTO';
 
-const CreatePromotionCommandSchema = z.object({
+export const CreatePromotionCommandSchema = z.object({
 	students: StudentDTOSchema.array(),
 	name: z.string().min(1),
 	baseYear: z.number().min(2000).max(2100)

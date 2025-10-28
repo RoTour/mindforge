@@ -1,17 +1,17 @@
 import { publicProcedure, router } from '$lib/server/trpc/init';
 import { ServiceProvider } from '$lib/server/trpc/ServiceProvider';
-import { ParseStudentListUsecase } from '$quiz/application/ParseStudentList.usecase';
-import { octetInputParser } from '@trpc/server/http';
+import {
+	CreatePromotionCommandSchema,
+	CreatePromotionUsecase
+} from '$quiz/application/CreatePromotion.usecase';
 
 export const QuizRouter = router({
-	parseStudentListFromFile: publicProcedure.input(octetInputParser).mutation(async ({ input }) => {
-		const usecase = new ParseStudentListUsecase(ServiceProvider.StudentListParser);
-		console.log('Input file:', input);
-		const result = await usecase.execute({
-			file: input
-		});
-		return result;
-	})
+	createPromotion: publicProcedure
+		.input(CreatePromotionCommandSchema)
+		.mutation(async ({ input }) => {
+			const usecase = new CreatePromotionUsecase(ServiceProvider.PromotionRepository);
+			await usecase.execute(input);
+		})
 });
 
 export type QuizRouter = typeof router;

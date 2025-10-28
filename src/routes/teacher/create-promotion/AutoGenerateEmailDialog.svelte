@@ -21,6 +21,14 @@
 	let emailTemplate = $state('${name}.${lastName}@example.com');
 	let templateInput: HTMLInputElement | null = $state(null);
 
+	function sanitizeForEmail(str: string | null | undefined): string {
+		if (!str) return '';
+		return str
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '') // Remove accents
+			.replace(/[^a-zA-Z0-9]/g, ''); // Remove spaces and all other special characters
+	}
+
 	function insertTag(tag: string) {
 		if (!templateInput) return;
 		const start = templateInput.selectionStart ?? emailTemplate.length;
@@ -37,8 +45,8 @@
 		if (!emailTemplate) return;
 		students.forEach((student) => {
 			const generatedEmail = emailTemplate
-				.replace(/\${name}/gi, student.name || '')
-				.replace(/\${lastName}/gi, student.lastName || '');
+				.replace(/\${name}/gi, sanitizeForEmail(student.name))
+				.replace(/\${lastName}/gi, sanitizeForEmail(student.lastName));
 			student.email = generatedEmail.toLowerCase();
 		});
 		open = false; // Close the dialog

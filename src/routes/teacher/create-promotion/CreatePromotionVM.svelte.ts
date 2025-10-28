@@ -1,22 +1,28 @@
+import { AppError } from '$lib/error/Error';
 import { ApiResponse } from '$lib/svelte/ApiResponse';
+import { createTRPC } from '$lib/trpc';
 import type { StudentDTO } from '$quiz/application/dtos/StudentDTO';
+import { SvelteDate } from 'svelte/reactivity';
 
 export class CreatePromotionVM {
-	parsedStudents: StudentDTO[] = $state([]);
+	students: StudentDTO[] = $state([]);
 	isLoading = $state(false);
 	errorMessage = $state('');
+	promotionName = $state('New Promotion');
+	baseYear = $state(new SvelteDate().getFullYear());
+	private trpc = createTRPC();
 
 	constructor(private readonly mockParsing = false) {}
 
 	private resetState = () => {
-		this.parsedStudents = [];
+		this.students = [];
 		this.isLoading = false;
 		this.errorMessage = '';
 	};
 
 	parsePromotionFromFile = async (file: File) => {
 		if (this.mockParsing) {
-			this.parsedStudents = mockStudents;
+			this.students = mockStudents;
 			return;
 		}
 		this.resetState();
@@ -32,7 +38,7 @@ export class CreatePromotionVM {
 			const apiResponse = new ApiResponse<{ students: StudentDTO[] }>(json);
 			console.debug('Api response', apiResponse, apiResponse.data(), apiResponse.data().students);
 			if (apiResponse.isSuccess()) {
-				this.parsedStudents = apiResponse.data().students as StudentDTO[];
+				this.students = apiResponse.data().students as StudentDTO[];
 			} else {
 				this.errorMessage = apiResponse.errorMessage() || 'An unknown error occurred.';
 			}
@@ -40,6 +46,19 @@ export class CreatePromotionVM {
 			this.errorMessage = 'Failed to parse student list. Please try again.';
 		}
 		this.isLoading = false;
+	};
+
+	createPromotion = async () => {
+		try {
+			await this.trpc.quiz.createPromotion.mutate({
+				name: this.promotionName,
+				baseYear: this.baseYear,
+				students: this.students
+			});
+			console.debug('Promotion created');
+		} catch (error) {
+			console.error(new AppError(error).getMessage());
+		}
 	};
 }
 
