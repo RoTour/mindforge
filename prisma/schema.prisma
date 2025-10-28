@@ -15,25 +15,26 @@ datasource db {
 }
 
 model Promotion {
-  id        String @id @default(cuid())
-  name      String
-  baseYear  Int
+  id       String @id @default(cuid())
+  name     String
+  baseYear Int
 
   // Relation to the join table
-  students  StudentsOnPromotions[]
+  students StudentsOnPromotions[]
 }
 
 model Student {
-  id        String  @id @default(cuid())
-  name      String
-  lastName  String?
-  email     String? @unique
+  id       String  @id @default(cuid())
+  name     String
+  lastName String?
+  email    String? @unique
 
   // Relation to the join table
   promotions StudentsOnPromotions[]
 }
 
 // Explicit many-to-many join table
+
 model StudentsOnPromotions {
   promotion   Promotion @relation(fields: [promotionId], references: [id])
   promotionId String
@@ -41,4 +42,64 @@ model StudentsOnPromotions {
   studentId   String
 
   @@id([promotionId, studentId])
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @default(now()) @updatedAt
+  sessions      Session[]
+  accounts      Account[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
 }
