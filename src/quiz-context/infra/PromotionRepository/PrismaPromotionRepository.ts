@@ -4,6 +4,7 @@ import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRep
 import { Promotion } from '$quiz/domain/Promotion.entity';
 import { PromotionId } from '$quiz/domain/PromotionId.valueObject';
 import { StudentId } from '$quiz/domain/StudentId.valueObject';
+import { TeacherId } from '$quiz/domain/TeacherId.valueObject';
 
 type PrismaPromotionWithStudents = PrismaPromotion & {
 	students: { studentId: string }[];
@@ -15,7 +16,8 @@ class PromotionMapper {
 			id: new PromotionId(prismaPromotion.id),
 			name: prismaPromotion.name,
 			period: new Period(prismaPromotion.baseYear),
-			studentIds: prismaPromotion.students.map((s) => new StudentId(s.studentId))
+			studentIds: prismaPromotion.students.map((s) => new StudentId(s.studentId)),
+			teacherId: new TeacherId(prismaPromotion.teacherId)
 		});
 		return promotion;
 	}
@@ -27,6 +29,11 @@ class PromotionMapper {
 			id: domainPromotion.id.id(),
 			name: domainPromotion.name,
 			baseYear: domainPromotion.period.baseYear,
+			teacher: {
+				connect: {
+					id: domainPromotion.teacherId.id()
+				}
+			},
 			students: {
 				create: domainPromotion.studentIds.map((studentId) => ({
 					student: {

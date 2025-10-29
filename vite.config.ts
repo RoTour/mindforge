@@ -18,7 +18,11 @@ export default defineConfig({
 					name: 'unit',
 					environment: 'node',
 					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.int.{test,spec}.{js,ts}', 'src/**/*.svelte.test.{js,ts}']
+					exclude: [
+						'src/**/*.int.{test,spec}.{js,ts}',
+						'src/**/*.svelte.test.{js,ts}',
+						'src/**/*.long.{test,spec}.{js,ts}'
+					]
 				}
 			},
 			{

@@ -1,4 +1,3 @@
-import { prisma as globalPrisma } from '$lib/server/prisma/prisma';
 import type { Prisma, PrismaClient, Student as PrismaStudent } from '$prisma/client';
 import type { IStudentRepository } from '$quiz/domain/interfaces/IStudentRepository';
 import { Student } from '$quiz/domain/Student.entity';
@@ -27,7 +26,7 @@ class StudentMapper {
 export class PrismaStudentRepository implements IStudentRepository {
 	private prisma: PrismaClient;
 
-	constructor(prismaClient: PrismaClient = globalPrisma) {
+	constructor(prismaClient: PrismaClient) {
 		this.prisma = prismaClient;
 	}
 

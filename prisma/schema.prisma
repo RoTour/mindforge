@@ -14,13 +14,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Promotion {
-  id       String @id @default(cuid())
-  name     String
-  baseYear Int
+model Teacher {
+  id          String      @id @default(cuid())
+  authUserId  String      @unique
+  promotions  Promotion[]
+}
 
-  // Relation to the join table
-  students StudentsOnPromotions[]
+
+
+model Promotion {
+
+  id        String @id @default(cuid())
+  name      String
+  baseYear  Int
+
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+  teacherId String
+  students  StudentsOnPromotions[]
 }
 
 model Student {

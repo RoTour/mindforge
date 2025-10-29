@@ -10,7 +10,12 @@ const resetDb = async () => {
 	await prisma.$transaction([
 		prisma.studentsOnPromotions.deleteMany(),
 		prisma.promotion.deleteMany(),
-		prisma.student.deleteMany()
+		prisma.student.deleteMany(),
+		prisma.teacher.deleteMany(),
+		prisma.account.deleteMany(),
+		prisma.verification.deleteMany(),
+		prisma.session.deleteMany(),
+		prisma.user.deleteMany()
 	]);
 };
 

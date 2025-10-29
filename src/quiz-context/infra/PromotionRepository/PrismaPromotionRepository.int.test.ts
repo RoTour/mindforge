@@ -1,20 +1,27 @@
 // /Users/rotour/projects/mindforge/src/quiz-context/infra/PromotionRepository/PrismaPromotionRepository.int.test.ts
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { PrismaPromotionRepository } from './PrismaPromotionRepository';
 import { getPrismaTestClient } from '../../../../test/setupIntegration';
 import { Promotion } from '$quiz/domain/Promotion.entity';
 import { Period } from '$quiz/domain/Period.valueObject';
 import { Student } from '$quiz/domain/Student.entity';
 import type { PrismaClient } from '$prisma/client';
+import { Teacher } from '$quiz/domain/Teacher.entity';
+
+import { PrismaTeacherRepository } from '../TeacherRepository/PrismaTeacherRepository';
 
 describe('PrismaPromotionRepository integration tests', () => {
 	let repository: PrismaPromotionRepository;
 	let prisma: PrismaClient;
+	let teacher: Teacher;
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		prisma = getPrismaTestClient();
 		// Inject the test prisma client into the repository
 		repository = new PrismaPromotionRepository(prisma);
+		const teacherRepository = new PrismaTeacherRepository(prisma);
+		teacher = Teacher.create({ authUserId: 'test-auth-user' });
+		await teacherRepository.save(teacher);
 	});
 
 	it('should save a new promotion and its students', async () => {
@@ -28,7 +35,11 @@ describe('PrismaPromotionRepository integration tests', () => {
 			]
 		});
 
-		const promotion = Promotion.create('Devs 2025', new Period(2024));
+		const promotion = Promotion.create({
+			name: 'Devs 2025',
+			period: new Period(2024),
+			teacherId: teacher.id
+		});
 		promotion.addStudents([student1.id, student2.id]);
 
 		// Act
@@ -43,6 +54,7 @@ describe('PrismaPromotionRepository integration tests', () => {
 		expect(savedPromotion).not.toBeNull();
 		expect(savedPromotion?.name).toBe('Devs 2025');
 		expect(savedPromotion?.baseYear).toBe(2024);
+		expect(savedPromotion?.teacherId).toBe(teacher.id.id());
 		expect(savedPromotion?.students.length).toBe(2);
 		expect(savedPromotion?.students.map((s) => s.studentId)).toContain(student1.id.id());
 		expect(savedPromotion?.students.map((s) => s.studentId)).toContain(student2.id.id());
@@ -53,7 +65,11 @@ describe('PrismaPromotionRepository integration tests', () => {
 		const student = Student.create({ name: 'Test', lastName: 'User' });
 		await prisma.student.create({ data: { id: student.id.id(), name: student.name } });
 
-		const promotion = Promotion.create('Testers 2024', new Period(2023));
+		const promotion = Promotion.create({
+			name: 'Testers 2024',
+			period: new Period(2023),
+			teacherId: teacher.id
+		});
 		promotion.addStudents([student.id]);
 		await repository.save(promotion);
 
@@ -65,6 +81,7 @@ describe('PrismaPromotionRepository integration tests', () => {
 		expect(foundPromotion?.id.id()).toBe(promotion.id.id());
 		expect(foundPromotion?.name).toBe('Testers 2024');
 		expect(foundPromotion?.period.baseYear).toBe(2023);
+		expect(foundPromotion?.teacherId.id()).toBe(teacher.id.id());
 		expect(foundPromotion?.studentIds.length).toBe(1);
 		expect(foundPromotion?.studentIds[0].id()).toBe(student.id.id());
 	});
@@ -78,8 +95,16 @@ describe('PrismaPromotionRepository integration tests', () => {
 
 	it('should find all promotions', async () => {
 		// Arrange
-		const promotion1 = Promotion.create('Promotion A', new Period(2022));
-		const promotion2 = Promotion.create('Promotion B', new Period(2023));
+		const promotion1 = Promotion.create({
+			name: 'Promotion A',
+			period: new Period(2022),
+			teacherId: teacher.id
+		});
+		const promotion2 = Promotion.create({
+			name: 'Promotion B',
+			period: new Period(2023),
+			teacherId: teacher.id
+		});
 		await repository.save(promotion1);
 		await repository.save(promotion2);
 
@@ -103,7 +128,11 @@ describe('PrismaPromotionRepository integration tests', () => {
 			]
 		});
 
-		const promotion = Promotion.create('Old Name', new Period(2020));
+		const promotion = Promotion.create({
+			name: 'Old Name',
+			period: new Period(2020),
+			teacherId: teacher.id
+		});
 		promotion.addStudents([student1.id]);
 		await repository.save(promotion);
 
@@ -124,7 +153,11 @@ describe('PrismaPromotionRepository integration tests', () => {
 	it('should throw an error when trying to connect to non-existent students', async () => {
 		// Arrange
 		const nonExistentStudent = Student.create({ name: 'Ghost', lastName: 'Student' });
-		const promotion = Promotion.create('Phantom Promotion', new Period(2024));
+		const promotion = Promotion.create({
+			name: 'Phantom Promotion',
+			period: new Period(2024),
+			teacherId: teacher.id
+		});
 		promotion.addStudents([nonExistentStudent.id]);
 
 		// Act & Assert
