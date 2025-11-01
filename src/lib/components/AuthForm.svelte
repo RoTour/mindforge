@@ -28,7 +28,8 @@
 	let error = $state<string | null>(null);
 	let isLoading = $state(false);
 
-	async function handlePasswordLogin() {
+	async function handlePasswordLogin(e: Event) {
+		e.preventDefault();
 		isLoading = true;
 		error = null;
 		try {
@@ -72,7 +73,7 @@
 	class={cn('flex flex-col gap-6', className)}
 	bind:this={ref}
 	{...restProps}
-	on:submit|preventDefault={handlePasswordLogin}
+	onsubmit={handlePasswordLogin}
 >
 	<FieldGroup>
 		<div class="flex flex-col items-center gap-1 text-center">
@@ -126,7 +127,7 @@
 			<FieldDescription class="text-center">
 				Don't have an account?
 				<a
-					href={resolve(`/auth?action=${type === 'signin' ? 'signup' : 'signin'}`)}
+					href={resolve(`/auth/${type === 'signin' ? 'sign-up' : 'sign-in'}`)}
 					class="underline underline-offset-4"
 				>
 					{#if type === 'signin'}

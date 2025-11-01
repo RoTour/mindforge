@@ -1,9 +1,11 @@
 <script lang="ts">
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
 	import AuthForm from '$lib/components/AuthForm.svelte';
-	import { page } from '$app/state';
 
-	let authType = $derived(page.url.searchParams.get('action'));
+	type Props = {
+		authType: 'signin' | 'signup';
+	};
+	const { authType }: Props = $props();
 </script>
 
 <div class="grid min-h-svh lg:grid-cols-2">
@@ -20,7 +22,7 @@
 		</div>
 		<div class="flex flex-1 items-center justify-center">
 			<div class="w-full max-w-xs">
-				<AuthForm type={authType === 'signup' ? authType : 'signin'} />
+				<AuthForm type={authType} />
 			</div>
 		</div>
 	</div>
