@@ -4,11 +4,11 @@ import { InMemoryStudentRepository } from '$quiz/infra/StudentRepository/InMemor
 import { beforeEach, describe, expect, it } from 'vitest';
 import { InMemoryPromotionRepository } from '../infra/PromotionRepository/InMemoryPromotionRepository';
 import { CreatePromotionUsecase, type CreatePromotionCommand } from './CreatePromotion.usecase';
-import type { StudentDTO } from './dtos/StudentDTO';
+import type { CreateStudentDTO } from './dtos/StudentDTO';
 import { BadRequestError } from './errors/BadRequestError';
 import { InMemoryTeacherRepository } from '$quiz/infra/TeacherRepository/InMemoryTeacherRepository';
 
-const studentStubData: StudentDTO[] = [
+const studentStubData: CreateStudentDTO[] = [
 	{ id: new StudentId().id(), name: 'Sarah', lastName: 'Barrabé' },
 	{ id: new StudentId().id(), name: 'Anthony', lastName: 'Cavagné' },
 	{ id: new StudentId().id(), name: 'Robin', lastName: 'Tourné' }

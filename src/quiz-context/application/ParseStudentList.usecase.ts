@@ -2,7 +2,7 @@ import type { IStudentListParser } from '$quiz/domain/interfaces/IStudentParser'
 import z from 'zod';
 import { BadRequestError } from './errors/BadRequestError';
 import { StudentId } from '$quiz/domain/StudentId.valueObject';
-import type { StudentDTO } from './dtos/StudentDTO';
+import type { CreateStudentDTO } from './dtos/StudentDTO';
 
 const ParseStudentListCommandSchema = z
 	.object({
@@ -17,7 +17,7 @@ const ParseStudentListCommandSchema = z
 export class ParseStudentListUsecase {
 	constructor(private readonly studentListParser: IStudentListParser) {}
 
-	async execute(payload: unknown): Promise<StudentDTO[]> {
+	async execute(payload: unknown): Promise<CreateStudentDTO[]> {
 		const parsedCommand = ParseStudentListCommandSchema.safeParse(payload);
 		if (!parsedCommand.success) {
 			console.debug(parsedCommand.error);

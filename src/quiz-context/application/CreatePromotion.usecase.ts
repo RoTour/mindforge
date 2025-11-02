@@ -4,7 +4,7 @@ import { BadRequestError } from './errors/BadRequestError';
 import { Period } from '$quiz/domain/Period.valueObject';
 import { Promotion } from '$quiz/domain/Promotion.entity';
 import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRepository';
-import { StudentDTO, StudentDTOSchema } from './dtos/StudentDTO';
+import { CreateStudentDTO, StudentDTOSchema } from './dtos/StudentDTO';
 import type { IStudentRepository } from '$quiz/domain/interfaces/IStudentRepository';
 import type { ITeacherRepository } from '$quiz/domain/interfaces/ITeacherRepository';
 import { Teacher } from '$quiz/domain/Teacher.entity';
@@ -43,7 +43,7 @@ export class CreatePromotionUsecase {
 		}
 
 		// 1. Convert DTOs to Domain Entities
-		const studentEntities = studentDTOs.map((dto) => StudentDTO.toDomain(dto));
+		const studentEntities = studentDTOs.map((dto) => CreateStudentDTO.toDomain(dto));
 
 		// 2. Save the new students to the database
 		await this.studentRepository.saveMany(studentEntities);

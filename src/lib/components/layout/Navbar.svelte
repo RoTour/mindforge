@@ -6,7 +6,7 @@
 
 	const signOut = () => {
 		authClient.signOut();
-		goto(resolve('/auth'));
+		goto(resolve('/auth/sign-in'));
 	};
 </script>
 

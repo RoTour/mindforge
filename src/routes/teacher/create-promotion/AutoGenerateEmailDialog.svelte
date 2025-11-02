@@ -1,6 +1,6 @@
 <!-- /Users/rotour/projects/mindforge/src/routes/teacher/create-promotion/AutoGenerateEmailDialog.svelte -->
 <script lang="ts">
-	import type { StudentDTO } from '$quiz/application/dtos/StudentDTO';
+	import type { CreateStudentDTO } from '$quiz/application/dtos/StudentDTO';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import {
@@ -13,7 +13,7 @@
 	} from '$lib/components/ui/dialog/index.js';
 
 	type Props = {
-		students: StudentDTO[];
+		students: CreateStudentDTO[];
 		open: boolean;
 	};
 	let { students, open = $bindable() }: Props = $props();

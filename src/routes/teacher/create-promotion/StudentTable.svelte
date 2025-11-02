@@ -9,12 +9,12 @@
 		TableRow
 	} from '$lib/components/ui/table/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import type { StudentDTO } from '$quiz/application/dtos/StudentDTO';
+	import type { CreateStudentDTO } from '$quiz/application/dtos/StudentDTO';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import AutoGenerateEmailDialog from './AutoGenerateEmailDialog.svelte';
 
 	type Props = {
-		students: StudentDTO[];
+		students: CreateStudentDTO[];
 	};
 	let { students }: Props = $props();
 

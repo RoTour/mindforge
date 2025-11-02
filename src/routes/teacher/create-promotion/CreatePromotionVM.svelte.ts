@@ -1,11 +1,11 @@
 import { AppError } from '$lib/error/Error';
 import { ApiResponse } from '$lib/svelte/ApiResponse';
 import { createTRPC } from '$lib/trpc';
-import type { StudentDTO } from '$quiz/application/dtos/StudentDTO';
+import type { CreateStudentDTO } from '$quiz/application/dtos/StudentDTO';
 import { SvelteDate } from 'svelte/reactivity';
 
 export class CreatePromotionVM {
-	students: StudentDTO[] = $state([]);
+	students: CreateStudentDTO[] = $state([]);
 	isLoading = $state(false);
 	errorMessage = $state('');
 	promotionName = $state('');
@@ -35,10 +35,10 @@ export class CreatePromotionVM {
 				body: formData
 			});
 			const json = await result.json();
-			const apiResponse = new ApiResponse<{ students: StudentDTO[] }>(json);
+			const apiResponse = new ApiResponse<{ students: CreateStudentDTO[] }>(json);
 			console.debug('Api response', apiResponse, apiResponse.data(), apiResponse.data().students);
 			if (apiResponse.isSuccess()) {
-				this.students = apiResponse.data().students as StudentDTO[];
+				this.students = apiResponse.data().students as CreateStudentDTO[];
 			} else {
 				this.errorMessage = apiResponse.errorMessage() || 'An unknown error occurred.';
 			}
@@ -62,7 +62,7 @@ export class CreatePromotionVM {
 	};
 }
 
-const mockStudents: StudentDTO[] = [
+const mockStudents: CreateStudentDTO[] = [
 	{
 		name: 'Thomas',
 		lastName: 'ABADIE',

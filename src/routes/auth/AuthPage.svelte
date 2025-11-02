@@ -1,6 +1,7 @@
 <script lang="ts">
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
 	import AuthForm from '$lib/components/AuthForm.svelte';
+	import { asset } from '$app/paths';
 
 	type Props = {
 		authType: 'signin' | 'signup';
@@ -28,7 +29,7 @@
 	</div>
 	<div class="bg-muted relative hidden lg:block">
 		<img
-			src="/placeholder.svg"
+			src={asset('/favicon.png')}
 			alt="placeholder"
 			class="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
 		/>

@@ -9,7 +9,7 @@ export const StudentDTOSchema = z.object({
 	email: z.email().optional()
 });
 
-export class StudentDTO {
+export class CreateStudentDTO {
 	constructor(
 		public id: string,
 		public name: string,
