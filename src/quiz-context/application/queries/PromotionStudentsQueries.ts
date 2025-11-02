@@ -5,6 +5,6 @@ export class PromotionStudentsQueries {
 	constructor(private readonly queries: IPromotionStudentsQueries) {}
 	async getStudentsFromPromotion(promotionId: string) {
 		const students = await this.queries.getStudentsFromPromotion(new PromotionId(promotionId));
-		return { students };
+		return students;
 	}
 }
