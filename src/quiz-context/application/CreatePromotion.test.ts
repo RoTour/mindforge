@@ -7,6 +7,7 @@ import { CreatePromotionUsecase, type CreatePromotionCommand } from './CreatePro
 import type { CreateStudentDTO } from './dtos/StudentDTO';
 import { BadRequestError } from './errors/BadRequestError';
 import { InMemoryTeacherRepository } from '$quiz/infra/TeacherRepository/InMemoryTeacherRepository';
+import { TeacherId } from '$quiz/domain/TeacherId.valueObject';
 
 const studentStubData: CreateStudentDTO[] = [
 	{ id: new StudentId().id(), name: 'Sarah', lastName: 'Barrabé' },
@@ -27,7 +28,7 @@ describe('CreatePromotionUsecase integration tests', () => {
 		studentRepository = new InMemoryStudentRepository();
 		teacherRepository = new InMemoryTeacherRepository();
 
-		usecase = new CreatePromotionUsecase(promotionRepository, studentRepository, teacherRepository);
+		usecase = new CreatePromotionUsecase(promotionRepository, studentRepository);
 	});
 
 	it('should create a promotion with a list of students and save it', async () => {
@@ -36,7 +37,7 @@ describe('CreatePromotionUsecase integration tests', () => {
 			name: 'B3 DevOps 2024',
 			baseYear: 2024,
 			students: studentStubData,
-			authUserId: authUserId
+			teacherId: new TeacherId()
 		};
 
 		// Act

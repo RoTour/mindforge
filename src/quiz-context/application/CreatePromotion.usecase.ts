@@ -1,19 +1,18 @@
 // /Users/rotour/projects/mindforge/src/quiz-context/application/CreatePromotion.usecase.ts
-import z from 'zod';
-import { BadRequestError } from './errors/BadRequestError';
+import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRepository';
+import type { IStudentRepository } from '$quiz/domain/interfaces/IStudentRepository';
 import { Period } from '$quiz/domain/Period.valueObject';
 import { Promotion } from '$quiz/domain/Promotion.entity';
-import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRepository';
+import z from 'zod';
 import { CreateStudentDTO, StudentDTOSchema } from './dtos/StudentDTO';
-import type { IStudentRepository } from '$quiz/domain/interfaces/IStudentRepository';
-import type { ITeacherRepository } from '$quiz/domain/interfaces/ITeacherRepository';
-import { Teacher } from '$quiz/domain/Teacher.entity';
+import { BadRequestError } from './errors/BadRequestError';
+import { TeacherId } from '$quiz/domain/TeacherId.valueObject';
 
 export const CreatePromotionCommandSchema = z.object({
 	students: StudentDTOSchema.array(),
 	name: z.string().min(1),
 	baseYear: z.number().min(2000).max(2100),
-	authUserId: z.string()
+	teacherId: z.instanceof(TeacherId)
 });
 
 export type CreatePromotionCommand = z.infer<typeof CreatePromotionCommandSchema>;
@@ -21,8 +20,7 @@ export type CreatePromotionCommand = z.infer<typeof CreatePromotionCommandSchema
 export class CreatePromotionUsecase {
 	constructor(
 		private readonly promotionRepository: IPromotionRepository,
-		private readonly studentRepository: IStudentRepository,
-		private readonly teacherRepository: ITeacherRepository
+		private readonly studentRepository: IStudentRepository
 	) {}
 
 	async execute(command: CreatePromotionCommand) {
@@ -32,15 +30,7 @@ export class CreatePromotionUsecase {
 				`Invalid command [${z.treeifyError(parsedCommand.error).errors.join(', ')}]`
 			);
 		}
-		const { name, baseYear, students: studentDTOs, authUserId } = parsedCommand.data;
-
-		// 0. Find teacher from authUserId
-		let teacher = await this.teacherRepository.findByAuthUserId(authUserId);
-		if (!teacher) {
-			// If teacher does not exist, create it.
-			teacher = Teacher.create({ authUserId });
-			await this.teacherRepository.save(teacher);
-		}
+		const { name, baseYear, students: studentDTOs, teacherId } = parsedCommand.data;
 
 		// 1. Convert DTOs to Domain Entities
 		const studentEntities = studentDTOs.map((dto) => CreateStudentDTO.toDomain(dto));
@@ -52,7 +42,7 @@ export class CreatePromotionUsecase {
 		const newPromotion = Promotion.create({
 			name,
 			period: new Period(baseYear),
-			teacherId: teacher.id
+			teacherId: teacherId
 		});
 
 		// 4. Add the IDs of the persistent students

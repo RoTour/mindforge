@@ -13,8 +13,22 @@ const handleAuthRoot: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-const handleTRPC: Handle = async ({ event, resolve }) => {
+const handleAuth: Handle = async ({ event, resolve }) => {
 	return svelteKitHandler({ event, resolve, auth, building });
 };
 
-export const handle = sequence(handleAuthRoot, handleTRPC);
+const handleAuthContext: Handle = async ({ event, resolve }) => {
+	const currentUser = await auth.api.getSession(event.request);
+	event.locals.authUserId = currentUser?.user.id ?? null;
+
+	return resolve(event);
+};
+
+const handleDebug: Handle = async ({ event, resolve }) => {
+	console.debug('Debug Hook', {
+		url: event.url.href
+	});
+	return resolve(event);
+};
+
+export const handle = sequence(handleAuthRoot, handleAuth, handleAuthContext, handleDebug);

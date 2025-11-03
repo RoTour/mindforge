@@ -1,4 +1,5 @@
-import { publicProcedure, router } from '$lib/server/trpc/init';
+import { router } from '$lib/server/trpc/init';
+import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import { ServiceProvider } from '$lib/server/trpc/ServiceProvider';
 import {
 	CreatePromotionCommandSchema,
@@ -6,14 +7,15 @@ import {
 } from '$quiz/application/CreatePromotion.usecase';
 
 export const QuizRouter = router({
-	createPromotion: publicProcedure
-		.input(CreatePromotionCommandSchema)
-		.mutation(async ({ input }) => {
+	createPromotion: teacherProcedure
+		.input(CreatePromotionCommandSchema.omit({ teacherId: true }))
+		.mutation(async ({ input, ctx }) => {
 			const usecase = new CreatePromotionUsecase(
 				ServiceProvider.PromotionRepository,
 				ServiceProvider.StudentRepository
 			);
-			await usecase.execute(input);
+			console.debug('Quiz router teacher', ctx.teacher);
+			await usecase.execute({ ...input, teacherId: ctx.teacher.id });
 		})
 });
 
