@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
-export function serialize(obj: unknown): unknown {
+export function serialize<T>(obj: T): T {
 	return JSON.parse(JSON.stringify(obj));
 }
 

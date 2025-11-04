@@ -11,5 +11,8 @@
 </script>
 
 <nav class="flex p-4">
-	<Button variant="outline" onclick={signOut} class="ms-auto">Sign Out</Button>
+	<div class="ms-auto flex items-center gap-4">
+		<Button variant="link" href={resolve('/teacher/promotions')}>My promotions</Button>
+		<Button variant="outline" onclick={signOut}>Sign Out</Button>
+	</div>
 </nav>

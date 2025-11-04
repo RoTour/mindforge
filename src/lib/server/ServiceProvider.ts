@@ -1,5 +1,6 @@
 import type { IEnrollQueries } from '$quiz/application/interfaces/IEnrollQueries';
 import type { IPromotionStudentsQueries } from '$quiz/application/interfaces/IPromotionStudentsQueries';
+import type { ITeacherPromotionsQueries } from '$quiz/application/interfaces/ITeacherPromotions';
 import type { ITeacherQueries } from '$quiz/application/interfaces/ITeacherQueries';
 import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRepository';
 import type { IStudentListParser } from '$quiz/domain/interfaces/IStudentParser';
@@ -8,6 +9,10 @@ import type { ITeacherRepository } from '$quiz/domain/interfaces/ITeacherReposit
 import { PrismaPromotionRepository } from '$quiz/infra/PromotionRepository/PrismaPromotionRepository';
 import { PrismaEnrollQueries } from '$quiz/infra/queries/PrismaEnrollQueries';
 import { PrismaPromotionStudentsQueries } from '$quiz/infra/queries/PrismaPromotionStudentsQueries';
+import {
+	PrismaTeacherPromotions,
+	PrismaTeacherPromotionsQueries
+} from '$quiz/infra/queries/PrismaTeacherPromotionsQueries';
 import { PrismaTeacherQueries } from '$quiz/infra/queries/PrismaTeacherQueries';
 import { ImageStudentListParser } from '$quiz/infra/StudentListParser/ImageStudentListParser';
 import { PrismaStudentRepository } from '$quiz/infra/StudentRepository/PrismaStudentRepository';
@@ -21,7 +26,8 @@ export const ServiceProvider: ServiceProvider = {
 	StudentListParser: new ImageStudentListParser(),
 	PromotionStudentsQueries: new PrismaPromotionStudentsQueries(prisma),
 	EnrollQueries: new PrismaEnrollQueries(prisma),
-	TeacherQueries: new PrismaTeacherQueries(prisma)
+	TeacherQueries: new PrismaTeacherQueries(prisma),
+	TeacherPromotionsQueries: new PrismaTeacherPromotionsQueries(prisma)
 };
 
 export type ServiceProvider = {
@@ -32,4 +38,5 @@ export type ServiceProvider = {
 	PromotionStudentsQueries: IPromotionStudentsQueries;
 	EnrollQueries: IEnrollQueries;
 	TeacherQueries: ITeacherQueries;
+	TeacherPromotionsQueries: ITeacherPromotionsQueries;
 };

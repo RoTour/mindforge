@@ -1,5 +1,5 @@
 import { serialize } from '$lib/lib/utils';
-import { ServiceProvider } from '$lib/server/trpc/ServiceProvider';
+import { ServiceProvider } from '$lib/server/ServiceProvider';
 import { PromotionStudentsQueries } from '$quiz/application/queries/PromotionStudentsQueries';
 import type { PageServerLoad } from './$types';
 
