@@ -1,6 +1,6 @@
 import { router } from '$lib/server/trpc/init';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
-import { ServiceProvider } from '$lib/server/trpc/ServiceProvider';
+import { ServiceProvider } from '$lib/server/ServiceProvider';
 import {
 	CreatePromotionCommandSchema,
 	CreatePromotionUsecase

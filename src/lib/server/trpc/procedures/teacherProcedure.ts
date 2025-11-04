@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { ServiceProvider } from '../ServiceProvider';
+import { ServiceProvider } from '$lib/server/ServiceProvider';
 import { t } from '../init';
 
 export const teacherProcedure = t.procedure.use(async ({ ctx, next }) => {
