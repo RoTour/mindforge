@@ -7,7 +7,6 @@ import { TeacherId } from '$quiz/domain/TeacherId.valueObject';
 import type { CreatePromotionCommand } from '$quiz/application/CreatePromotion.usecase';
 import { QuizRouter } from './QuizRouter';
 import { InMemoryPromotionRepository } from '$quiz/infra/PromotionRepository/InMemoryPromotionRepository';
-import { mock } from 'node:test';
 
 const { ServiceProvider: mockedServiceProvider } = (await import(
 	'$lib/server/ServiceProvider'
