@@ -1,11 +1,13 @@
 // /Users/rotour/projects/mindforge/src/quiz-context/application/CreatePromotion.usecase.ts
 import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRepository';
 import type { IStudentRepository } from '$quiz/domain/interfaces/IStudentRepository';
+import type { ITeacherRepository } from '$quiz/domain/interfaces/ITeacherRepository';
 import { Period } from '$quiz/domain/Period.valueObject';
 import { Promotion } from '$quiz/domain/Promotion.entity';
 import z from 'zod';
 import { CreateStudentDTO, StudentDTOSchema } from './dtos/StudentDTO';
 import { BadRequestError } from './errors/BadRequestError';
+import { NotFoundError } from './errors/NotFoundError';
 import { TeacherId } from '$quiz/domain/TeacherId.valueObject';
 
 export const CreatePromotionCommandSchema = z.object({
@@ -20,7 +22,8 @@ export type CreatePromotionCommand = z.infer<typeof CreatePromotionCommandSchema
 export class CreatePromotionUsecase {
 	constructor(
 		private readonly promotionRepository: IPromotionRepository,
-		private readonly studentRepository: IStudentRepository
+		private readonly studentRepository: IStudentRepository,
+		private readonly teacherRepository: ITeacherRepository
 	) {}
 
 	async execute(command: CreatePromotionCommand) {
@@ -31,6 +34,11 @@ export class CreatePromotionUsecase {
 			);
 		}
 		const { name, baseYear, students: studentDTOs, teacherId } = parsedCommand.data;
+
+		const teacher = await this.teacherRepository.findById(teacherId);
+		if (!teacher) {
+			throw new NotFoundError(`Teacher with id ${teacherId.id()} not found`);
+		}
 
 		// 1. Convert DTOs to Domain Entities
 		const studentEntities = studentDTOs.map((dto) => CreateStudentDTO.toDomain(dto));

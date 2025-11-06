@@ -9,6 +9,9 @@ import { BadRequestError } from './errors/BadRequestError';
 import { InMemoryTeacherRepository } from '$quiz/infra/TeacherRepository/InMemoryTeacherRepository';
 import { TeacherId } from '$quiz/domain/TeacherId.valueObject';
 
+import { NotFoundError } from './errors/NotFoundError';
+import { Teacher } from '$quiz/domain/Teacher.entity';
+
 const studentStubData: CreateStudentDTO[] = [
 	{ id: new StudentId().id(), name: 'Sarah', lastName: 'Barrabé' },
 	{ id: new StudentId().id(), name: 'Anthony', lastName: 'Cavagné' },
@@ -28,16 +31,32 @@ describe('CreatePromotionUsecase integration tests', () => {
 		studentRepository = new InMemoryStudentRepository();
 		teacherRepository = new InMemoryTeacherRepository();
 
-		usecase = new CreatePromotionUsecase(promotionRepository, studentRepository);
+		usecase = new CreatePromotionUsecase(promotionRepository, studentRepository, teacherRepository);
 	});
 
-	it('should create a promotion with a list of students and save it', async () => {
+	it('Should raise error if teacher does not exist', async () => {
 		// Arrange
 		const command: CreatePromotionCommand = {
 			name: 'B3 DevOps 2024',
 			baseYear: 2024,
 			students: studentStubData,
-			teacherId: new TeacherId()
+			teacherId: new TeacherId() // This ID does not exist in the repo
+		};
+
+		// Act & Assert
+		await expect(usecase.execute(command)).rejects.toThrowError(NotFoundError);
+	});
+
+	it('should create a promotion with a list of students and save it', async () => {
+		// Arrange
+		const teacher = Teacher.create({ authUserId });
+		await teacherRepository.save(teacher);
+
+		const command: CreatePromotionCommand = {
+			name: 'B3 DevOps 2024',
+			baseYear: 2024,
+			students: studentStubData,
+			teacherId: teacher.id
 		};
 
 		// Act
@@ -52,9 +71,6 @@ describe('CreatePromotionUsecase integration tests', () => {
 		expect(createdPromotion.name).toBe('B3 DevOps 2024');
 		expect(createdPromotion.period.baseYear).toBe(2024);
 		expect(createdPromotion.studentIds.length).toBe(studentStubData.length);
-
-		const teacher = await teacherRepository.findByAuthUserId(authUserId);
-		expect(teacher).toBeDefined();
 		expect(createdPromotion.teacherId.equals(teacher!.id)).toBe(true);
 	});
 

@@ -27,4 +27,8 @@ export class InMemoryTeacherRepository implements ITeacherRepository {
 	async findAll(): Promise<Teacher[]> {
 		return Array.from(this.teachers.values());
 	}
+
+	async clear(): Promise<void> {
+		this.teachers.clear();
+	}
 }

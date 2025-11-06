@@ -17,7 +17,9 @@ datasource db {
 model Teacher {
   id          String      @id @default(cuid())
   authUserId  String      @unique
+
   promotions  Promotion[]
+  createdQuestions Question[]
 }
 
 
@@ -31,6 +33,7 @@ model Promotion {
   teacher   Teacher @relation(fields: [teacherId], references: [id])
   teacherId String
   students  StudentsOnPromotions[]
+  questionSessions QuestionSession[]
 }
 
 model Student {
@@ -41,6 +44,7 @@ model Student {
 
   // Relation to the join table
   promotions StudentsOnPromotions[]
+  answers Answer[]
 }
 
 // Explicit many-to-many join table
@@ -112,4 +116,53 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+}
+
+// --- Add to your existing schema.prisma ---
+
+model Question {
+  id        String   @id @default(cuid())
+  text      String   @db.Text // The content of the question
+  authorId  String   // Foreign key to the Teacher who created it
+  author    Teacher  @relation(fields: [authorId], references: [id])
+
+  // A single Question template can be used in many live sessions
+  questionSessions QuestionSession[]
+}
+
+model QuestionSession {
+  id          String    @id @default(cuid())
+
+  questionId  String
+  question    Question  @relation(fields: [questionId], references: [id])
+
+  promotionId String
+  promotion   Promotion @relation(fields: [promotionId], references: [id])
+
+  startedAt   DateTime  // When the session was started
+  endsAt      DateTime  // When students can no longer answer
+  status      String    // e.g., "PENDING", "ACTIVE", "CLOSED", "GRADING"
+
+  // A session aggregates all the answers
+  answers     Answer[]
+}
+
+model Answer {
+  id                String   @id @default(cuid())
+
+  questionSessionId String
+  questionSession   QuestionSession @relation(fields: [questionSessionId], references: [id], onDelete: Cascade)
+
+  studentId         String
+  student           Student @relation(fields: [studentId], references: [id])
+
+  text              String   @db.Text // The student's answer
+  submittedAt       DateTime @default(now())
+
+  // Fields for the future LLM assessment
+  grade             Float?
+  assessment        String?  @db.Text
+
+  // Enforce that a student can only answer once per session
+  @@unique([questionSessionId, studentId])
 }

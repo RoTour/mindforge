@@ -7,6 +7,7 @@ import { TeacherId } from '$quiz/domain/TeacherId.valueObject';
 import type { CreatePromotionCommand } from '$quiz/application/CreatePromotion.usecase';
 import { QuizRouter } from './QuizRouter';
 import { InMemoryPromotionRepository } from '$quiz/infra/PromotionRepository/InMemoryPromotionRepository';
+import { mock } from 'node:test';
 
 const { ServiceProvider: mockedServiceProvider } = (await import(
 	'$lib/server/ServiceProvider'
@@ -75,6 +76,7 @@ describe('Unit-QuizRouter', () => {
 
 		mockedServiceProvider.TeacherQueries.findByAuthUserId.mockResolvedValueOnce(mockTeacher);
 		mockedServiceProvider.PromotionRepository = new InMemoryPromotionRepository();
+		mockedServiceProvider.TeacherRepository.findById.mockResolvedValueOnce(mockTeacher);
 
 		await caller.createPromotion(createPromotionPayload);
 
