@@ -4,7 +4,6 @@
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
 	import type { TeacherPromotionsListItem } from '$quiz/application/interfaces/ITeacherPromotionsQueries';
-	import { resolve } from '$app/paths';
 
 	let {
 		ref = $bindable(null),
@@ -22,11 +21,26 @@
 				items: [
 					{
 						title: 'Students Overview',
-						url: `promotions/${selectedPromotion?.id}/students`
+						url: `/teacher/promotions/${selectedPromotion?.id}/students`
 					},
 					{
 						title: 'Project Structure',
 						url: '#'
+					}
+				]
+			},
+			{
+				title: 'Questions',
+				url: '#',
+				shown: !!selectedPromotion,
+				items: [
+					{
+						title: 'Add Questions',
+						url: `/teacher/promotions/${selectedPromotion?.id}/questions/add`
+					},
+					{
+						title: 'Question Bank',
+						url: `/teacher/promotions/${selectedPromotion?.id}/questions/manage`
 					}
 				]
 			}
@@ -36,7 +50,7 @@
 
 <Sidebar.Root {...restProps} bind:ref>
 	<Sidebar.Header>
-		<PromotionSelector {promotions} />
+		<PromotionSelector {promotions} {selectedPromotion} />
 		<SearchForm />
 	</Sidebar.Header>
 	<Sidebar.Content>

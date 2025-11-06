@@ -6,7 +6,7 @@
 	let promotions = $derived(data.promotions);
 </script>
 
-<section class="px-8 py-4">
+<section class="w-full px-8 py-4">
 	<h1>Promotions</h1>
 	{#each promotions as promotion (promotion.id)}
 		<Card.Root>

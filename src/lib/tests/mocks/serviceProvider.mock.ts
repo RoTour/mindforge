@@ -9,7 +9,7 @@ import { vi } from 'vitest';
 import type { ServiceProvider } from '$lib/server/ServiceProvider';
 
 // Create a type that converts all methods to vi.fn() mocks OR allows real implementations
-type DeepMockServiceProvider = {
+export type DeepMockServiceProvider = {
 	[K in keyof ServiceProvider]:
 		| ServiceProvider[K]
 		| {

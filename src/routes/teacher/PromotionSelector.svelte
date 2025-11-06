@@ -8,7 +8,7 @@
 
 	type Props = {
 		promotions: TeacherPromotionsListItem[];
-		selectedPromotion?: TeacherPromotionsListItem;
+		selectedPromotion: TeacherPromotionsListItem | null;
 	};
 	let { promotions, selectedPromotion = $bindable() }: Props = $props();
 </script>

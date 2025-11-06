@@ -8,7 +8,6 @@ import type { CreatePromotionCommand } from '$quiz/application/CreatePromotion.u
 import { QuizRouter } from './QuizRouter';
 import { InMemoryPromotionRepository } from '$quiz/infra/PromotionRepository/InMemoryPromotionRepository';
 
-// Import the mocked ServiceProvider - it's now properly typed!
 const { ServiceProvider: mockedServiceProvider } = (await import(
 	'$lib/server/ServiceProvider'
 )) as {
