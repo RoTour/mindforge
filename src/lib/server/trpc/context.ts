@@ -1,5 +1,5 @@
 // src/lib/server/trpc/context.ts
-import type { TeacherId } from '$quiz/domain/TeacherId.valueObject';
+import type { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 import type { RequestEvent } from '@sveltejs/kit';
 
 /**

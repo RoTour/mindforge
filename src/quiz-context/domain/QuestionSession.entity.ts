@@ -1,8 +1,8 @@
 // src/quiz-context/domain/QuestionSession.entity.ts
 import { AggregateRoot } from '$lib/ddd/interfaces/AggregateRoot';
 import { QuestionSessionId } from './QuestionSessionId.valueObject';
-import type { QuestionId } from './QuestionId.valueObject';
-import type { PromotionId } from './PromotionId.valueObject';
+import type { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
+import type { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import { Answer, type AnswerProps } from './Answer.entity';
 import {
 	SessionHasEndedError,

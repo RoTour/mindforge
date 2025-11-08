@@ -9,9 +9,9 @@
 		TableRow
 	} from '$lib/components/ui/table/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import type { CreateStudentDTO } from '$quiz/application/dtos/StudentDTO';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import AutoGenerateEmailDialog from './AutoGenerateEmailDialog.svelte';
+	import type { CreateStudentDTO } from '$quiz/student/application/dtos/StudentDTO';
 
 	type Props = {
 		students: CreateStudentDTO[];

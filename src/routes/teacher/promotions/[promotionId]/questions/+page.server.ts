@@ -1,5 +1,5 @@
 import { createContext } from '$lib/server/trpc/context';
-import { TeacherRouter } from '$quiz/adapters/TeacherRouter';
+import { TeacherRouter } from '$quiz/teacher/adapters/TeacherRouter';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {

@@ -3,6 +3,7 @@
 	import StudentRoll from './StudentRoll.svelte';
 
 	let { data }: PageProps = $props();
+	let { students } = $derived(data);
 </script>
 
-<StudentRoll students={data.students} />
+<StudentRoll {students} />

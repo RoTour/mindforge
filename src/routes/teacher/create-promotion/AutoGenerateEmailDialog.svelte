@@ -1,6 +1,6 @@
 <!-- /Users/rotour/projects/mindforge/src/routes/teacher/create-promotion/AutoGenerateEmailDialog.svelte -->
 <script lang="ts">
-	import type { CreateStudentDTO } from '$quiz/application/dtos/StudentDTO';
+	import type { CreateStudentDTO } from '$quiz/student/application/dtos/StudentDTO';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
 	import {

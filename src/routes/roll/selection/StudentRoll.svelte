@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import * as ButtonGroup from '$lib/components/ui/button-group/index';
-	import type { PromotionStudentDTO } from '$quiz/application/dtos/PromotionStudentDTO';
+	import type { PromotionStudentDTO } from '$quiz/promotion/application/dtos/PromotionStudentDTO';
 	import StudentRollCard from './StudentRollCard.svelte';
 	import Minus from '@lucide/svelte/icons/minus';
 	import Plus from '@lucide/svelte/icons/plus';

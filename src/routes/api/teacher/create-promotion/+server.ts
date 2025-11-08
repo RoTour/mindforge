@@ -1,7 +1,7 @@
 import { AppError } from '$lib/error/Error';
 import { ApiResponse } from '$lib/svelte/ApiResponse';
-import { ParseStudentListUsecase } from '$quiz/application/ParseStudentList.usecase';
-import { ImageStudentListParser } from '$quiz/infra/StudentListParser/ImageStudentListParser';
+import { ParseStudentListUsecase } from '$quiz/student/application/ParseStudentList.usecase';
+import { ImageStudentListParser } from '$quiz/student/infra/StudentListParser/ImageStudentListParser';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {

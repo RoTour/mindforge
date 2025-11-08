@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { PromotionStudentDTO } from '$quiz/application/dtos/PromotionStudentDTO';
+	import type { PromotionStudentDTO } from '$quiz/promotion/application/dtos/PromotionStudentDTO';
 	import * as Card from '$lib/components/ui/card/index';
 	type Props = {
 		student: PromotionStudentDTO;

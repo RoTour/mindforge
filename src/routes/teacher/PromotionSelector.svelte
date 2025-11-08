@@ -4,7 +4,7 @@
 	import CheckIcon from '@lucide/svelte/icons/check';
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
-	import type { TeacherPromotionsListItem } from '$quiz/application/interfaces/ITeacherPromotionsQueries';
+	import type { TeacherPromotionsListItem } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
 
 	type Props = {
 		promotions: TeacherPromotionsListItem[];

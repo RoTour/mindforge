@@ -3,7 +3,8 @@
 	import PromotionSelector from './PromotionSelector.svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { ComponentProps } from 'svelte';
-	import type { TeacherPromotionsListItem } from '$quiz/application/interfaces/ITeacherPromotionsQueries';
+	import type { TeacherPromotionsListItem } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
+	import { page } from '$app/stores';
 
 	let {
 		ref = $bindable(null),
@@ -63,7 +64,7 @@
 						<Sidebar.Menu>
 							{#each group.items as item (item.title)}
 								<Sidebar.MenuItem>
-									<Sidebar.MenuButton isActive={item.isActive}>
+									<Sidebar.MenuButton isActive={$page.url.pathname === item.url}>
 										{#snippet child({ props })}
 											<a href={item.url} {...props}>{item.title}</a>
 										{/snippet}

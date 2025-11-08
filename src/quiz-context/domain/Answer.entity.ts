@@ -1,5 +1,5 @@
 // src/quiz-context/domain/Answer.entity.ts
-import type { StudentId } from './StudentId.valueObject';
+import type { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 
 export type AnswerProps = {
 	studentId: StudentId;

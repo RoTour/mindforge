@@ -75,6 +75,12 @@ export const createFullMockServiceProvider = (): DeepMockServiceProvider => ({
 		findById: vi.fn(),
 		save: vi.fn()
 	},
+	StudentsOverviewQueries: {
+		getStudentsFromPromotion: vi.fn()
+	},
+	TeacherPromotionsQueries: {
+		listTeacherPromotions: vi.fn()
+	},
 	StudentListParser: {
 		parse: vi.fn()
 	},
@@ -86,5 +92,14 @@ export const createFullMockServiceProvider = (): DeepMockServiceProvider => ({
 	},
 	TeacherQueries: {
 		findByAuthUserId: vi.fn()
+	},
+	QuestionRepository: {
+		save: vi.fn(),
+		findById: vi.fn(),
+		findByAuthorId: vi.fn()
+	},
+	TeacherQuestionsQueries: {
+		getAllOwnQuestionsForTeacher: vi.fn(),
+		getOwnQuestionsForPromotion: vi.fn()
 	}
 });

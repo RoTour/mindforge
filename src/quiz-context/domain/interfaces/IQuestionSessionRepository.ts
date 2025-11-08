@@ -1,5 +1,5 @@
 // src/quiz-context/domain/interfaces/IQuestionSessionRepository.ts
-import type { PromotionId } from '../PromotionId.valueObject';
+import type { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import type { QuestionSession } from '../QuestionSession.entity';
 import type { QuestionSessionId } from '../QuestionSessionId.valueObject';
 

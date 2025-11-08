@@ -1,14 +1,14 @@
+import { PromotionRouter } from '$quiz/promotion/adapters/PromotionRouter.js';
+import { QuestionRouter } from '$quiz/question/adapters/QuestionRouter.js';
+import { StudentsOverviewRouter } from '$quiz/student/adapters/StudentRouter.js';
+import { TeacherRouter } from '$quiz/teacher/adapters/TeacherRouter.js';
 import { router } from './init.js';
-import { QuizRouter } from '$quiz/adapters/QuizRouter.js';
-import { QuestionRouter } from '$quiz/adapters/QuestionRouter.js';
-import { StudentsOverviewRouter } from '$quiz/adapters/StudentsOverviewRouter.js';
-import { TeacherRouter } from '$quiz/adapters/TeacherRouter.js';
 
 export const appRouter = router({
-	quiz: QuizRouter,
+	promotion: PromotionRouter,
 	question: QuestionRouter,
-	studentsOverview: StudentsOverviewRouter,
-	teacher: TeacherRouter
+	teacher: TeacherRouter,
+	student: StudentsOverviewRouter
 });
 
 export type AppRouter = typeof appRouter;

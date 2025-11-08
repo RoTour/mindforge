@@ -1,7 +1,7 @@
 import { AppError } from '$lib/error/Error';
 import { ApiResponse } from '$lib/svelte/ApiResponse';
 import { createTRPC } from '$lib/trpc';
-import type { CreateStudentDTO } from '$quiz/application/dtos/StudentDTO';
+import type { CreateStudentDTO } from '$quiz/student/application/dtos/StudentDTO';
 import { SvelteDate } from 'svelte/reactivity';
 
 export class CreatePromotionVM {
@@ -50,7 +50,7 @@ export class CreatePromotionVM {
 
 	createPromotion = async () => {
 		try {
-			await this.trpc.quiz.createPromotion.mutate({
+			await this.trpc.promotion.createPromotion.mutate({
 				name: this.promotionName,
 				baseYear: this.baseYear,
 				students: this.students
