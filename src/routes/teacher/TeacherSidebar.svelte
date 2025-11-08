@@ -35,12 +35,12 @@
 				shown: !!selectedPromotion,
 				items: [
 					{
-						title: 'Add Questions',
-						url: `/teacher/promotions/${selectedPromotion?.id}/questions/add`
+						title: 'Manage Questions',
+						url: `/teacher/promotions/${selectedPromotion?.id}/questions`
 					},
 					{
-						title: 'Question Bank',
-						url: `/teacher/promotions/${selectedPromotion?.id}/questions/manage`
+						title: 'Add Questions',
+						url: `/teacher/promotions/${selectedPromotion?.id}/questions/add`
 					}
 				]
 			}

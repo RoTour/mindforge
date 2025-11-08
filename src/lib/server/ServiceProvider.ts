@@ -3,6 +3,7 @@ import type { IPromotionStudentsQueries } from '$quiz/application/interfaces/IPr
 import type { IStudentsOverviewQueries } from '$quiz/application/interfaces/IStudentsOverviewQueries';
 import type { ITeacherPromotionsQueries } from '$quiz/application/interfaces/ITeacherPromotionsQueries';
 import type { ITeacherQueries } from '$quiz/application/interfaces/ITeacherQueries';
+import type { ITeacherQuestionsQueries } from '$quiz/application/interfaces/ITeacherQuestionsQueries';
 import type { IPromotionRepository } from '$quiz/domain/interfaces/IPromotionRepository';
 import type { IQuestionRepository } from '$quiz/domain/interfaces/IQuestionRepository';
 import type { IStudentListParser } from '$quiz/domain/interfaces/IStudentParser';
@@ -14,6 +15,7 @@ import { PrismaPromotionStudentsQueries } from '$quiz/infra/queries/PrismaPromot
 import { PrismaStudentsOverviewQueries } from '$quiz/infra/queries/PrismaStudentsOverviewQueries';
 import { PrismaTeacherPromotionsQueries } from '$quiz/infra/queries/PrismaTeacherPromotionsQueries';
 import { PrismaTeacherQueries } from '$quiz/infra/queries/PrismaTeacherQueries';
+import { PrismaTeacherQuestionsQueries } from '$quiz/infra/queries/PrismaTeacherQuestionsQueries';
 import { PrismaQuestionRepository } from '$quiz/infra/QuestionRepository/PrismaQuestionRepository';
 import { ImageStudentListParser } from '$quiz/infra/StudentListParser/ImageStudentListParser';
 import { PrismaStudentRepository } from '$quiz/infra/StudentRepository/PrismaStudentRepository';
@@ -30,7 +32,8 @@ export const ServiceProvider: ServiceProvider = {
 	EnrollQueries: new PrismaEnrollQueries(prisma),
 	TeacherQueries: new PrismaTeacherQueries(prisma),
 	TeacherPromotionsQueries: new PrismaTeacherPromotionsQueries(prisma),
-	StudentsOverviewQueries: new PrismaStudentsOverviewQueries(prisma)
+	StudentsOverviewQueries: new PrismaStudentsOverviewQueries(prisma),
+	TeacherQuestionsQueries: new PrismaTeacherQuestionsQueries(prisma)
 };
 
 export type ServiceProvider = {
@@ -44,4 +47,5 @@ export type ServiceProvider = {
 	TeacherQueries: ITeacherQueries;
 	TeacherPromotionsQueries: ITeacherPromotionsQueries;
 	StudentsOverviewQueries: IStudentsOverviewQueries;
+	TeacherQuestionsQueries: ITeacherQuestionsQueries;
 };

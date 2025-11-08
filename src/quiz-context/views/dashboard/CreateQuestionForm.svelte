@@ -9,8 +9,6 @@
 	import { Trash2 } from 'lucide-svelte';
 
 	const vm = new CreateQuestionFormVM();
-
-	$inspect('INSPECT: vm.keyNotions', vm.keyNotions);
 </script>
 
 <Card.Root class="h-fit w-full">

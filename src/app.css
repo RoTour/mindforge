@@ -172,4 +172,8 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+	a:hover,
+	button:hover {
+		@apply cursor-pointer;
+	}
 }
