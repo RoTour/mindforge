@@ -4,6 +4,7 @@ import { Question } from '$quiz/domain/Question.entity';
 import { QuestionId } from '$quiz/domain/QuestionId.valueObject';
 import { TeacherId } from '$quiz/domain/TeacherId.valueObject';
 import type { IQuestionRepository } from '$quiz/domain/interfaces/IQuestionRepository';
+import type { KeyNotionProps } from '$quiz/domain/KeyNotion.valueObject';
 
 // Mapper
 class QuestionMapper {
@@ -11,7 +12,8 @@ class QuestionMapper {
 		return Question.rehydrate({
 			id: new QuestionId(prismaQuestion.id),
 			text: prismaQuestion.text,
-			authorId: new TeacherId(prismaQuestion.authorId)
+			authorId: new TeacherId(prismaQuestion.authorId),
+			keyNotions: (prismaQuestion.keyNotions as KeyNotionProps[] | null) ?? []
 		});
 	}
 
@@ -19,7 +21,13 @@ class QuestionMapper {
 		return {
 			id: question.id.id(),
 			text: question.text,
-			authorId: question.authorId.id()
+			authorId: question.authorId.id(),
+			keyNotions: question.keyNotions.map((kn) => ({
+				text: kn.text,
+				description: kn.description,
+				weight: kn.weight,
+				synonyms: kn.synonyms
+			}))
 		};
 	}
 }

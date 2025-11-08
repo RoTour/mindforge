@@ -125,6 +125,7 @@ model Question {
   text      String   @db.Text // The content of the question
   authorId  String   // Foreign key to the Teacher who created it
   author    Teacher  @relation(fields: [authorId], references: [id])
+  keyNotions Json?
 
   // A single Question template can be used in many live sessions
   questionSessions QuestionSession[]

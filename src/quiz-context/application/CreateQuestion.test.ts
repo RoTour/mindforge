@@ -49,4 +49,25 @@ describe('Unit:CreateQuestion', () => {
 		// When & Then
 		await expect(usecase.execute(command)).rejects.toThrowError(NotFoundError);
 	});
+
+	test('Should save key notions', async () => {
+		const command: CreateQuestionCommand = {
+			authorId: defaultTeacher.id,
+			text: 'What are the main goals of DDD ?',
+			keyNotions: [
+				{ text: 'Ubiquitous Language' },
+				{ text: 'Bounded Context' },
+				{ text: 'Communication', synonyms: ['Collaboration', 'Interaction', 'Business experts'] }
+			]
+		};
+
+		await usecase.execute(command);
+
+		const savedQuestions = await questionRepository.findByAuthorId(defaultTeacher.id);
+		expect(savedQuestions.length).toBe(1);
+		expect(savedQuestions[0].keyNotions.at(0)?.text).toEqual(command.keyNotions?.at(0)?.text);
+		expect(savedQuestions[0].keyNotions.at(2)?.synonyms?.length).toEqual(
+			command.keyNotions?.at(2)?.synonyms?.length
+		);
+	});
 });
