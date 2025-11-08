@@ -3,7 +3,7 @@ import { createOpenRouter, type OpenRouterProvider } from '@openrouter/ai-sdk-pr
 import { env } from '$env/dynamic/private';
 import z from 'zod';
 import { generateObject, type ModelMessage } from 'ai';
-import { BadRequestError } from '$quiz/application/errors/BadRequestError';
+import { BadRequestError } from '$quiz/common/application/errors/BadRequestError';
 
 const llmResultSchema = z.object({
 	studentData: z

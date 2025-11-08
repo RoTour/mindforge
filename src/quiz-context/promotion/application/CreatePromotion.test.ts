@@ -5,10 +5,10 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { InMemoryPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/InMemoryPromotionRepository';
 import { CreatePromotionUsecase, type CreatePromotionCommand } from './CreatePromotion.usecase';
 import type { CreateStudentDTO } from '$quiz/student/application/dtos/StudentDTO';
-import { BadRequestError } from '$quiz/application/errors/BadRequestError';
+import { BadRequestError } from '$quiz/common/application/errors/BadRequestError';
 import { InMemoryTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/InMemoryTeacherRepository';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
-import { NotFoundError } from '$quiz/application/errors/NotFoundError';
+import { NotFoundError } from '$quiz/common/application/errors/NotFoundError';
 import { Teacher } from '$quiz/teacher/domain/Teacher.entity';
 
 const studentStubData: CreateStudentDTO[] = [

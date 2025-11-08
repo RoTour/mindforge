@@ -21,8 +21,6 @@ import { ImageStudentListParser } from '$quiz/student/infra/StudentListParser/Im
 import { PrismaStudentRepository } from '$quiz/student/infra/StudentRepository/PrismaStudentRepository';
 import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/PrismaTeacherRepository';
 import { prisma } from './prisma/prisma';
-import type { IQuestionSessionRepository } from '$quiz/domain/interfaces/IQuestionSessionRepository';
-import { PrismaQuestionSessionRepository } from '$quiz/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
 
 export const ServiceProvider: ServiceProvider = {
 	PromotionRepository: new PrismaPromotionRepository(prisma),

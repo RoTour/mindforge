@@ -30,8 +30,8 @@ beforeAll(async () => {
 		}
 	});
 	prisma = new PrismaClient({
-		datasourceUrl: dbUrl,
-		log: process.env.DEBUG ? ['query', 'error', 'warn'] : ['error']
+		datasourceUrl: dbUrl
+		// log: process.env.DEBUG ? ['query', 'error', 'warn'] : ['error']
 	});
 }, 30000); // Increase timeout for starting the container
 

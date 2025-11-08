@@ -5,12 +5,15 @@ import type {
 	Prisma,
 	PrismaClient
 } from '$prisma/client';
-import { Answer } from '$quiz/domain/Answer.entity';
+import { Answer } from '$quiz/question-session/domain/Answer.entity';
 import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
+import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
+import {
+	QuestionSession,
+	type QuestionSessionStatus
+} from '$quiz/question-session/domain/QuestionSession.entity';
+import { QuestionSessionId } from '$quiz/question-session/domain/QuestionSessionId.valueObject';
 import { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
-import { QuestionSession, type QuestionSessionStatus } from '$quiz/domain/QuestionSession.entity';
-import { QuestionSessionId } from '$quiz/domain/QuestionSessionId.valueObject';
-import type { IQuestionSessionRepository } from '$quiz/domain/interfaces/IQuestionSessionRepository';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 
 type PrismaQuestionSessionWithRelations = PrismaQuestionSession & { answers: PrismaAnswer[] };

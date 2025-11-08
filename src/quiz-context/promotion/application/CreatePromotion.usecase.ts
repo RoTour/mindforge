@@ -6,8 +6,8 @@ import { Period } from '$quiz/promotion/domain/Period.valueObject';
 import { Promotion } from '$quiz/promotion/domain/Promotion.entity';
 import z from 'zod';
 import { CreateStudentDTO, StudentDTOSchema } from '$quiz/student/application/dtos/StudentDTO';
-import { BadRequestError } from '$quiz/application/errors/BadRequestError';
-import { NotFoundError } from '$quiz/application/errors/NotFoundError';
+import { BadRequestError } from '$quiz/common/application/errors/BadRequestError';
+import { NotFoundError } from '$quiz/common/application/errors/NotFoundError';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 import type { Student } from '$quiz/student/domain/Student.entity';
 

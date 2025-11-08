@@ -2,7 +2,7 @@ import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQues
 import { Question } from '$quiz/question/domain/Question.entity';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 import z from 'zod';
-import { NotFoundError } from '$quiz/application/errors/NotFoundError';
+import { NotFoundError } from '$quiz/common/application/errors/NotFoundError';
 import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeacherRepository';
 import { KeyNotion } from '$quiz/question/domain/KeyNotion.valueObject';
 

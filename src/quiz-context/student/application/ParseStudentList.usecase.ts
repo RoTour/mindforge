@@ -1,8 +1,8 @@
 import type { IStudentListParser } from '../domain/interfaces/IStudentParser';
 import z from 'zod';
-import { BadRequestError } from '$quiz/application/errors/BadRequestError';
 import { StudentId } from '../domain/StudentId.valueObject';
 import type { CreateStudentDTO } from './dtos/StudentDTO';
+import { BadRequestError } from '$quiz/common/application/errors/BadRequestError';
 
 const ParseStudentListCommandSchema = z
 	.object({

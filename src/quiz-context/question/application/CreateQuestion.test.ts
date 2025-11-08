@@ -3,7 +3,7 @@ import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 import { InMemoryQuestionRepository } from '$quiz/question/infra/repositories/InMemoryQuestionRepository';
 import { beforeEach, describe, expect, test } from 'vitest';
 import { CreateQuestionUsecase, type CreateQuestionCommand } from './CreateQuestion.usecase';
-import { NotFoundError } from '$quiz/application/errors/NotFoundError';
+import { NotFoundError } from '$quiz/common/application/errors/NotFoundError';
 import { InMemoryTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/InMemoryTeacherRepository';
 import { Teacher } from '$quiz/teacher/domain/Teacher.entity';
 

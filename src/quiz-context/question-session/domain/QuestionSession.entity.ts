@@ -9,7 +9,7 @@ import {
 	SessionIsNotActiveError,
 	SessionIsNotPendingError,
 	StudentAlreadyAnsweredError
-} from './errors/QuestionSession.errors';
+} from './QuestionSession.errors';
 
 export type QuestionSessionStatus = 'PENDING' | 'ACTIVE' | 'CLOSED' | 'GRADING';
 
