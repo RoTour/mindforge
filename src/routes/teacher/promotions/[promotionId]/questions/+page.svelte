@@ -5,9 +5,16 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Separator } from '$lib/components/ui/separator';
 	import * as HoverCard from '$lib/components/ui/hover-card';
-	import type { PageData } from './$types';
+	import type { PageProps } from './$types';
+	import { QuestionsPageVM } from './QuestionsPageVM.svelte';
+	import QuestionPlanner from './QuestionPlanner.svelte';
 
-	let { data }: { data: PageData } = $props();
+	let { data, params }: PageProps = $props();
+	const vm = new QuestionsPageVM({
+		allQuestions: data.allQuestions,
+		promotionId: params.promotionId,
+		plannedQuestions: data.plannedQuestions
+	});
 	const KEY_NOTION_LIMIT = 5;
 </script>
 
@@ -22,14 +29,20 @@
 	<Separator />
 
 	<div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
-		<!-- Questions in this Promotion -->
+		<!-- Planned Questions -->
 		<div class="space-y-4">
-			<h2 class="text-xl font-semibold">In this Promotion</h2>
+			<h2 class="text-xl font-semibold">Planned Questions</h2>
 			<div class="space-y-4">
-				{#each data.promotionQuestions as question (question.id)}
+				{#each vm.plannedQuestions as question (question.id)}
 					<Card.Root>
 						<Card.Header>
 							<Card.Title>{question.text}</Card.Title>
+							{#if question.startingOn}
+								<Card.Description>
+									Scheduled from {question.startingOn.toLocaleString()} to {question.endingOn?.toLocaleString() ??
+										'N/A'}
+								</Card.Description>
+							{/if}
 						</Card.Header>
 						{#if question.keyNotions.length > 0}
 							<Card.Content class="-mt-4 flex flex-wrap items-center gap-2">
@@ -64,7 +77,9 @@
 					<div
 						class="border-border flex min-h-[200px] flex-col items-center justify-center rounded-md border border-dashed p-6 text-center"
 					>
-						<p class="text-muted-foreground">No questions have been used in this promotion yet.</p>
+						<p class="text-muted-foreground">
+							No questions have been planned for this promotion yet.
+						</p>
 					</div>
 				{/each}
 			</div>
@@ -74,7 +89,7 @@
 		<div class="space-y-4">
 			<h2 class="text-xl font-semibold">All My Questions</h2>
 			<div class="space-y-4">
-				{#each data.allQuestions as question (question.id)}
+				{#each vm.allQuestions as question (question.id)}
 					<Card.Root>
 						<Card.Header>
 							<Card.Title>{question.text}</Card.Title>
@@ -105,7 +120,13 @@
 							</Card.Content>
 						{/if}
 						<Card.Footer class="flex justify-end">
-							<Button size="sm">Use in this promotion</Button>
+							<QuestionPlanner
+								onSubmit={(payload) => {
+									vm.planQuestionOnPromotion(question.id, payload.startingOn, payload.endingOn);
+								}}
+							>
+								<Button size="sm">Use in this promotion</Button>
+							</QuestionPlanner>
 						</Card.Footer>
 					</Card.Root>
 				{:else}

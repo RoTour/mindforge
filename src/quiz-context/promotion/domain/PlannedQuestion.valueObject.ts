@@ -4,20 +4,17 @@ import { EndingDateBeforeStartingDateError } from './PlannedQuestion.errors';
 type PlannedQuestionStatus = 'PLANNED' | 'ENDED' | 'ONGOING' | 'NOT_DATE_DEFINED';
 
 type PlannedQuestionProps = {
-	status: PlannedQuestionStatus;
 	startingOn?: Date;
 	endingOn?: Date;
 	questionId: QuestionId;
 };
 
 export class PlannedQuestion {
-	status: PlannedQuestionStatus = 'NOT_DATE_DEFINED';
-	startingOn?: Date;
-	endingOn?: Date;
-	questionId: QuestionId;
+	readonly startingOn?: Date;
+	readonly endingOn?: Date;
+	readonly questionId: QuestionId;
 
 	private constructor(props: PlannedQuestionProps) {
-		this.status = props.status;
 		this.startingOn = props.startingOn;
 		this.endingOn = props.endingOn;
 		this.questionId = props.questionId;
@@ -28,14 +25,15 @@ export class PlannedQuestion {
 		this.datesCheck(startingOn, endingOn);
 		return new PlannedQuestion({
 			questionId,
-			status: this.determineStatus(startingOn, endingOn),
 			startingOn,
 			endingOn
 		});
 	}
 
-	private static determineStatus(startingOn?: Date, endingOn?: Date): PlannedQuestionStatus {
+	public status(): PlannedQuestionStatus {
 		const now = new Date();
+		const { startingOn, endingOn } = this;
+
 		if (startingOn && endingOn) {
 			if (now < startingOn) return 'PLANNED';
 			if (now >= startingOn && now <= endingOn) return 'ONGOING';

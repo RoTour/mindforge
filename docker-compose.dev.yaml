@@ -1,0 +1,29 @@
+services:
+  # BullMQ Redis instance for local development
+  redis:
+    image: 'redis:8.4-rc1-alpine'
+    container_name: mindforge_redis_dev
+    ports:
+      - '6379:6379' # Expose Redis port to host for local debugging if needed
+    volumes:
+      - mindforge_redis_data:/data
+
+  # BullMQ worker for processing background jobs
+  worker:
+    build:
+      context: .
+      dockerfile: ./dev/Dockerfile
+    container_name: mindforge_worker_dev
+    volumes:
+      - .:/app
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+    depends_on:
+      - redis
+    command: >
+      bun run --watch src/lib/server/jobs/worker.ts
+
+volumes:
+  mindforge_redis_data:

@@ -34,6 +34,7 @@ model Promotion {
   teacherId String
   students  StudentsOnPromotions[]
   questionSessions QuestionSession[]
+  plannedQuestions PlannedQuestion[]
 }
 
 model Student {
@@ -129,6 +130,20 @@ model Question {
 
   // A single Question template can be used in many live sessions
   questionSessions QuestionSession[]
+  plannedIn        PlannedQuestion[]
+}
+
+model PlannedQuestion {
+  id          String    @id @default(cuid())
+
+  promotionId String
+  promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+
+  questionId  String
+  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  startingOn  DateTime?
+  endingOn    DateTime?
 }
 
 model QuestionSession {

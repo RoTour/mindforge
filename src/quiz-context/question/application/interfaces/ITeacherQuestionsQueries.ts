@@ -1,4 +1,4 @@
-// src/quiz-context/application/interfaces/ITeacherQuestionsQueries.ts
+// src/quiz-context/question/application/interfaces/ITeacherQuestionsQueries.ts
 import type { KeyNotionProps } from '$quiz/question/domain/KeyNotion.valueObject';
 import type { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import type { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
@@ -8,6 +8,11 @@ export type TeacherQuestionDTO = {
 	text: string;
 	authorId: string;
 	keyNotions: KeyNotionProps[];
+};
+
+export type PlannedQuestionDTO = TeacherQuestionDTO & {
+	startingOn: Date | null;
+	endingOn: Date | null;
 };
 
 export interface ITeacherQuestionsQueries {
@@ -23,4 +28,12 @@ export interface ITeacherQuestionsQueries {
 	 * Fetches all questions ever created by a given teacher.
 	 */
 	getAllOwnQuestionsForTeacher(teacherId: TeacherId): Promise<TeacherQuestionDTO[]>;
+
+	/**
+	 * Fetches all questions that are planned for a specific promotion.
+	 */
+	getPlannedQuestionsForPromotion(
+		promotionId: PromotionId,
+		teacherId: TeacherId
+	): Promise<PlannedQuestionDTO[]>;
 }

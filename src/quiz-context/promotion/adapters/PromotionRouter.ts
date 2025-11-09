@@ -5,6 +5,8 @@ import {
 	CreatePromotionCommandSchema,
 	CreatePromotionUsecase
 } from '$quiz/promotion/application/CreatePromotion.usecase';
+import { PlanQuestionSchema, PlanQuestionUsecase } from '../application/PlanQuestion.usecase';
+import { OwnPromotionMiddleware } from './OwnPromotion';
 
 export const PromotionRouter = router({
 	createPromotion: teacherProcedure
@@ -17,6 +19,16 @@ export const PromotionRouter = router({
 			);
 			console.debug('Quiz router teacher', ctx.teacher);
 			await usecase.execute({ ...input, teacherId: ctx.teacher.id });
+		}),
+	planQuestion: teacherProcedure
+		.input(PlanQuestionSchema)
+		.use(OwnPromotionMiddleware)
+		.mutation(async ({ input }) => {
+			const usecase = new PlanQuestionUsecase(
+				ServiceProvider.PromotionRepository,
+				ServiceProvider.QuestionRepository
+			);
+			await usecase.execute(input);
 		})
 });
 

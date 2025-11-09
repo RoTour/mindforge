@@ -1,0 +1,6 @@
+- **Question**: An open prompt or inquiry presented to the user, requiring a response from students. Questions can be answered in a defined timeframe. A question may have mutliple answering timeframes.
+- **Student**: A representation of a learner or participant engaging with the quiz content.
+- **Answer**: A response provided by a Student to a specific Question.
+- **QuestionSession**: A specific instance of a Question being presented to a Promotion. Is defined by the combination of a Question, a Promotion, and a timeframe during which the Question is active (eg: 3min).
+- **Promotion**: A class or group of Students the Teacher is teaching to.
+- **Teacher**: An instructor or facilitator who creates and manages Questions and interacts with Students.

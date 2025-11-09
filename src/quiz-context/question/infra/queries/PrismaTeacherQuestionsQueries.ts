@@ -2,6 +2,7 @@
 import type { PrismaClient, Question as PrismaQuestion } from '$prisma/client';
 import type {
 	ITeacherQuestionsQueries,
+	PlannedQuestionDTO,
 	TeacherQuestionDTO
 } from '$quiz/question/application/interfaces/ITeacherQuestionsQueries';
 import type { KeyNotionProps } from '$quiz/question/domain/KeyNotion.valueObject';
@@ -52,5 +53,37 @@ export class PrismaTeacherQuestionsQueries implements ITeacherQuestionsQueries {
 		});
 
 		return questions.map(toDTO);
+	}
+
+	async getPlannedQuestionsForPromotion(
+		promotionId: PromotionId,
+		teacherId: TeacherId
+	): Promise<PlannedQuestionDTO[]> {
+		// This assumes a `PlannedQuestion` model exists that links questions and promotions.
+		const plannedQuestions = await this.prisma.plannedQuestion.findMany({
+			where: {
+				promotionId: promotionId.id(),
+				// Security check: ensure the promotion is owned by the teacher
+				promotion: {
+					teacherId: teacherId.id()
+				}
+			},
+			include: {
+				// We need the full question details
+				question: true
+			},
+			orderBy: {
+				startingOn: 'asc'
+			}
+		});
+
+		return plannedQuestions.map((pq) => {
+			const questionDTO = toDTO(pq.question);
+			return {
+				...questionDTO,
+				startingOn: pq.startingOn,
+				endingOn: pq.endingOn
+			};
+		});
 	}
 }

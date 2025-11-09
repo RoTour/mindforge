@@ -1,5 +1,5 @@
 // /Users/rotour/projects/mindforge/src/quiz-context/infra/PromotionRepository/PrismaPromotionRepository.int.test.ts
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { PrismaPromotionRepository } from './PrismaPromotionRepository';
 import { getPrismaTestClient } from '../../../../../test/setupIntegration';
 import { Promotion } from '../../domain/Promotion.entity';
@@ -7,8 +7,8 @@ import { Period } from '../../domain/Period.valueObject';
 import { Student } from '$quiz/student/domain/Student.entity';
 import type { PrismaClient } from '$prisma/client';
 import { Teacher } from '$quiz/teacher/domain/Teacher.entity';
-
 import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/PrismaTeacherRepository';
+import { Question } from '$quiz/question/domain/Question.entity';
 
 describe('PrismaPromotionRepository integration tests', () => {
 	let repository: PrismaPromotionRepository;
@@ -58,6 +58,40 @@ describe('PrismaPromotionRepository integration tests', () => {
 		expect(savedPromotion?.students.length).toBe(2);
 		expect(savedPromotion?.students.map((s) => s.studentId)).toContain(student1.id.id());
 		expect(savedPromotion?.students.map((s) => s.studentId)).toContain(student2.id.id());
+	});
+
+	it('should save a promotion and its planned questions', async () => {
+		// Arrange
+		const question = Question.create({ text: 'My test question?', authorId: teacher.id });
+		await prisma.question.create({
+			data: { id: question.id.id(), text: question.text, authorId: teacher.id.id() }
+		});
+
+		const promotion = Promotion.create({
+			name: 'Promotion with Plans',
+			period: new Period(2024),
+			teacherId: teacher.id
+		});
+
+		const startingOn = new Date('2025-01-01T10:00:00.000Z');
+		const endingOn = new Date('2025-01-01T11:00:00.000Z');
+		// This method is assumed to exist on the Promotion entity
+		promotion.planQuestion(question.id, startingOn, endingOn);
+
+		// Act
+		await repository.save(promotion);
+
+		// Assert
+		const savedPromotion = await prisma.promotion.findUnique({
+			where: { id: promotion.id.id() },
+			include: { plannedQuestions: true }
+		});
+
+		expect(savedPromotion).not.toBeNull();
+		expect(savedPromotion?.plannedQuestions).toHaveLength(1);
+		expect(savedPromotion?.plannedQuestions[0].questionId).toBe(question.id.id());
+		expect(savedPromotion?.plannedQuestions[0].startingOn).toEqual(startingOn);
+		expect(savedPromotion?.plannedQuestions[0].endingOn).toEqual(endingOn);
 	});
 
 	it('should find a promotion by its ID', async () => {

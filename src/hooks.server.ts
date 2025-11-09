@@ -1,9 +1,13 @@
-import { auth } from '$lib/auth'; // path to your auth file
+import { auth } from '$lib/auth';
 import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { resolve as resolvePath } from '$app/paths';
 import { sequence } from '@sveltejs/kit/hooks';
+import '$lib/server/bullmq/bullmq';
+import { quizMQ } from '$lib/server/bullmq/bullmq';
+
+let initialized = false;
 
 const handleAuthRoot: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
@@ -25,6 +29,10 @@ const handleAuthContext: Handle = async ({ event, resolve }) => {
 };
 
 const handleDebug: Handle = async ({ event, resolve }) => {
+	if (!initialized) {
+		await quizMQ.add('question-scheduling', { foo: 'bar' });
+		initialized = true;
+	}
 	console.debug('Debug Hook', {
 		url: event.url.href
 	});
