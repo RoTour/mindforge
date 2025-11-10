@@ -1,9 +1,8 @@
-import { DomainEventPublisher } from '$lib/ddd/events/DomainEventPublisher';
 import type {
-	PlannedQuestion as PrismaPlannedQuestion,
 	Prisma,
-	Promotion as PrismaPromotion,
-	PrismaClient
+	PrismaClient,
+	PlannedQuestion as PrismaPlannedQuestion,
+	Promotion as PrismaPromotion
 } from '$prisma/client';
 import { Period } from '$quiz/promotion/domain/Period.valueObject';
 import { PlannedQuestion as PlannedQuestionEntity } from '$quiz/promotion/domain/PlannedQuestion.entity';

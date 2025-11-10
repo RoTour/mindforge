@@ -1,5 +1,4 @@
 import { DomainEventPublisher } from '$lib/ddd/events/DomainEventPublisher';
-import { getQuizMQ } from '$lib/server/bullmq/bullmq';
 import { ScheduleQuestionSessionCommand } from '$quiz/common/domain/commands/ScheduleQuestionSession.command';
 import { Question } from '$quiz/question/domain/Question.entity';
 import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
@@ -14,16 +13,19 @@ import { Promotion } from '../domain/Promotion.entity';
 import { PrismaPromotionRepository } from '../infra/PromotionRepository/PrismaPromotionRepository';
 import { ScheduleSessionOnPromotionQuestionPlanned } from './listeners/ScheduleSessionOnPromotionQUestionPlanned.listener';
 import type { PrismaClient } from '$prisma/client';
-import type { Queue } from 'bullmq';
 import { PlanQuestionUsecase } from './PlanQuestion.usecase';
+import { BullMQAdapter } from '$lib/server/bullmq/BullMQ.adapter';
+import type { IMessageQueue } from '$ddd/interfaces/IMessageQueue';
+import { Queue } from 'bullmq';
 
 describe('Full Planning Flow Integration Test', () => {
 	let prisma: PrismaClient;
-	let quizMQ: Queue;
+	let messageQueue: IMessageQueue;
 	let promotionRepository: PrismaPromotionRepository;
 	let questionRepository: PrismaQuestionRepository;
 	let teacherRepository: PrismaTeacherRepository;
 	let planQuestionUsecase: PlanQuestionUsecase;
+	let scheduleCommandQueue: Queue;
 
 	// --- Default Entities for tests ---
 	let teacher: Teacher;
@@ -34,9 +36,12 @@ describe('Full Planning Flow Integration Test', () => {
 
 		// --- Explicitly initialize components for the test ---
 		prisma = getPrismaTestClient();
-		// Get the queue instance connected to the test Redis container
-		quizMQ = getQuizMQ(getTestRedisConnection());
-		await quizMQ.obliterate(); // Clear any jobs from previous tests
+		const redisConnection = getTestRedisConnection();
+		messageQueue = new BullMQAdapter(redisConnection);
+		scheduleCommandQueue = new Queue(ScheduleQuestionSessionCommand.type, {
+			connection: redisConnection
+		});
+		await scheduleCommandQueue.obliterate(); // Clear any jobs from previous tests
 
 		// Initialize Repositories and Services
 		promotionRepository = new PrismaPromotionRepository(prisma);
@@ -47,7 +52,7 @@ describe('Full Planning Flow Integration Test', () => {
 			questionSessionRepository
 		);
 		const scheduleSessionListener = new ScheduleSessionOnPromotionQuestionPlanned(
-			quizMQ,
+			messageQueue,
 			createQuestionSessionUsecase
 		);
 
@@ -67,7 +72,7 @@ describe('Full Planning Flow Integration Test', () => {
 	afterEach(async () => {
 		// Unsubscribe listeners and clean queue to ensure test isolation
 		DomainEventPublisher.reset();
-		await quizMQ.obliterate();
+		await scheduleCommandQueue.obliterate();
 	});
 
 	test('When a question is planned for the future, a job is scheduled', async () => {
@@ -91,7 +96,7 @@ describe('Full Planning Flow Integration Test', () => {
 		});
 
 		// --- THEN ---
-		const delayedJobs = await quizMQ.getDelayed();
+		const delayedJobs = await scheduleCommandQueue.getDelayed();
 		expect(delayedJobs).toHaveLength(1);
 		expect(delayedJobs[0].name).toBe(ScheduleQuestionSessionCommand.type);
 		expect(delayedJobs[0].data.questionId).toBe(question.id.id());
@@ -132,7 +137,7 @@ describe('Full Planning Flow Integration Test', () => {
 		expect(session).not.toBeNull();
 		expect(session?.status).toBe('ACTIVE');
 
-		const delayedJobs = await quizMQ.getDelayed();
+		const delayedJobs = await scheduleCommandQueue.getDelayed();
 		expect(delayedJobs).toHaveLength(0);
 	});
 });

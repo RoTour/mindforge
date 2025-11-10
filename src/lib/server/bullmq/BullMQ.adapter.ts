@@ -1,6 +1,6 @@
 // /Users/rotour/projects/mindforge/src/lib/server/bullmq/BullMQ.adapter.ts
 import { Queue, Worker, Job as BullMQJob, type QueueOptions } from 'bullmq';
-import type { IMessageQueue, Job } from '$lib/ddd/interfaces/MessageQueue.interface';
+import type { IMessageQueue, Job } from '$ddd/interfaces/IMessageQueue';
 
 export class BullMQAdapter implements IMessageQueue {
 	private queues: Map<string, Queue> = new Map();

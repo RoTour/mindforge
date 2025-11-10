@@ -1,29 +1,29 @@
-// /Users/rotour/projects/mindforge/src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.test.ts
-import { quizMQ } from '$lib/server/bullmq/bullmq';
 import { ScheduleQuestionSessionCommand } from '$quiz/common/domain/commands/ScheduleQuestionSession.command';
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi, type Mock } from 'vitest';
 import { PromotionQuestionPlanned } from '../../domain/events/PromotionQuestionPlanned.event';
 import { ScheduleSessionOnPromotionQuestionPlanned } from './ScheduleSessionOnPromotionQUestionPlanned.listener';
 import type { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
-
-// Mock the entire bullmq module and the creator service
-vi.mock('$lib/server/bullmq/bullmq');
+import type { IMessageQueue } from '$lib/ddd/interfaces/MessageQueue.interface';
 
 describe('Listener: ScheduleSessionOnPromotionQuestionPlanned', () => {
 	let listener: ScheduleSessionOnPromotionQuestionPlanned;
-	let addJobSpy: vi.SpyInstance;
+	let mockQueue: IMessageQueue;
+	let addJobSpy: Mock;
 	let mockQuestionSessionCreator: CreateQuestionSessionUsecase;
 
 	beforeEach(() => {
-		// Create a spy on the `add` method of our mocked queue.
-		addJobSpy = vi.spyOn(quizMQ, 'add');
-
 		// Create a mock instance of the creator service
 		mockQuestionSessionCreator = {
 			execute: vi.fn()
 		} as unknown as CreateQuestionSessionUsecase;
 
-		listener = new ScheduleSessionOnPromotionQuestionPlanned(addJobSpy, mockQuestionSessionCreator);
+		addJobSpy = vi.fn();
+		mockQueue = {
+			add: addJobSpy,
+			process: vi.fn() // Not used in this test
+		} as unknown as IMessageQueue;
+
+		listener = new ScheduleSessionOnPromotionQuestionPlanned(mockQueue, mockQuestionSessionCreator);
 
 		// Use fake timers to control time-based logic like calculating the delay.
 		vi.useFakeTimers();
@@ -58,14 +58,14 @@ describe('Listener: ScheduleSessionOnPromotionQuestionPlanned', () => {
 
 		// --- THEN (Assert) ---
 		expect(addJobSpy).toHaveBeenCalledOnce();
-		expect(addJobSpy).toHaveBeenCalledWith(
-			ScheduleQuestionSessionCommand.type,
-			expectedCommand.payload,
-			{
+		expect(addJobSpy).toHaveBeenCalledWith({
+			name: ScheduleQuestionSessionCommand.type,
+			data: expectedCommand.payload(),
+			opts: {
 				delay: expectedDelay,
 				jobId: expectedJobId
 			}
-		);
+		});
 		expect(mockQuestionSessionCreator.execute).not.toHaveBeenCalled();
 	});
 

@@ -3,12 +3,12 @@
 import type { IDomainEventListener } from '$lib/ddd/interfaces/IDomainEventListener';
 import { ScheduleQuestionSessionCommand } from '$quiz/common/domain/commands/ScheduleQuestionSession.command';
 import type { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
-import type { Queue } from 'bullmq';
 import { PromotionQuestionPlanned } from '../../domain/events/PromotionQuestionPlanned.event';
+import type { IMessageQueue } from '$ddd/interfaces/IMessageQueue';
 
 export class ScheduleSessionOnPromotionQuestionPlanned implements IDomainEventListener {
 	constructor(
-		private readonly mq: Queue,
+		private readonly mq: IMessageQueue,
 		private readonly createQuestionSessionUsecase: CreateQuestionSessionUsecase
 	) {}
 
@@ -22,9 +22,13 @@ export class ScheduleSessionOnPromotionQuestionPlanned implements IDomainEventLi
 		if (delay > 0) {
 			// The start time is in the future, schedule a delayed job.
 			const command = new ScheduleQuestionSessionCommand({ promotionId, questionId, startingOn });
-			await this.mq.add(ScheduleQuestionSessionCommand.type, command.payload(), {
-				delay,
-				jobId: `${promotionId}-${questionId}` // Prevents duplicate jobs
+			await this.mq.add({
+				name: ScheduleQuestionSessionCommand.type,
+				data: command.payload(),
+				opts: {
+					delay,
+					jobId: `${promotionId}-${questionId}` // Prevents duplicate jobs
+				}
 			});
 			console.log(`Scheduled BullMQ job for question ${questionId} with delay ${delay}ms.`);
 		} else if (endingOn && endingOn.getTime() > now) {
