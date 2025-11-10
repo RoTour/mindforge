@@ -21,6 +21,9 @@ import { ImageStudentListParser } from '$quiz/student/infra/StudentListParser/Im
 import { PrismaStudentRepository } from '$quiz/student/infra/StudentRepository/PrismaStudentRepository';
 import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/PrismaTeacherRepository';
 import { prisma } from './prisma/prisma';
+import { BullMQAdapter } from './bullmq/BullMQ.adapter';
+import { redisConnection } from './redis';
+import type { IMessageQueue } from '$lib/ddd/interfaces/MessageQueue.interface';
 
 export const ServiceProvider: ServiceProvider = {
 	PromotionRepository: new PrismaPromotionRepository(prisma),
@@ -33,7 +36,8 @@ export const ServiceProvider: ServiceProvider = {
 	TeacherQueries: new PrismaTeacherQueries(prisma),
 	TeacherPromotionsQueries: new PrismaTeacherPromotionsQueries(prisma),
 	StudentsOverviewQueries: new PrismaStudentsOverviewQueries(prisma),
-	TeacherQuestionsQueries: new PrismaTeacherQuestionsQueries(prisma)
+	TeacherQuestionsQueries: new PrismaTeacherQuestionsQueries(prisma),
+	MessageQueue: new BullMQAdapter(redisConnection)
 };
 
 export type ServiceProvider = {
@@ -48,4 +52,5 @@ export type ServiceProvider = {
 	TeacherPromotionsQueries: ITeacherPromotionsQueries;
 	StudentsOverviewQueries: IStudentsOverviewQueries;
 	TeacherQuestionsQueries: ITeacherQuestionsQueries;
+	MessageQueue: IMessageQueue;
 };
