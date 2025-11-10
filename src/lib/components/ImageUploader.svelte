@@ -19,7 +19,6 @@
 	});
 
 	function handleFile(file: File | null | undefined) {
-		console.debug('Handling file:', file);
 		if (!file || !file.type.startsWith('image/')) {
 			return;
 		}

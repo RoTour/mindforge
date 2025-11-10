@@ -23,7 +23,7 @@ describe('Listener: ScheduleSessionOnPromotionQuestionPlanned', () => {
 			execute: vi.fn()
 		} as unknown as CreateQuestionSessionUsecase;
 
-		listener = new ScheduleSessionOnPromotionQuestionPlanned(mockQuestionSessionCreator);
+		listener = new ScheduleSessionOnPromotionQuestionPlanned(addJobSpy, mockQuestionSessionCreator);
 
 		// Use fake timers to control time-based logic like calculating the delay.
 		vi.useFakeTimers();

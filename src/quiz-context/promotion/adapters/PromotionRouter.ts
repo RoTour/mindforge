@@ -17,7 +17,6 @@ export const PromotionRouter = router({
 				ServiceProvider.StudentRepository,
 				ServiceProvider.TeacherRepository
 			);
-			console.debug('Quiz router teacher', ctx.teacher);
 			await usecase.execute({ ...input, teacherId: ctx.teacher.id });
 		}),
 	planQuestion: teacherProcedure

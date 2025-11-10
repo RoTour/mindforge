@@ -1,3 +1,4 @@
+import { DomainEventPublisher } from '$lib/ddd/events/DomainEventPublisher';
 import type {
 	PlannedQuestion as PrismaPlannedQuestion,
 	Prisma,
@@ -5,14 +6,14 @@ import type {
 	PrismaClient
 } from '$prisma/client';
 import { Period } from '$quiz/promotion/domain/Period.valueObject';
-import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
+import { PlannedQuestion as PlannedQuestionEntity } from '$quiz/promotion/domain/PlannedQuestion.entity';
+import { PlannedQuestionId } from '$quiz/promotion/domain/PlannedQuestionId.valueObject';
 import { Promotion } from '$quiz/promotion/domain/Promotion.entity';
 import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
+import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
+import { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
-import { PlannedQuestion as PlannedQuestionEntity } from '$quiz/promotion/domain/PlannedQuestion.entity';
-import { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
-import { PlannedQuestionId } from '$quiz/promotion/domain/PlannedQuestionId.valueObject';
 
 type PrismaPromotionFull = PrismaPromotion & {
 	students: { studentId: string }[];
@@ -68,6 +69,7 @@ export class PrismaPromotionRepository implements IPromotionRepository {
 	async save(promotion: Promotion): Promise<void> {
 		const prismaData = PromotionMapper.fromDomainToPrisma(promotion);
 
+		// The transaction ensures all DB changes succeed or fail together.
 		await this.prisma.$transaction(async (tx) => {
 			// Step 1: Upsert the core Promotion aggregate fields
 			await tx.promotion.upsert({
@@ -129,6 +131,13 @@ export class PrismaPromotionRepository implements IPromotionRepository {
 				});
 			}
 		});
+
+		// Only after the transaction is successful, dispatch the domain events.
+		const events = promotion.getDomainEvents();
+		for (const event of events) {
+			await DomainEventPublisher.publish(event);
+		}
+		promotion.clearDomainEvents();
 	}
 
 	async findById(id: string): Promise<Promotion | null> {

@@ -1,13 +1,16 @@
 // src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.ts
 
 import type { IDomainEventListener } from '$lib/ddd/interfaces/IDomainEventListener';
-import { quizMQ } from '$lib/server/bullmq/bullmq';
 import { ScheduleQuestionSessionCommand } from '$quiz/common/domain/commands/ScheduleQuestionSession.command';
 import type { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
+import type { Queue } from 'bullmq';
 import { PromotionQuestionPlanned } from '../../domain/events/PromotionQuestionPlanned.event';
 
 export class ScheduleSessionOnPromotionQuestionPlanned implements IDomainEventListener {
-	constructor(private readonly createQuestionSessionUsecase: CreateQuestionSessionUsecase) {}
+	constructor(
+		private readonly mq: Queue,
+		private readonly createQuestionSessionUsecase: CreateQuestionSessionUsecase
+	) {}
 
 	public async handle(event: PromotionQuestionPlanned): Promise<void> {
 		if (!(event instanceof PromotionQuestionPlanned)) return;
@@ -19,7 +22,7 @@ export class ScheduleSessionOnPromotionQuestionPlanned implements IDomainEventLi
 		if (delay > 0) {
 			// The start time is in the future, schedule a delayed job.
 			const command = new ScheduleQuestionSessionCommand({ promotionId, questionId, startingOn });
-			await quizMQ.add(ScheduleQuestionSessionCommand.type, command.payload, {
+			await this.mq.add(ScheduleQuestionSessionCommand.type, command.payload(), {
 				delay,
 				jobId: `${promotionId}-${questionId}` // Prevents duplicate jobs
 			});

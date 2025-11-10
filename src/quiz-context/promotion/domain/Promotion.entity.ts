@@ -7,7 +7,6 @@ import { PlannedQuestion } from './PlannedQuestion.entity';
 import type { PlannedQuestionId } from './PlannedQuestionId.valueObject';
 import { Period } from './Period.valueObject';
 import { PromotionId } from './PromotionId.valueObject';
-import { DomainEventPublisher } from '$ddd/events/DomainEventPublisher';
 
 type CreatePromotionProps = {
 	name: string;
@@ -61,16 +60,17 @@ export class Promotion extends AggregateRoot<PromotionId> {
 	}
 
 	public planQuestion(questionId: QuestionId, startingOn?: Date, endingOn?: Date): void {
-		const newPlan = PlannedQuestion.create({
+		const plannedQuestion: PlannedQuestion = PlannedQuestion.create({
 			questionId,
 			startingOn,
 			endingOn
 		});
-		this.plannedQuestions.push(newPlan);
+
+		this.plannedQuestions.push(plannedQuestion);
 
 		if (startingOn) {
-			DomainEventPublisher.publish(
-				new PromotionQuestionPlanned(this.id.id(), newPlan.id.id(), startingOn, endingOn)
+			this.addDomainEvent(
+				new PromotionQuestionPlanned(this.id.id(), questionId.id(), startingOn, endingOn)
 			);
 		}
 	}
