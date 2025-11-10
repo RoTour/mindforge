@@ -2,6 +2,6 @@
 	import CreateQuestionForm from '$quiz/views/dashboard/CreateQuestionForm.svelte';
 </script>
 
-<main class="w-full justify-center p-8">
+<main class="w-full justify-center p-8 lg:w-3/5">
 	<CreateQuestionForm />
 </main>

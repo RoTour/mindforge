@@ -16,6 +16,38 @@
 		plannedQuestions: data.plannedQuestions
 	});
 	const KEY_NOTION_LIMIT = 5;
+
+	function getOrdinalSuffix(day: number): string {
+		if (day > 3 && day < 21) return 'th';
+		switch (day % 10) {
+			case 1:
+				return 'st';
+			case 2:
+				return 'nd';
+			case 3:
+				return 'rd';
+			default:
+				return 'th';
+		}
+	}
+
+	function formatScheduleDate(date: Date | null): string {
+		if (!date) return 'N/A';
+
+		const day = date.getDate();
+		const suffix = getOrdinalSuffix(day);
+		const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+		const month = date.toLocaleDateString('en-US', { month: 'long' });
+		const time = date
+			.toLocaleTimeString('en-US', {
+				hour: 'numeric',
+				minute: '2-digit',
+				hour12: true
+			})
+			.replace(' ', ''); // Remove space before AM/PM
+
+		return `${weekday} ${day}${suffix}, ${month} ${time}`;
+	}
 </script>
 
 <div class="w-full space-y-8 p-4 md:p-6 lg:w-3/5">
@@ -28,7 +60,7 @@
 
 	<Separator />
 
-	<div class="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
+	<div class="custom-grid grid grid-cols-1 gap-8 lg:items-start">
 		<!-- Planned Questions -->
 		<div class="space-y-4">
 			<h2 class="text-xl font-semibold">Planned Questions</h2>
@@ -38,9 +70,17 @@
 						<Card.Header>
 							<Card.Title>{plannedQuestion.text}</Card.Title>
 							{#if plannedQuestion.startingOn}
-								<Card.Description>
-									Scheduled from {plannedQuestion.startingOn.toLocaleString()} to {plannedQuestion.endingOn?.toLocaleString() ??
-										'N/A'}
+								<Card.Description class="flex flex-col pt-1 text-xs">
+									<p>
+										<span class="font-bold">From:</span>
+										{formatScheduleDate(plannedQuestion.startingOn)}
+									</p>
+									{#if plannedQuestion.endingOn}
+										<p>
+											<span class="font-bold">To:</span>
+											{formatScheduleDate(plannedQuestion.endingOn)}
+										</p>
+									{/if}
 								</Card.Description>
 							{/if}
 						</Card.Header>
@@ -96,6 +136,7 @@
 			</div>
 		</div>
 
+		<Separator orientation="vertical" class="w-fit place-self-center" />
 		<!-- All Questions -->
 		<div class="space-y-4">
 			<h2 class="text-xl font-semibold">All My Questions</h2>
@@ -152,3 +193,11 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	.custom-grid {
+		@media (width >= 64rem /* 1024px */) {
+			grid-template-columns: minmax(0, 1fr) min-content minmax(0, 1fr);
+		}
+	}
+</style>
