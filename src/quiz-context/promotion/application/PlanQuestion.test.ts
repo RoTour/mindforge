@@ -1,9 +1,14 @@
 // /Users/rotour/projects/mindforge/src/quiz-context/promotion/application/PlanQuestion.test.ts
 import { InMemoryQuestionRepository } from '$quiz/question/infra/repositories/InMemoryQuestionRepository';
 import { InMemoryTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/InMemoryTeacherRepository';
+import { vi } from 'vitest';
 import { InMemoryPromotionRepository } from '../infra/PromotionRepository/InMemoryPromotionRepository';
 import { runPlanQuestionTests } from './PlanQuestion.shared';
+import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 
+const mockScheduleSessionListener: IDomainEventListener = {
+	handle: vi.fn()
+};
 // Run the shared test suite with the InMemory (unit test) configuration.
 runPlanQuestionTests('Unit: PlanQuestionUsecase', {
 	setup: async () => {
@@ -11,7 +16,8 @@ runPlanQuestionTests('Unit: PlanQuestionUsecase', {
 		return {
 			promotionRepository: new InMemoryPromotionRepository(),
 			questionRepository: new InMemoryQuestionRepository(),
-			teacherRepository: new InMemoryTeacherRepository()
+			teacherRepository: new InMemoryTeacherRepository(),
+			scheduleSessionListener: mockScheduleSessionListener
 		};
 	}
 });

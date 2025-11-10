@@ -4,6 +4,12 @@ import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/P
 import { getPrismaTestClient } from '../../../../test/setupIntegration';
 import { PrismaPromotionRepository } from '../infra/PromotionRepository/PrismaPromotionRepository';
 import { runPlanQuestionTests } from './PlanQuestion.shared';
+import type { IDomainEventListener } from '$lib/ddd/interfaces/IDomainEventListener';
+import { vi } from 'vitest';
+
+const mockScheduleSessionListener: IDomainEventListener = {
+	handle: vi.fn()
+};
 
 // Run the shared test suite with the Prisma (unit test) configuration.
 runPlanQuestionTests('Int:PlanQuestionUsecase', {
@@ -12,7 +18,8 @@ runPlanQuestionTests('Int:PlanQuestionUsecase', {
 		return {
 			promotionRepository: new PrismaPromotionRepository(prisma),
 			questionRepository: new PrismaQuestionRepository(prisma),
-			teacherRepository: new PrismaTeacherRepository(prisma)
+			teacherRepository: new PrismaTeacherRepository(prisma),
+			scheduleSessionListener: mockScheduleSessionListener
 		};
 	}
 });

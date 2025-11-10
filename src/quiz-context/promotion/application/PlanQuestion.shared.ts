@@ -9,6 +9,7 @@ import { Promotion } from '../domain/Promotion.entity';
 import type { IPromotionRepository } from '../domain/interfaces/IPromotionRepository';
 import { PlanQuestionUsecase, type PlanQuestionCommand } from './PlanQuestion.usecase';
 import type { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
+import type { IDomainEventListener } from '$lib/ddd/interfaces/IDomainEventListener';
 
 export function runPlanQuestionTests(
 	suiteName: string,
@@ -19,6 +20,7 @@ export function runPlanQuestionTests(
 			promotionRepository: IPromotionRepository;
 			questionRepository: IQuestionRepository;
 			teacherRepository: ITeacherRepository;
+			scheduleSessionListener: IDomainEventListener;
 		}>;
 	}
 ) {
@@ -64,7 +66,11 @@ export function runPlanQuestionTests(
 			await questionRepository.save(defaultQuestion);
 			await promotionRepository.save(defaultPromotion);
 
-			usecase = new PlanQuestionUsecase(promotionRepository, questionRepository);
+			usecase = new PlanQuestionUsecase(
+				promotionRepository,
+				questionRepository,
+				repos.scheduleSessionListener
+			);
 			vi.useFakeTimers();
 			vi.setSystemTime(new Date('2025-01-01T00:00:00Z'));
 		});
