@@ -43,6 +43,8 @@ model Student {
   name     String
   lastName String?
   email    String? @unique
+  authUserId String? @unique
+
 
   // Relation to the join table
   promotions StudentsOnPromotions[]

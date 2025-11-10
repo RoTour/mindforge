@@ -70,7 +70,7 @@ export class Promotion extends AggregateRoot<PromotionId> {
 
 		if (startingOn) {
 			DomainEventPublisher.publish(
-				new PromotionQuestionPlanned(this.id.id(), newPlan.id.id(), startingOn)
+				new PromotionQuestionPlanned(this.id.id(), newPlan.id.id(), startingOn, endingOn)
 			);
 		}
 	}

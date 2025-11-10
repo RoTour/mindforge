@@ -6,12 +6,13 @@ export class PromotionQuestionPlanned implements IDomainEvent {
 	public readonly payload;
 	public readonly type = 'PromotionQuestionPlanned';
 
-	constructor(promotionId: string, questionId: string, startingOn: Date) {
+	constructor(promotionId: string, questionId: string, startingOn: Date, endingOn?: Date) {
 		this.occurredOn = new Date();
 		this.payload = {
 			promotionId,
 			questionId,
-			startingOn
+			startingOn,
+			endingOn
 		};
 	}
 }
