@@ -1,12 +1,13 @@
-import { DomainEventPublisher } from '$ddd/events/DomainEventPublisher';
 import { AggregateRoot } from '$lib/ddd/interfaces/AggregateRoot';
-import { Period } from '$quiz/promotion/domain/Period.valueObject';
-import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import type { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import type { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 import { PromotionQuestionPlanned } from './events/PromotionQuestionPlanned.event';
-import { PlannedQuestion } from './PlannedQuestion.valueObject';
+import { PlannedQuestion } from './PlannedQuestion.entity';
+import type { PlannedQuestionId } from './PlannedQuestionId.valueObject';
+import { Period } from './Period.valueObject';
+import { PromotionId } from './PromotionId.valueObject';
+import { DomainEventPublisher } from '$ddd/events/DomainEventPublisher';
 
 type CreatePromotionProps = {
 	name: string;
@@ -30,9 +31,9 @@ export class Promotion extends AggregateRoot<PromotionId> {
 		this.plannedQuestions = props.plannedQuestions ?? [];
 	}
 
-	public static create(props: CreatePromotionProps): Promotion {
+	public static create(props: Omit<CreatePromotionProps, 'plannedQuestions'>): Promotion {
 		const id = new PromotionId();
-		return new Promotion(id, props);
+		return new Promotion(id, { ...props, plannedQuestions: [] });
 	}
 
 	public static rehydrate(props: {
@@ -41,13 +42,13 @@ export class Promotion extends AggregateRoot<PromotionId> {
 		period: Period;
 		teacherId: TeacherId;
 		studentIds: StudentId[];
-		plannedQuestions?: PlannedQuestion[];
+		plannedQuestions: PlannedQuestion[];
 	}): Promotion {
 		const promotion = new Promotion(props.id, {
 			name: props.name,
 			period: props.period,
 			teacherId: props.teacherId,
-			plannedQuestions: props.plannedQuestions ?? []
+			plannedQuestions: props.plannedQuestions
 		});
 		promotion.studentIds = props.studentIds;
 		return promotion;
@@ -59,19 +60,38 @@ export class Promotion extends AggregateRoot<PromotionId> {
 		this.studentIds = deduplicatedIds;
 	}
 
-	public planQuestion(questionId: QuestionId, startingOn?: Date, endingOn?: Date) {
-		const plannedQuestion: PlannedQuestion = PlannedQuestion.create({
+	public planQuestion(questionId: QuestionId, startingOn?: Date, endingOn?: Date): void {
+		const newPlan = PlannedQuestion.create({
 			questionId,
 			startingOn,
 			endingOn
 		});
-
-		this.plannedQuestions.push(plannedQuestion);
+		this.plannedQuestions.push(newPlan);
 
 		if (startingOn) {
 			DomainEventPublisher.publish(
-				new PromotionQuestionPlanned(this.id.id(), questionId.id(), startingOn)
+				new PromotionQuestionPlanned(this.id.id(), newPlan.id.id(), startingOn)
 			);
 		}
+	}
+
+	public updatePlannedQuestionSchedule(
+		plannedQuestionId: PlannedQuestionId,
+		startingOn?: Date,
+		endingOn?: Date
+	): void {
+		const planToUpdate = this.plannedQuestions.find((p) => p.id.equals(plannedQuestionId));
+		if (!planToUpdate) {
+			// Or throw an error
+			return;
+		}
+		planToUpdate.changeSchedule(startingOn, endingOn);
+
+		// Optionally, publish an update event
+	}
+
+	public unplanQuestion(plannedQuestionId: PlannedQuestionId): void {
+		this.plannedQuestions = this.plannedQuestions.filter((p) => !p.id.equals(plannedQuestionId));
+		// Optionally, publish a deletion event
 	}
 }

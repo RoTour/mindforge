@@ -18,7 +18,7 @@
 	const KEY_NOTION_LIMIT = 5;
 </script>
 
-<div class="space-y-8 p-4 md:p-6">
+<div class="w-full space-y-8 p-4 md:p-6 lg:w-3/5">
 	<div class="space-y-2">
 		<h1 class="text-2xl font-bold">Questions</h1>
 		<p class="text-muted-foreground">
@@ -33,21 +33,21 @@
 		<div class="space-y-4">
 			<h2 class="text-xl font-semibold">Planned Questions</h2>
 			<div class="space-y-4">
-				{#each vm.plannedQuestions as question (question.id)}
+				{#each vm.plannedQuestions as plannedQuestion (plannedQuestion.id)}
 					<Card.Root>
 						<Card.Header>
-							<Card.Title>{question.text}</Card.Title>
-							{#if question.startingOn}
+							<Card.Title>{plannedQuestion.text}</Card.Title>
+							{#if plannedQuestion.startingOn}
 								<Card.Description>
-									Scheduled from {question.startingOn.toLocaleString()} to {question.endingOn?.toLocaleString() ??
+									Scheduled from {plannedQuestion.startingOn.toLocaleString()} to {plannedQuestion.endingOn?.toLocaleString() ??
 										'N/A'}
 								</Card.Description>
 							{/if}
 						</Card.Header>
-						{#if question.keyNotions.length > 0}
+						{#if plannedQuestion.keyNotions.length > 0}
 							<Card.Content class="-mt-4 flex flex-wrap items-center gap-2">
-								{@const displayNotions = question.keyNotions.slice(0, KEY_NOTION_LIMIT)}
-								{@const remainingCount = question.keyNotions.length - KEY_NOTION_LIMIT}
+								{@const displayNotions = plannedQuestion.keyNotions.slice(0, KEY_NOTION_LIMIT)}
+								{@const remainingCount = plannedQuestion.keyNotions.length - KEY_NOTION_LIMIT}
 
 								{#each displayNotions as notion (notion.text)}
 									<Badge variant="secondary">{notion.text}</Badge>
@@ -60,7 +60,7 @@
 										</HoverCard.Trigger>
 										<HoverCard.Content class="w-auto max-w-sm" side="top">
 											<div class="flex flex-wrap gap-2">
-												{#each question.keyNotions as notion (notion.text)}
+												{#each plannedQuestion.keyNotions as notion (notion.text)}
 													<Badge variant="secondary">{notion.text}</Badge>
 												{/each}
 											</div>
@@ -72,7 +72,12 @@
 						<Card.Footer class="flex justify-end">
 							<QuestionPlanner
 								onSubmit={(payload) => {
-									vm.planQuestionOnPromotion(question.id, payload.startingOn, payload.endingOn);
+									vm.updatePlannedQuestions(
+										plannedQuestion.id,
+										plannedQuestion.questionId,
+										payload.startingOn,
+										payload.endingOn
+									);
 								}}
 							>
 								<Button variant="outline" size="sm">Edit schedule</Button>

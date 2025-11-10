@@ -80,7 +80,11 @@ export class PrismaTeacherQuestionsQueries implements ITeacherQuestionsQueries {
 		return plannedQuestions.map((pq) => {
 			const questionDTO = toDTO(pq.question);
 			return {
-				...questionDTO,
+				id: pq.id,
+				keyNotions: questionDTO.keyNotions,
+				questionId: questionDTO.id,
+				text: questionDTO.text,
+				authorId: questionDTO.authorId,
 				startingOn: pq.startingOn,
 				endingOn: pq.endingOn
 			};

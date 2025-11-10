@@ -34,4 +34,19 @@ export class QuestionsPageVM {
 			endingOn
 		});
 	}
+
+	async updatePlannedQuestions(
+		plannedQuestionId: string,
+		questionId: string,
+		startingOn: Date,
+		endingOn: Date
+	) {
+		await createTRPC().promotion.planQuestion.mutate({
+			id: plannedQuestionId,
+			promotionId: this.promotionId!,
+			questionId,
+			startingOn,
+			endingOn
+		});
+	}
 }

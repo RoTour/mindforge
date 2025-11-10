@@ -10,7 +10,12 @@ export type TeacherQuestionDTO = {
 	keyNotions: KeyNotionProps[];
 };
 
-export type PlannedQuestionDTO = TeacherQuestionDTO & {
+export type PlannedQuestionDTO = {
+	id: string;
+	questionId: string;
+	text: string;
+	authorId: string;
+	keyNotions: KeyNotionProps[];
 	startingOn: Date | null;
 	endingOn: Date | null;
 };

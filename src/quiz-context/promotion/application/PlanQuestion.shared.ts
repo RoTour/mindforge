@@ -52,8 +52,7 @@ export function runPlanQuestionTests(
 			defaultPromotion = Promotion.create({
 				name: 'Promotion 2025',
 				period: new Period(2025),
-				teacherId: defaultTeacherId,
-				plannedQuestions: []
+				teacherId: defaultTeacherId
 			});
 			const repos = await context.setup();
 			promotionRepository = repos.promotionRepository;

@@ -1,16 +1,22 @@
-import type { PlannedQuestion, Prisma, Promotion as PrismaPromotion } from '$prisma/client';
+import type {
+	PlannedQuestion as PrismaPlannedQuestion,
+	Prisma,
+	Promotion as PrismaPromotion,
+	PrismaClient
+} from '$prisma/client';
 import { Period } from '$quiz/promotion/domain/Period.valueObject';
 import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
 import { Promotion } from '$quiz/promotion/domain/Promotion.entity';
 import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
-import { PlannedQuestion as PlannedQuestionVO } from '$quiz/promotion/domain/PlannedQuestion.valueObject';
+import { PlannedQuestion as PlannedQuestionEntity } from '$quiz/promotion/domain/PlannedQuestion.entity';
 import { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
+import { PlannedQuestionId } from '$quiz/promotion/domain/PlannedQuestionId.valueObject';
 
 type PrismaPromotionFull = PrismaPromotion & {
 	students: { studentId: string }[];
-	plannedQuestions: PlannedQuestion[];
+	plannedQuestions: PrismaPlannedQuestion[];
 };
 
 class PromotionMapper {
@@ -22,7 +28,9 @@ class PromotionMapper {
 			studentIds: prismaPromotion.students.map((s) => new StudentId(s.studentId)),
 			teacherId: new TeacherId(prismaPromotion.teacherId),
 			plannedQuestions: prismaPromotion.plannedQuestions.map((pq) =>
-				PlannedQuestionVO.create({
+				// Rehydrate as an entity, including its own ID
+				PlannedQuestionEntity.rehydrate({
+					id: new PlannedQuestionId(pq.id),
 					questionId: new QuestionId(pq.questionId),
 					startingOn: pq.startingOn ?? undefined,
 					endingOn: pq.endingOn ?? undefined
@@ -32,6 +40,8 @@ class PromotionMapper {
 		return promotion;
 	}
 
+	// This mapper is now only used for the initial creation within the upsert.
+	// The complex relation logic is handled directly in the `save` method's transaction.
 	static fromDomainToPrisma(
 		domainPromotion: Promotion
 	): Prisma.PromotionCreateInput & { id: string } {
@@ -43,51 +53,80 @@ class PromotionMapper {
 				connect: {
 					id: domainPromotion.teacherId.id()
 				}
-			},
-			students: {
-				create: domainPromotion.studentIds.map((studentId) => ({
-					student: {
-						connect: {
-							id: studentId.id()
-						}
-					}
-				}))
-			},
-			plannedQuestions: {
-				create: domainPromotion.plannedQuestions.map((pq) => ({
-					questionId: pq.questionId.id(),
-					startingOn: pq.startingOn,
-					endingOn: pq.endingOn
-				}))
 			}
 		};
 	}
 }
 
 export class PrismaPromotionRepository implements IPromotionRepository {
-	private prisma: Prisma.TransactionClient;
+	private prisma: PrismaClient;
 
-	constructor(prismaClient: Prisma.TransactionClient) {
+	constructor(prismaClient: PrismaClient) {
 		this.prisma = prismaClient;
 	}
 
 	async save(promotion: Promotion): Promise<void> {
 		const prismaData = PromotionMapper.fromDomainToPrisma(promotion);
 
-		await this.prisma.promotion.upsert({
-			where: { id: promotion.id.id() },
-			create: prismaData,
-			update: {
-				name: prismaData.name,
-				baseYear: prismaData.baseYear,
-				students: {
-					deleteMany: {},
-					create: prismaData.students?.create
-				},
-				plannedQuestions: {
-					deleteMany: {},
-					create: prismaData.plannedQuestions?.create
+		await this.prisma.$transaction(async (tx) => {
+			// Step 1: Upsert the core Promotion aggregate fields
+			await tx.promotion.upsert({
+				where: { id: promotion.id.id() },
+				create: prismaData,
+				update: {
+					name: prismaData.name,
+					baseYear: prismaData.baseYear
 				}
+			});
+
+			// Step 2: Synchronize the Students (simple delete and recreate)
+			await tx.studentsOnPromotions.deleteMany({ where: { promotionId: promotion.id.id() } });
+			await tx.studentsOnPromotions.createMany({
+				data: promotion.studentIds.map((sid) => ({
+					promotionId: promotion.id.id(),
+					studentId: sid.id()
+				}))
+			});
+
+			// Step 3: Synchronize the PlannedQuestion child entities (intelligent upsert/delete)
+			const existingPlans = await tx.plannedQuestion.findMany({
+				where: { promotionId: promotion.id.id() }
+			});
+			const domainPlans: PlannedQuestionEntity[] = promotion.plannedQuestions;
+
+			const existingPlanIds = new Set(existingPlans.map((p) => p.id));
+			const domainPlanIds = new Set(domainPlans.map((p) => p.id.id()));
+
+			// Find plans to delete, create, and update
+			const toDelete = existingPlans.filter((p) => !domainPlanIds.has(p.id));
+			const toCreate = domainPlans.filter((p) => !existingPlanIds.has(p.id.id()));
+			const toUpdate = domainPlans.filter((p) => existingPlanIds.has(p.id.id()));
+
+			// Execute database operations
+			if (toDelete.length > 0) {
+				await tx.plannedQuestion.deleteMany({
+					where: { id: { in: toDelete.map((p) => p.id) } }
+				});
+			}
+			if (toCreate.length > 0) {
+				await tx.plannedQuestion.createMany({
+					data: toCreate.map((p) => ({
+						id: p.id.id(),
+						promotionId: promotion.id.id(),
+						questionId: p.questionId.id(),
+						startingOn: p.startingOn,
+						endingOn: p.endingOn
+					}))
+				});
+			}
+			for (const plan of toUpdate) {
+				await tx.plannedQuestion.update({
+					where: { id: plan.id.id() },
+					data: {
+						startingOn: plan.startingOn,
+						endingOn: plan.endingOn
+					}
+				});
 			}
 		});
 	}
