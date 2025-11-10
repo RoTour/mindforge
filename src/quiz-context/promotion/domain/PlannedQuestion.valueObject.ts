@@ -30,7 +30,7 @@ export class PlannedQuestion {
 		});
 	}
 
-	public status(): PlannedQuestionStatus {
+	public get status(): PlannedQuestionStatus {
 		const now = new Date();
 		const { startingOn, endingOn } = this;
 

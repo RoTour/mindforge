@@ -70,7 +70,13 @@
 							</Card.Content>
 						{/if}
 						<Card.Footer class="flex justify-end">
-							<Button variant="outline" size="sm">View Stats</Button>
+							<QuestionPlanner
+								onSubmit={(payload) => {
+									vm.planQuestionOnPromotion(question.id, payload.startingOn, payload.endingOn);
+								}}
+							>
+								<Button variant="outline" size="sm">Edit schedule</Button>
+							</QuestionPlanner>
 						</Card.Footer>
 					</Card.Root>
 				{:else}

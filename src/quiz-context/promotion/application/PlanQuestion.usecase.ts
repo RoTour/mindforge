@@ -11,7 +11,7 @@ export const PlanQuestionSchema = z.object({
 	endingOn: z.coerce.date().optional()
 });
 
-type PlanQuestionCommand = z.infer<typeof PlanQuestionSchema>;
+export type PlanQuestionCommand = z.infer<typeof PlanQuestionSchema>;
 
 export class PlanQuestionUsecase {
 	constructor(

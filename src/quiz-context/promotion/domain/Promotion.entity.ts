@@ -12,6 +12,7 @@ type CreatePromotionProps = {
 	name: string;
 	period: Period;
 	teacherId: TeacherId;
+	plannedQuestions?: PlannedQuestion[];
 };
 
 export class Promotion extends AggregateRoot<PromotionId> {
@@ -26,6 +27,7 @@ export class Promotion extends AggregateRoot<PromotionId> {
 		this.name = props.name;
 		this.period = props.period;
 		this.teacherId = props.teacherId;
+		this.plannedQuestions = props.plannedQuestions ?? [];
 	}
 
 	public static create(props: CreatePromotionProps): Promotion {
@@ -39,11 +41,13 @@ export class Promotion extends AggregateRoot<PromotionId> {
 		period: Period;
 		teacherId: TeacherId;
 		studentIds: StudentId[];
+		plannedQuestions?: PlannedQuestion[];
 	}): Promotion {
 		const promotion = new Promotion(props.id, {
 			name: props.name,
 			period: props.period,
-			teacherId: props.teacherId
+			teacherId: props.teacherId,
+			plannedQuestions: props.plannedQuestions ?? []
 		});
 		promotion.studentIds = props.studentIds;
 		return promotion;

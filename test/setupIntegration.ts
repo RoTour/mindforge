@@ -9,10 +9,10 @@ let prisma: PrismaClient;
 const resetDb = async () => {
 	await prisma.$transaction([
 		prisma.studentsOnPromotions.deleteMany(),
+		prisma.plannedQuestion.deleteMany(),
+		prisma.questionSession.deleteMany(),
 		prisma.question.deleteMany(),
 		prisma.answer.deleteMany(),
-		prisma.questionSession.deleteMany(),
-		prisma.plannedQuestion.deleteMany(),
 		prisma.promotion.deleteMany(),
 		prisma.student.deleteMany(),
 		prisma.teacher.deleteMany(),
@@ -46,6 +46,6 @@ beforeEach(async () => {
 afterAll(async () => {
 	await postgresContainer.stop();
 	await prisma.$disconnect();
-});
+}, 10000);
 
 export const getPrismaTestClient = () => prisma;
