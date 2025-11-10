@@ -111,6 +111,8 @@
 						{/if}
 						<Card.Footer class="flex justify-end">
 							<QuestionPlanner
+								initialStartingOn={plannedQuestion.startingOn}
+								initialEndingOn={plannedQuestion.endingOn}
 								onSubmit={(payload) => {
 									vm.updatePlannedQuestions(
 										plannedQuestion.id,

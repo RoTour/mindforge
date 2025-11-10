@@ -7,26 +7,38 @@
 	import { Input } from '$lib/components/ui/input';
 	import * as Popover from '$lib/components/ui/popover';
 	import { Calendar } from '$lib/components/ui/calendar';
-	import { getLocalTimeZone, today, type CalendarDate } from '@internationalized/date';
+	import { getLocalTimeZone, today, type CalendarDate, fromDate } from '@internationalized/date';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
 
 	type Props = {
 		children: Snippet;
 		onSubmit: (payload: { startingOn: Date; endingOn: Date }) => void;
+		initialStartingOn?: Date | null;
+		initialEndingOn?: Date | null;
 	};
-	let { children, onSubmit }: Props = $props();
+	let { children, onSubmit, initialStartingOn, initialEndingOn }: Props = $props();
 
 	let open = $state(false);
 
-	// State for the start date-time picker
-	let startOpen = $state(false);
-	let startDate = $state<CalendarDate | undefined>(today(getLocalTimeZone()));
-	let startTime = $state('10:00:00');
+	// Helper functions to initialize state from props or defaults
+	function getInitialDate(date: Date | null | undefined): CalendarDate {
+		return date ? fromDate(date, getLocalTimeZone()) : today(getLocalTimeZone());
+	}
 
-	// State for the end date-time picker
+	function getInitialTime(date: Date | null | undefined, defaultTime: string): string {
+		// 'en-GB' locale is used to force HH:mm:ss format
+		return date ? date.toLocaleTimeString('en-GB') : defaultTime;
+	}
+
+	// State for the start date-time picker, initialized from props or defaults
+	let startOpen = $state(false);
+	let startDate = $state<CalendarDate | undefined>(getInitialDate(initialStartingOn));
+	let startTime = $state(getInitialTime(initialStartingOn, '10:00:00'));
+
+	// State for the end date-time picker, initialized from props or defaults
 	let endOpen = $state(false);
-	let endDate = $state<CalendarDate | undefined>(today(getLocalTimeZone()));
-	let endTime = $state('11:00:00');
+	let endDate = $state<CalendarDate | undefined>(getInitialDate(initialEndingOn));
+	let endTime = $state(getInitialTime(initialEndingOn, '11:00:00'));
 
 	// Effect to ensure end date is never before start date
 	$effect(() => {
@@ -37,7 +49,7 @@
 
 	function parseTime(timeStr: string): [number, number, number] {
 		const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-		return [hours, minutes, seconds];
+		return [hours || 0, minutes || 0, seconds || 0];
 	}
 
 	function handleSubmit() {
