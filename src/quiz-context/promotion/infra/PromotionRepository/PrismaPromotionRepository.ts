@@ -131,13 +131,6 @@ export class PrismaPromotionRepository implements IPromotionRepository {
 				});
 			}
 		});
-
-		// Only after the transaction is successful, dispatch the domain events.
-		const events = promotion.getDomainEvents();
-		for (const event of events) {
-			await DomainEventPublisher.publish(event);
-		}
-		promotion.clearDomainEvents();
 	}
 
 	async findById(id: string): Promise<Promotion | null> {

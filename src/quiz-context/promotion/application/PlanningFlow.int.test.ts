@@ -15,6 +15,7 @@ import { PrismaPromotionRepository } from '../infra/PromotionRepository/PrismaPr
 import { ScheduleSessionOnPromotionQuestionPlanned } from './listeners/ScheduleSessionOnPromotionQUestionPlanned.listener';
 import type { PrismaClient } from '$prisma/client';
 import type { Queue } from 'bullmq';
+import { PlanQuestionUsecase } from './PlanQuestion.usecase';
 
 describe('Full Planning Flow Integration Test', () => {
 	let prisma: PrismaClient;
@@ -22,6 +23,7 @@ describe('Full Planning Flow Integration Test', () => {
 	let promotionRepository: PrismaPromotionRepository;
 	let questionRepository: PrismaQuestionRepository;
 	let teacherRepository: PrismaTeacherRepository;
+	let planQuestionUsecase: PlanQuestionUsecase;
 
 	// --- Default Entities for tests ---
 	let teacher: Teacher;
@@ -49,8 +51,11 @@ describe('Full Planning Flow Integration Test', () => {
 			createQuestionSessionUsecase
 		);
 
-		// Subscribe the real listener to the real publisher
-		DomainEventPublisher.subscribe(scheduleSessionListener);
+		planQuestionUsecase = new PlanQuestionUsecase(
+			promotionRepository,
+			questionRepository,
+			scheduleSessionListener
+		);
 
 		// Seed the database with common entities
 		teacher = Teacher.create({ authUserId: 'teacher-for-flow-test' });
@@ -78,8 +83,12 @@ describe('Full Planning Flow Integration Test', () => {
 		const endingOn = new Date(Date.now() + 1000 * 60 * 120); // 2 hours in the future
 
 		// --- WHEN ---
-		promotion.planQuestion(question.id, startingOn, endingOn);
-		await promotionRepository.save(promotion);
+		await planQuestionUsecase.execute({
+			promotionId: promotion.id.id(),
+			questionId: question.id.id(),
+			startingOn,
+			endingOn
+		});
 
 		// --- THEN ---
 		const delayedJobs = await quizMQ.getDelayed();
@@ -106,8 +115,12 @@ describe('Full Planning Flow Integration Test', () => {
 		const endingOn = new Date(Date.now() + 1000 * 60 * 60); // 1 hour in the future
 
 		// --- WHEN ---
-		promotion.planQuestion(question.id, startingOn, endingOn);
-		await promotionRepository.save(promotion);
+		await planQuestionUsecase.execute({
+			promotionId: promotion.id.id(),
+			questionId: question.id.id(),
+			startingOn,
+			endingOn
+		});
 
 		// --- THEN ---
 		const session = await prisma.questionSession.findFirst({
