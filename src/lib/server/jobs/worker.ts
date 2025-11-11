@@ -1,14 +1,41 @@
 // This is a separate process that runs in parallel to the main server process.
-// It can't rely on sveltekit's environment variables, so we use the same logic as in server/redis.ts to get env vars.
-
 import { startScheduleQuestionSessionWorker } from '$quiz/question-session/adapters/ScheduleQuestionSessionWorker.adapter';
 import type { WorkerOptions } from 'bullmq';
+import { ServiceProviderFactory } from '../ServiceProvider';
+import type { IEnvironment } from '../IEnvironment';
 
+// 1. Create an environment implementation specific to the worker
+class WorkerEnvironment implements IEnvironment {
+	get DATABASE_URL(): string {
+		return Bun.env.DATABASE_URL!;
+	}
+	get REDIS_HOST(): string {
+		return Bun.env.REDIS_HOST!;
+	}
+	get REDIS_PORT(): string {
+		return Bun.env.REDIS_PORT!;
+	}
+	get OPENROUTER_API_KEY(): string {
+		return Bun.env.OPENROUTER_API_KEY!;
+	}
+	get OPENROUTER_MODEL_NAME(): string | undefined {
+		return Bun.env.OPENROUTER_MODEL_NAME;
+	}
+}
+
+// 2. Use the factory to create a serviceProvider instance for the worker
+const factory = new ServiceProviderFactory(new WorkerEnvironment());
+const serviceProvider = factory.create();
+
+// 3. Create the redis connection for the worker
 const redisConnection: WorkerOptions['connection'] = {
 	host: Bun.env.REDIS_HOST ?? 'localhost',
-	port: parseInt(Bun.env.REDIS_PORT, 10)
+	port: parseInt(Bun.env.REDIS_PORT!, 10)
 };
 
 console.log('Starting question scheduling workers...');
 
-export const workers = [startScheduleQuestionSessionWorker(redisConnection)];
+// 4. Start the worker, injecting the required repository from the service provider
+export const workers = [
+	startScheduleQuestionSessionWorker(redisConnection, serviceProvider.QuestionSessionRepository)
+];

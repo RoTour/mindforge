@@ -1,4 +1,4 @@
-import { ServiceProvider } from '$lib/server/ServiceProvider';
+import { serviceProvider } from '$lib/server/container';
 import { t } from '$lib/server/trpc/init';
 import { TRPCError } from '@trpc/server';
 import z from 'zod';
@@ -25,7 +25,7 @@ export const OwnPromotionMiddleware = t.middleware(async (opts) => {
 	if (!teacher) {
 		throw new TRPCError({ code: 'UNAUTHORIZED' });
 	}
-	const teacherPromotions = await ServiceProvider.PromotionRepository.findByOwnerId(
+	const teacherPromotions = await serviceProvider.PromotionRepository.findByOwnerId(
 		teacher.id.id()
 	);
 

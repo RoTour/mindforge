@@ -1,4 +1,4 @@
-import { ServiceProvider } from '$lib/server/ServiceProvider';
+import { serviceProvider } from '$lib/server/container';
 import { router } from '$lib/server/trpc/init';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import z from 'zod';
@@ -13,7 +13,7 @@ export const StudentsOverviewRouter = router({
 		.query(async ({ ctx, input }) => {
 			const { promotionId } = input;
 			const { id: teacherId } = ctx.teacher;
-			const students = await ServiceProvider.StudentsOverviewQueries.getStudentsFromPromotion(
+			const students = await serviceProvider.StudentsOverviewQueries.getStudentsFromPromotion(
 				promotionId,
 				teacherId.id()
 			);

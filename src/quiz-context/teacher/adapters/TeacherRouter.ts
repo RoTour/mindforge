@@ -1,4 +1,4 @@
-import { ServiceProvider } from '$lib/server/ServiceProvider';
+import { serviceProvider } from '$lib/server/container';
 import { router } from '$lib/server/trpc/init';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import { OwnPromotionMiddleware } from '$quiz/promotion/adapters/OwnPromotion';
@@ -7,17 +7,17 @@ import z from 'zod';
 
 export const TeacherRouter = router({
 	listTeacherPromotions: teacherProcedure.query(async ({ ctx }) => {
-		return ServiceProvider.TeacherPromotionsQueries.listTeacherPromotions(ctx.teacher.id);
+		return serviceProvider.TeacherPromotionsQueries.listTeacherPromotions(ctx.teacher.id);
 	}),
 	getAllOwnQuestions: teacherProcedure.query(async ({ ctx }) => {
-		return ServiceProvider.TeacherQuestionsQueries.getAllOwnQuestionsForTeacher(ctx.teacher.id);
+		return serviceProvider.TeacherQuestionsQueries.getAllOwnQuestionsForTeacher(ctx.teacher.id);
 	}),
 	getPlannedQuestionsForPromotion: teacherProcedure
 		.input(z.object({ promotionId: z.string() }))
 		.use(OwnPromotionMiddleware)
 		.query(async ({ ctx, input }) => {
 			const { promotionId } = input;
-			return ServiceProvider.TeacherQuestionsQueries.getPlannedQuestionsForPromotion(
+			return serviceProvider.TeacherQuestionsQueries.getPlannedQuestionsForPromotion(
 				new PromotionId(promotionId),
 				ctx.teacher.id
 			);
@@ -30,7 +30,7 @@ export const TeacherRouter = router({
 		)
 		.query(async ({ ctx, input }) => {
 			const { promotionId } = input;
-			return ServiceProvider.TeacherQuestionsQueries.getOwnQuestionsForPromotion(
+			return serviceProvider.TeacherQuestionsQueries.getOwnQuestionsForPromotion(
 				new PromotionId(promotionId),
 				ctx.teacher.id
 			);

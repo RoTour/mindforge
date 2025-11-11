@@ -1,12 +1,14 @@
 // /Users/rotour/projects/mindforge/src/lib/server/redis.ts
 import type { WorkerOptions } from 'bullmq';
-import { env } from '$env/dynamic/private';
 
-const getEnvSource = () => {
-	return env ?? Bun.env ?? process.env;
-};
+interface RedisConfig {
+	host: string;
+	port: number;
+}
 
-export const redisConnection: WorkerOptions['connection'] = {
-	host: getEnvSource().REDIS_HOST ?? 'localhost',
-	port: parseInt(getEnvSource().REDIS_PORT, 10)
+export const createRedisConnection = (config: RedisConfig): WorkerOptions['connection'] => {
+	return {
+		host: config.host,
+		port: config.port
+	};
 };

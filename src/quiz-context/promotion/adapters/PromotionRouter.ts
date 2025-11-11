@@ -1,6 +1,6 @@
 import { router } from '$lib/server/trpc/init';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
-import { ServiceProvider } from '$lib/server/ServiceProvider';
+import { serviceProvider } from '$lib/server/container';
 import {
 	CreatePromotionCommandSchema,
 	CreatePromotionUsecase
@@ -13,9 +13,9 @@ export const PromotionRouter = router({
 		.input(CreatePromotionCommandSchema.omit({ teacherId: true }))
 		.mutation(async ({ input, ctx }) => {
 			const usecase = new CreatePromotionUsecase(
-				ServiceProvider.PromotionRepository,
-				ServiceProvider.StudentRepository,
-				ServiceProvider.TeacherRepository
+				serviceProvider.PromotionRepository,
+				serviceProvider.StudentRepository,
+				serviceProvider.TeacherRepository
 			);
 			await usecase.execute({ ...input, teacherId: ctx.teacher.id });
 		}),
@@ -24,9 +24,9 @@ export const PromotionRouter = router({
 		.use(OwnPromotionMiddleware)
 		.mutation(async ({ input }) => {
 			const usecase = new PlanQuestionUsecase(
-				ServiceProvider.PromotionRepository,
-				ServiceProvider.QuestionRepository,
-				ServiceProvider.eventListeners['scheduleSessionOnPromotionQuestionPlanned']
+				serviceProvider.PromotionRepository,
+				serviceProvider.QuestionRepository,
+				serviceProvider.eventListeners['scheduleSessionOnPromotionQuestionPlanned']
 			);
 			await usecase.execute(input);
 		})

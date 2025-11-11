@@ -30,7 +30,9 @@ export class ScheduleSessionOnPromotionQuestionPlanned implements IDomainEventLi
 					jobId: `${promotionId}-${questionId}` // Prevents duplicate jobs
 				}
 			});
-			console.log(`Scheduled BullMQ job for question ${questionId} with delay ${delay}ms.`);
+			console.log(
+				`Scheduled BullMQ job for question ${questionId} with delay ${delay}ms. (starts on ${startingOn.toISOString()})`
+			);
 		} else if (endingOn && endingOn.getTime() > now) {
 			// The start time is in the past, but the end time is in the future.
 			// This session should be active immediately.

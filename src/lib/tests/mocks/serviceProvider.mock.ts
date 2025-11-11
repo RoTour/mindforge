@@ -1,7 +1,7 @@
 // Mock the module
-vi.mock(import('../../server/ServiceProvider'), () => {
+vi.mock('$lib/server/container', () => {
 	return {
-		ServiceProvider: createFullMockServiceProvider()
+		serviceProvider: createFullMockServiceProvider()
 	};
 });
 // tests/mocks/serviceProvider.mock.ts

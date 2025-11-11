@@ -8,10 +8,8 @@ import type { CreatePromotionCommand } from '$quiz/promotion/application/CreateP
 import { PromotionRouter } from './PromotionRouter';
 import { InMemoryPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/InMemoryPromotionRepository';
 
-const { ServiceProvider: mockedServiceProvider } = (await import(
-	'$lib/server/ServiceProvider'
-)) as {
-	ServiceProvider: DeepMockServiceProvider;
+const { serviceProvider: mockedServiceProvider } = (await import('$lib/server/container')) as {
+	serviceProvider: DeepMockServiceProvider;
 };
 
 describe('Unit-QuizRouter', () => {

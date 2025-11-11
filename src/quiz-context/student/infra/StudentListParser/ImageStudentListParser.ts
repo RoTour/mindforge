@@ -1,6 +1,5 @@
 import type { IStudentListParser, StudentParsed } from '../../domain/interfaces/IStudentParser';
 import { createOpenRouter, type OpenRouterProvider } from '@openrouter/ai-sdk-provider';
-import { env } from '$env/dynamic/private';
 import z from 'zod';
 import { generateObject, type ModelMessage } from 'ai';
 import { BadRequestError } from '$quiz/common/application/errors/BadRequestError';
@@ -16,15 +15,18 @@ const llmResultSchema = z.object({
 });
 
 export class ImageStudentListParser implements IStudentListParser {
-	openrouter: OpenRouterProvider;
-	constructor() {
-		if (!env.OPENROUTER_API_KEY) {
+	private readonly openrouter: OpenRouterProvider;
+	private readonly modelName: string;
+
+	constructor(config: { apiKey: string; modelName?: string }) {
+		if (!config.apiKey) {
 			throw new Error('OPENROUTER_API_KEY is not defined');
 		}
 		this.openrouter = createOpenRouter({
 			baseURL: 'https://openrouter.ai/api/v1',
-			apiKey: env.OPENROUTER_API_KEY
+			apiKey: config.apiKey
 		});
+		this.modelName = config.modelName || 'google/gemini-2.5-flash-preview-09-2025';
 	}
 
 	async parse(file: File): Promise<StudentParsed[]> {
@@ -66,9 +68,7 @@ Pay close attention to the required JSON structure. The top-level key must be "s
 		try {
 			console.info(`Sending request to AI model for structured student list OCR...`);
 			const { object } = await generateObject({
-				model: this.openrouter(
-					env.OPENROUTER_MODEL_NAME || 'google/gemini-2.5-flash-preview-09-2025'
-				),
+				model: this.openrouter(this.modelName),
 				messages: messages,
 				schema: llmResultSchema
 			});
