@@ -23,7 +23,7 @@ import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/P
 import { prisma } from './prisma/prisma';
 import { BullMQAdapter } from './bullmq/BullMQ.adapter';
 import { redisConnection } from './redis';
-import type { IMessageQueue } from '$lib/ddd/interfaces/MessageQueue.interface';
+import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
 
 export const ServiceProvider: ServiceProvider = {
 	PromotionRepository: new PrismaPromotionRepository(prisma),

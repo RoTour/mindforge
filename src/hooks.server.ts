@@ -5,9 +5,8 @@ import { redirect, type Handle } from '@sveltejs/kit';
 import { resolve as resolvePath } from '$app/paths';
 import { sequence } from '@sveltejs/kit/hooks';
 import '$lib/server/bullmq/bullmq';
-import { quizMQ } from '$lib/server/bullmq/bullmq';
-
-let initialized = false;
+import { TRPCError } from '@trpc/server';
+import { env } from '$env/dynamic/private';
 
 const handleAuthRoot: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
@@ -29,10 +28,6 @@ const handleAuthContext: Handle = async ({ event, resolve }) => {
 };
 
 const handleDebug: Handle = async ({ event, resolve }) => {
-	if (!initialized) {
-		await quizMQ.add('question-scheduling', { foo: 'bar' });
-		initialized = true;
-	}
 	console.debug('Debug Hook', {
 		url: event.url.href
 	});
@@ -40,3 +35,22 @@ const handleDebug: Handle = async ({ event, resolve }) => {
 };
 
 export const handle = sequence(handleAuthRoot, handleAuth, handleAuthContext, handleDebug);
+
+export const handleError = async ({ error }) => {
+	const { DEBUG } = env;
+	const content: Record<string, string> = {};
+	if (error instanceof TRPCError) {
+		content.message = error.message;
+		content.code = error.code;
+		content.isTRPCError = 'true';
+	}
+	if (error instanceof Error) {
+		content.message = error.message;
+		content.stack = error.stack ?? '';
+		content.isTRPCError = 'false';
+	}
+	if (DEBUG === 'false') {
+		delete content.stack;
+	}
+	console.error('Global Error Handler:', content);
+};
