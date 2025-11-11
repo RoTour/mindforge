@@ -1,29 +1,35 @@
+import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
+import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
+import type { ITeacherPromotionsQueries } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
+import { ScheduleSessionOnPromotionQuestionPlanned } from '$quiz/promotion/application/listeners/ScheduleSessionOnPromotionQUestionPlanned.listener';
+import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
+import { PrismaPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/PrismaPromotionRepository';
+import { PrismaTeacherPromotionsQueries } from '$quiz/promotion/infra/queries/PrismaTeacherPromotionsQueries';
+import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
+import { PrismaQuestionSessionRepository } from '$quiz/question-session/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
+import type { ITeacherQuestionsQueries } from '$quiz/question/application/interfaces/ITeacherQuestionsQueries';
+import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
+import { PrismaTeacherQuestionsQueries } from '$quiz/question/infra/queries/PrismaTeacherQuestionsQueries';
+import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
 import type { IEnrollQueries } from '$quiz/student/application/interfaces/IEnrollQueries';
 import type { IPromotionStudentsQueries } from '$quiz/student/application/interfaces/IPromotionStudentsQueries';
 import type { IStudentsOverviewQueries } from '$quiz/student/application/interfaces/IStudentsOverviewQueries';
-import type { ITeacherQuestionsQueries } from '$quiz/question/application/interfaces/ITeacherQuestionsQueries';
-import type { ITeacherPromotionsQueries } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
-import type { ITeacherQueries } from '$quiz/teacher/application/interfaces/ITeacherQueries';
-import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
-import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
 import type { IStudentListParser } from '$quiz/student/domain/interfaces/IStudentParser';
 import type { IStudentRepository } from '$quiz/student/domain/interfaces/IStudentRepository';
-import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeacherRepository';
-import { PrismaPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/PrismaPromotionRepository';
 import { PrismaEnrollQueries } from '$quiz/student/infra/queries/PrismaEnrollQueries';
 import { PrismaPromotionStudentsQueries } from '$quiz/student/infra/queries/PrismaPromotionStudentsQueries';
 import { PrismaStudentsOverviewQueries } from '$quiz/student/infra/queries/PrismaStudentsOverviewQueries';
-import { PrismaTeacherPromotionsQueries } from '$quiz/promotion/infra/queries/PrismaTeacherPromotionsQueries';
-import { PrismaTeacherQueries } from '$quiz/teacher/infra/queries/PrismaTeacherQueries';
-import { PrismaTeacherQuestionsQueries } from '$quiz/question/infra/queries/PrismaTeacherQuestionsQueries';
-import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
 import { ImageStudentListParser } from '$quiz/student/infra/StudentListParser/ImageStudentListParser';
 import { PrismaStudentRepository } from '$quiz/student/infra/StudentRepository/PrismaStudentRepository';
+import type { ITeacherQueries } from '$quiz/teacher/application/interfaces/ITeacherQueries';
+import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeacherRepository';
+import { PrismaTeacherQueries } from '$quiz/teacher/infra/queries/PrismaTeacherQueries';
 import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/PrismaTeacherRepository';
-import { prisma } from './prisma/prisma';
 import { BullMQAdapter } from './bullmq/BullMQ.adapter';
+import { prisma } from './prisma/prisma';
 import { redisConnection } from './redis';
-import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
+
+const mq = new BullMQAdapter(redisConnection);
 
 export const ServiceProvider: ServiceProvider = {
 	PromotionRepository: new PrismaPromotionRepository(prisma),
@@ -37,7 +43,13 @@ export const ServiceProvider: ServiceProvider = {
 	TeacherPromotionsQueries: new PrismaTeacherPromotionsQueries(prisma),
 	StudentsOverviewQueries: new PrismaStudentsOverviewQueries(prisma),
 	TeacherQuestionsQueries: new PrismaTeacherQuestionsQueries(prisma),
-	MessageQueue: new BullMQAdapter(redisConnection)
+	MessageQueue: mq,
+	eventListeners: {
+		scheduleSessionOnPromotionQuestionPlanned: new ScheduleSessionOnPromotionQuestionPlanned(
+			mq,
+			new CreateQuestionSessionUsecase(new PrismaQuestionSessionRepository(prisma))
+		)
+	}
 };
 
 export type ServiceProvider = {
@@ -53,4 +65,5 @@ export type ServiceProvider = {
 	StudentsOverviewQueries: IStudentsOverviewQueries;
 	TeacherQuestionsQueries: ITeacherQuestionsQueries;
 	MessageQueue: IMessageQueue;
+	eventListeners: Record<string, IDomainEventListener>;
 };

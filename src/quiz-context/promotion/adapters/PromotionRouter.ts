@@ -25,7 +25,8 @@ export const PromotionRouter = router({
 		.mutation(async ({ input }) => {
 			const usecase = new PlanQuestionUsecase(
 				ServiceProvider.PromotionRepository,
-				ServiceProvider.QuestionRepository
+				ServiceProvider.QuestionRepository,
+				ServiceProvider.eventListeners['scheduleSessionOnPromotionQuestionPlanned']
 			);
 			await usecase.execute(input);
 		})

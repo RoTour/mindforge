@@ -5,6 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
+		"dev:queueonly": "docker compose -f docker-compose.dev.yaml up --build worker redis",
+		"dev:dbonly": "docker compose -f docker-compose.dev.yaml up --build db",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",

@@ -111,7 +111,11 @@
 			<Input bind:value={password} id="password-{id}" type="password" required />
 		</Field>
 		<Field>
-			<Button type="submit" disabled={isLoading}>Login</Button>
+			<Button type="submit" disabled={isLoading}>
+				{#if type === 'signin'}
+					{#if isLoading}Logging in...{:else}Login{/if}
+				{:else if isLoading}Creating account...{:else}Create Account{/if}
+			</Button>
 		</Field>
 		<FieldSeparator>Or continue with</FieldSeparator>
 		<Field>

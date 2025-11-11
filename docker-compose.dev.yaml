@@ -1,4 +1,15 @@
 services:
+  db:
+    container_name: mindforge_db
+    restart: unless-stopped
+    image: 'postgres:18'
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    volumes:
+      - mindforge_db:/var/lib/postgresql
+
   # BullMQ Redis instance for local development
   redis:
     image: 'redis:8.4-rc1-alpine'
@@ -27,3 +38,4 @@ services:
 
 volumes:
   mindforge_redis_data:
+  mindforge_db:
