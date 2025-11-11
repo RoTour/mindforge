@@ -5,6 +5,9 @@
 	import ChevronsUpDownIcon from '@lucide/svelte/icons/chevrons-up-down';
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
 	import type { TeacherPromotionsListItem } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
+	import { resolve } from '$app/paths';
+	import { goto } from '$app/navigation';
+	import Plus from '@lucide/svelte/icons/plus';
 
 	type Props = {
 		promotions: TeacherPromotionsListItem[];
@@ -45,6 +48,9 @@
 						{/if}
 					</DropdownMenu.Item>
 				{/each}
+				<DropdownMenu.Item onSelect={() => goto(resolve('/teacher/create-promotion'))}>
+					<Plus />Create new promotion
+				</DropdownMenu.Item>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</Sidebar.MenuItem>

@@ -8,6 +8,8 @@
 	import type { PageProps } from './$types';
 	import { QuestionsPageVM } from './QuestionsPageVM.svelte';
 	import QuestionPlanner from './QuestionPlanner.svelte';
+	import { resolve } from '$app/paths';
+	import { page } from '$app/stores';
 
 	let { data, params }: PageProps = $props();
 	const vm = new QuestionsPageVM({
@@ -71,15 +73,15 @@
 							<Card.Title>{plannedQuestion.text}</Card.Title>
 							{#if plannedQuestion.startingOn}
 								<Card.Description class="flex flex-col pt-1 text-xs">
-									<p>
+									<span>
 										<span class="font-bold">From:</span>
 										{formatScheduleDate(plannedQuestion.startingOn)}
-									</p>
+									</span>
 									{#if plannedQuestion.endingOn}
-										<p>
+										<span>
 											<span class="font-bold">To:</span>
 											{formatScheduleDate(plannedQuestion.endingOn)}
-										</p>
+										</span>
 									{/if}
 								</Card.Description>
 							{/if}
@@ -111,6 +113,7 @@
 						{/if}
 						<Card.Footer class="flex justify-end">
 							<QuestionPlanner
+								triggerVariant="outline"
 								initialStartingOn={plannedQuestion.startingOn}
 								initialEndingOn={plannedQuestion.endingOn}
 								onSubmit={(payload) => {
@@ -122,7 +125,7 @@
 									);
 								}}
 							>
-								<Button variant="outline" size="sm">Edit schedule</Button>
+								Edit schedule
 							</QuestionPlanner>
 						</Card.Footer>
 					</Card.Root>
@@ -179,7 +182,7 @@
 									vm.planQuestionOnPromotion(question.id, payload.startingOn, payload.endingOn);
 								}}
 							>
-								<Button size="sm">Use in this promotion</Button>
+								Use in this promotion
 							</QuestionPlanner>
 						</Card.Footer>
 					</Card.Root>
@@ -188,7 +191,11 @@
 						class="border-border flex min-h-[200px] flex-col items-center justify-center rounded-md border border-dashed p-6 text-center"
 					>
 						<p class="text-muted-foreground">You haven't created any questions yet.</p>
-						<Button class="mt-4" size="sm">Create First Question</Button>
+						<Button
+							href={resolve(`/teacher/promotions/${params.promotionId}/questions/add`)}
+							class="mt-4"
+							size="sm">Create First Question</Button
+						>
 					</div>
 				{/each}
 			</div>

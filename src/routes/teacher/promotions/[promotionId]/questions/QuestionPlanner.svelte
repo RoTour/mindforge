@@ -1,7 +1,7 @@
 <!-- /src/routes/teacher/promotions/[promotionId]/questions/QuestionPlanner.svelte -->
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { Button } from '$lib/components/ui/button';
+	import { Button, buttonVariants } from '$lib/components/ui/button';
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Label } from '$lib/components/ui/label';
 	import { Input } from '$lib/components/ui/input';
@@ -15,8 +15,15 @@
 		onSubmit: (payload: { startingOn: Date; endingOn: Date }) => void;
 		initialStartingOn?: Date | null;
 		initialEndingOn?: Date | null;
+		triggerVariant: 'outline' | 'default';
 	};
-	let { children, onSubmit, initialStartingOn, initialEndingOn }: Props = $props();
+	let {
+		children,
+		onSubmit,
+		initialStartingOn,
+		initialEndingOn,
+		triggerVariant: variant
+	}: Props = $props();
 
 	let open = $state(false);
 
@@ -91,7 +98,7 @@
 </script>
 
 <Dialog.Root bind:open>
-	<Dialog.Trigger asChild>
+	<Dialog.Trigger class="{buttonVariants({ variant: variant })}}">
 		{@render children()}
 	</Dialog.Trigger>
 	<Dialog.Content class="sm:max-w-[650px]">
@@ -110,13 +117,13 @@
 					<div class="flex flex-col gap-2">
 						<Label for="start-date" class="px-1">Date</Label>
 						<Popover.Root bind:open={startOpen}>
-							<Popover.Trigger asChild>
-								<Button variant="outline" class="w-40 justify-between font-normal">
-									{startDate
-										? startDate.toDate(getLocalTimeZone()).toLocaleDateString('en-GB')
-										: 'Select date'}
-									<ChevronDown class="h-4 w-4" />
-								</Button>
+							<Popover.Trigger
+								class="{buttonVariants({ variant: 'outline' })} w-40 justify-between font-normal"
+							>
+								{startDate
+									? startDate.toDate(getLocalTimeZone()).toLocaleDateString('en-GB')
+									: 'Select date'}
+								<ChevronDown class="h-4 w-4" />
 							</Popover.Trigger>
 							<Popover.Content class="w-auto overflow-hidden p-0" align="start">
 								<Calendar
@@ -142,13 +149,13 @@
 					<div class="flex flex-col gap-2">
 						<Label for="end-date" class="px-1">Date</Label>
 						<Popover.Root bind:open={endOpen}>
-							<Popover.Trigger asChild>
-								<Button variant="outline" class="w-40 justify-between font-normal">
-									{endDate
-										? endDate.toDate(getLocalTimeZone()).toLocaleDateString('en-GB')
-										: 'Select date'}
-									<ChevronDown class="h-4 w-4" />
-								</Button>
+							<Popover.Trigger
+								class="{buttonVariants({ variant: 'outline' })} w-40 justify-between font-normal"
+							>
+								{endDate
+									? endDate.toDate(getLocalTimeZone()).toLocaleDateString('en-GB')
+									: 'Select date'}
+								<ChevronDown class="h-4 w-4" />
 							</Popover.Trigger>
 							<Popover.Content class="w-auto overflow-hidden p-0" align="start">
 								<Calendar
@@ -170,9 +177,7 @@
 		</div>
 
 		<Dialog.Footer>
-			<Dialog.Close asChild>
-				<Button variant="outline">Cancel</Button>
-			</Dialog.Close>
+			<Dialog.Close class={buttonVariants({ variant: 'outline' })}>Cancel</Dialog.Close>
 			<Button onclick={handleSubmit}>Plan Question</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
