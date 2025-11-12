@@ -1,16 +1,17 @@
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer, type StartedRedisContainer } from '@testcontainers/redis';
-import { afterAll, beforeAll, beforeEach } from 'vitest';
-import { PrismaClient } from '../prisma/generated/client';
 import { execSync } from 'child_process';
 import type { RedisOptions } from 'ioredis';
 import {
 	GenericContainer,
-	Wait,
 	Network,
+	Wait,
+	type ImagePullPolicy,
 	type StartedNetwork,
 	type StartedTestContainer
 } from 'testcontainers';
+import { afterAll, beforeAll, beforeEach } from 'vitest';
+import { PrismaClient } from '../prisma/generated/client';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let redisContainer: StartedRedisContainer;
@@ -18,6 +19,12 @@ let workerContainer: StartedTestContainer;
 let network: StartedNetwork;
 let prisma: PrismaClient;
 let testRedisConnection: RedisOptions;
+
+class NeverPullPolicy implements ImagePullPolicy {
+	public shouldPull(): boolean {
+		return false;
+	}
+}
 
 const resetDb = async () => {
 	// This function is called by a beforeEach hook to ensure data isolation between tests
@@ -54,6 +61,7 @@ beforeAll(async () => {
 	prisma = new PrismaClient({
 		datasourceUrl: dbUrl
 	});
+	await prisma.$connect();
 	// We apply migrations using the prisma client from the testcontainers, but we need to set the env var for the worker container
 	execSync('bun prisma db push', {
 		env: { ...process.env, DATABASE_URL: dbUrl }
@@ -66,23 +74,31 @@ beforeAll(async () => {
 		maxRetriesPerRequest: null // Recommended for BullMQ
 	};
 
-	const container = await GenericContainer.fromDockerfile('../dev').build();
+	// const container = await GenericContainer.fromDockerfile('.', 'Dockerfile')
+	// 	.withCache(true)
+	// 	.build();
 	// --- Setup Worker ---
-	workerContainer = await container
+	workerContainer = await new GenericContainer('rotour/mindforge-worker:dev')
+		// workerContainer = await container
+		.withPullPolicy(new NeverPullPolicy())
 		.withNetwork(network)
 		.withEnvironment({
-			DATABASE_URL: postgresContainer.getConnectionUri().replace(postgresContainer.getHost(), 'db'), // Use network alias
+			DATABASE_URL: `postgresql://${postgresContainer.getUsername()}:${postgresContainer.getPassword()}@db:5432/${postgresContainer.getDatabase()}`,
 			REDIS_HOST: 'redis',
 			REDIS_PORT: '6379',
 			OPENROUTER_API_KEY: 'test-key', // Provide dummy values
 			OPENROUTER_MODEL_NAME: 'test-model'
 		})
-		.withCommand(['bun', 'run', 'src/lib/server/jobs/worker.ts'])
+		.withCommand(['bun', 'run', '/app/src/lib/server/jobs/worker.ts'])
 		.withWaitStrategy(
 			Wait.forLogMessage('Question scheduling worker is ready and listening for jobs !')
 		)
+		.withLogConsumer((stream) => {
+			stream.on('data', (line) => console.log('[WORKER]', line));
+			stream.on('err', (line) => console.error('[WORKER ERROR]', line));
+		})
 		.start();
-}, 60000); // Increase timeout for starting containers
+}, 120000); // Increase timeout for starting containers
 
 beforeEach(async () => {
 	await resetDb();

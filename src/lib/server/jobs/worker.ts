@@ -32,6 +32,10 @@ const redisConnection: WorkerOptions['connection'] = {
 	host: Bun.env.REDIS_HOST ?? 'localhost',
 	port: parseInt(Bun.env.REDIS_PORT!, 10)
 };
+
+// This log is used by testContainers to ensure the worker is ready - do not remove it
+console.log('Question scheduling worker is ready and listening for jobs !');
+
 console.log(`Connecting to Redis at ${redisConnection.host}:${redisConnection.port}`);
 
 console.log('Starting question scheduling workers...');

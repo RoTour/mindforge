@@ -1,0 +1,455 @@
+
+DEV  v4.0.8 /Users/rotour/projects/mindforge
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.397Z testcontainers [DEBUG] Checking container runtime strategy "TestcontainersHostStrategy"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.398Z testcontainers [DEBUG] Container runtime strategy "TestcontainersHostStrategy" is not applicable
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.398Z testcontainers [DEBUG] Checking container runtime strategy "ConfigurationStrategy"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.398Z testcontainers [DEBUG] Container runtime strategy "ConfigurationStrategy" is not applicable
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.398Z testcontainers [DEBUG] Checking container runtime strategy "UnixSocketStrategy"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.398Z testcontainers [TRACE] Fetching Docker info...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.428Z testcontainers [TRACE] Fetching remote container runtime socket path...
+2025-11-12T12:59:23.428Z testcontainers [TRACE] Resolving host...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.428Z testcontainers [TRACE] Fetching Compose info...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.428Z testcontainers [TRACE] Looking up host IPs...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.431Z testcontainers [TRACE] Initialising clients...
+2025-11-12T12:59:23.431Z testcontainers [TRACE] Container runtime info:
+{
+ "node": {
+   "version": "v24.4.1",
+   "architecture": "arm64",
+   "platform": "darwin"
+ },
+ "containerRuntime": {
+   "host": "localhost",
+   "hostIps": [
+     {
+       "address": "::1",
+       "family": 6
+     },
+     {
+       "address": "127.0.0.1",
+       "family": 4
+     }
+   ],
+   "remoteSocketPath": "/var/run/docker.sock",
+   "indexServerAddress": "https://index.docker.io/v1/",
+   "serverVersion": "28.3.3",
+   "operatingSystem": "OrbStack",
+   "operatingSystemType": "linux",
+   "architecture": "aarch64",
+   "cpus": 16,
+   "memory": 16808607744,
+   "runtimes": [
+     "io.containerd.runc.v2",
+     "runc"
+   ],
+   "labels": []
+ }
+}
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.431Z testcontainers [DEBUG] Container runtime strategy "UnixSocketStrategy" works
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.432Z testcontainers [DEBUG] Acquiring lock file "/private/var/folders/02/8rvptd7s165d5f987y_3jmmw0000gn/T/testcontainers-node.lock"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.433Z testcontainers [DEBUG] Acquired lock file "/private/var/folders/02/8rvptd7s165d5f987y_3jmmw0000gn/T/testcontainers-node.lock"
+2025-11-12T12:59:23.433Z testcontainers [DEBUG] Listing containers...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.438Z testcontainers [DEBUG] Listed containers
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.439Z testcontainers [DEBUG] Reusing existing Reaper for session "c7c230f6f6cf"...
+2025-11-12T12:59:23.439Z testcontainers [DEBUG] [b6109ca60843] Connecting to Reaper (attempt 1) on "localhost:34818"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.440Z testcontainers [DEBUG] [b6109ca60843] Connected to Reaper
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.440Z testcontainers [DEBUG] Releasing lock file "/private/var/folders/02/8rvptd7s165d5f987y_3jmmw0000gn/T/testcontainers-node.lock"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.440Z testcontainers [DEBUG] Released lock file "/private/var/folders/02/8rvptd7s165d5f987y_3jmmw0000gn/T/testcontainers-node.lock"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.440Z testcontainers [INFO] Starting network "3d39d1047117"...
+2025-11-12T12:59:23.440Z testcontainers [DEBUG] Creating network "3d39d1047117"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.475Z testcontainers [DEBUG] Created network "3d39d1047117"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.475Z testcontainers [INFO] Started network "3d39d1047117" with ID "1343ade95149e90c3a1e71f6317f44a45624f4c64905e32c794f45d104c49158"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.475Z testcontainers [DEBUG] Checking if image exists "postgres:16-alpine"...
+2025-11-12T12:59:23.475Z testcontainers [DEBUG] Checking if image exists "redis:7.2-alpine"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.477Z testcontainers [DEBUG] Checked if image exists "postgres:16-alpine"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.477Z testcontainers [DEBUG] Image "postgres:16-alpine" already exists
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.477Z testcontainers [DEBUG] Creating container for image "postgres:16-alpine"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.477Z testcontainers [DEBUG] Checked if image exists "redis:7.2-alpine"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.477Z testcontainers [DEBUG] Image "redis:7.2-alpine" already exists
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.477Z testcontainers [DEBUG] Creating container for image "redis:7.2-alpine"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.531Z testcontainers [DEBUG] [280ead3e3f45] Created container for image "redis:7.2-alpine"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.531Z testcontainers [DEBUG] Getting network by ID...
+2025-11-12T12:59:23.531Z testcontainers [DEBUG] Got network by ID
+2025-11-12T12:59:23.531Z testcontainers [DEBUG] [280ead3e3f45] Connecting to network "3d39d1047117"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.533Z testcontainers [DEBUG] [fe3145a29122] Created container for image "postgres:16-alpine"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.533Z testcontainers [DEBUG] Getting network by ID...
+2025-11-12T12:59:23.533Z testcontainers [DEBUG] Got network by ID
+2025-11-12T12:59:23.533Z testcontainers [DEBUG] [fe3145a29122] Connecting to network "3d39d1047117"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.534Z testcontainers [DEBUG] [280ead3e3f45] Connected to network "3d39d1047117"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.534Z testcontainers [INFO] [280ead3e3f45] Starting container for image "redis:7.2-alpine"...
+2025-11-12T12:59:23.534Z testcontainers [DEBUG] [280ead3e3f45] Starting container...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.537Z testcontainers [DEBUG] [fe3145a29122] Connected to network "3d39d1047117"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:23.537Z testcontainers [INFO] [fe3145a29122] Starting container for image "postgres:16-alpine"...
+2025-11-12T12:59:23.537Z testcontainers [DEBUG] [fe3145a29122] Starting container...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.071Z testcontainers [DEBUG] [fe3145a29122] Started container
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.071Z testcontainers [INFO] [fe3145a29122] Started container for image "postgres:16-alpine"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.078Z testcontainers [DEBUG] [fe3145a29122] Fetching container logs...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.078Z testcontainers [DEBUG] [fe3145a29122] Waiting for container to be ready...
+2025-11-12T12:59:24.078Z testcontainers [DEBUG] [fe3145a29122] Waiting for composite...
+2025-11-12T12:59:24.078Z testcontainers [DEBUG] [fe3145a29122] Waiting for health check...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.078Z testcontainers [DEBUG] [fe3145a29122] Waiting for host port 34841...
+2025-11-12T12:59:24.078Z testcontainers [DEBUG] [fe3145a29122] Waiting for internal port 5432/tcp...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.083Z testcontainers [DEBUG] [fe3145a29122] Demuxing stream...
+2025-11-12T12:59:24.083Z testcontainers [DEBUG] [fe3145a29122] Demuxed stream
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] The files belonging to this database system will be owned by user "postgres".
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] This user must also own the server process.
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122]
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] The database cluster will be initialized with locale "en_US.utf8".
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] The default database encoding has accordingly been set to "UTF8".
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] The default text search configuration will be set to "english".
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122]
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] Data page checksums are disabled.
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122]
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] fixing permissions on existing directory /var/lib/postgresql/data ... ok
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] creating subdirectories ... ok
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] selecting dynamic shared memory implementation ... posix
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] selecting default max_connections ... 100
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] selecting default shared_buffers ... 128MB
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] selecting default time zone ... UTC
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] creating configuration files ... ok
+2025-11-12T12:59:24.083Z testcontainers:containers [fe3145a29122] running bootstrap script ... ok
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.085Z testcontainers [DEBUG] [fe3145a29122] Host port 34841 ready
+2025-11-12T12:59:24.086Z testcontainers [DEBUG] [fe3145a29122] Host port wait strategy complete
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.106Z testcontainers:containers [fe3145a29122] sh: locale: not found
+2025-11-12T12:59:24.107Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:24.106 UTC [35] WARNING:  no usable system locales were found
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.108Z testcontainers [TRACE] [fe3145a29122] Port check result exit code 1: /bin/bash: connect: Connection refused
+/bin/bash: line 1: /dev/tcp/localhost/5432: Connection refused
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.187Z testcontainers [DEBUG] [280ead3e3f45] Started container
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.187Z testcontainers [INFO] [280ead3e3f45] Started container for image "redis:7.2-alpine"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.192Z testcontainers [DEBUG] [280ead3e3f45] Fetching container logs...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.192Z testcontainers [DEBUG] [280ead3e3f45] Waiting for container to be ready...
+2025-11-12T12:59:24.192Z testcontainers [DEBUG] [280ead3e3f45] Waiting for log message "Ready to accept connections"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.192Z testcontainers [DEBUG] [280ead3e3f45] Fetching container logs...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.194Z testcontainers [DEBUG] [280ead3e3f45] Demuxing stream...
+2025-11-12T12:59:24.195Z testcontainers [DEBUG] [280ead3e3f45] Demuxed stream
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.195Z testcontainers:containers [280ead3e3f45] 1:C 12 Nov 2025 12:59:24.141 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.195Z testcontainers [DEBUG] [280ead3e3f45] Demuxing stream...
+2025-11-12T12:59:24.195Z testcontainers [DEBUG] [280ead3e3f45] Demuxed stream
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.196Z testcontainers:containers [280ead3e3f45] 1:C 12 Nov 2025 12:59:24.141 * Redis version=7.2.12, bits=64, commit=00000000, modified=0, pid=1, just started
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.196Z testcontainers:containers [280ead3e3f45] 1:C 12 Nov 2025 12:59:24.141 # Warning: no config file specified, using the default config. In order to specify a config file use redis-server /path/to/redis.conf
+2025-11-12T12:59:24.196Z testcontainers:containers [280ead3e3f45] 1:M 12 Nov 2025 12:59:24.141 * monotonic clock: POSIX clock_gettime
+2025-11-12T12:59:24.196Z testcontainers:containers [280ead3e3f45] 1:M 12 Nov 2025 12:59:24.141 * Running mode=standalone, port=6379.
+2025-11-12T12:59:24.196Z testcontainers:containers [280ead3e3f45] 1:M 12 Nov 2025 12:59:24.142 * Server initialized
+2025-11-12T12:59:24.196Z testcontainers:containers [280ead3e3f45] 1:M 12 Nov 2025 12:59:24.142 * Ready to accept connections tcp
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.197Z testcontainers [DEBUG] [280ead3e3f45] Log wait strategy complete
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.197Z testcontainers [INFO] [280ead3e3f45] Container is ready
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:24.245Z testcontainers:containers [fe3145a29122] performing post-bootstrap initialization ... ok
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.318Z testcontainers:containers [fe3145a29122] syncing data to disk ... ok
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.318Z testcontainers:containers [fe3145a29122]
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.318Z testcontainers:containers [fe3145a29122]
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.319Z testcontainers:containers [fe3145a29122] Success. You can now start the database server using:
+2025-11-12T12:59:26.319Z testcontainers:containers [fe3145a29122]
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.319Z testcontainers:containers [fe3145a29122] pg_ctl -D /var/lib/postgresql/data -l logfile start
+2025-11-12T12:59:26.319Z testcontainers:containers [fe3145a29122]
+2025-11-12T12:59:26.319Z testcontainers:containers [fe3145a29122] initdb: warning: enabling "trust" authentication for local connections
+2025-11-12T12:59:26.319Z testcontainers:containers [fe3145a29122] initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.339Z testcontainers:containers [fe3145a29122] waiting for server to start....2025-11-12 12:59:26.338 UTC [459] LOG:  starting PostgreSQL 16.10 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.340Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:26.340 UTC [459] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.343Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:26.342 UTC [462] LOG:  database system was shut down at 2025-11-12 12:59:24 UTC
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.345Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:26.345 UTC [459] LOG:  database system is ready to accept connections
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.447Z testcontainers:containers [fe3145a29122] done
+2025-11-12T12:59:26.447Z testcontainers:containers [fe3145a29122] server started
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.593Z testcontainers:containers [fe3145a29122] CREATE DATABASE
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.594Z testcontainers:containers [fe3145a29122]
+2025-11-12T12:59:26.594Z testcontainers:containers [fe3145a29122]
+2025-11-12T12:59:26.594Z testcontainers:containers [fe3145a29122] /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/*
+2025-11-12T12:59:26.594Z testcontainers:containers [fe3145a29122]
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.594Z testcontainers:containers [fe3145a29122] waiting for server to shut down....2025-11-12 12:59:26.593 UTC [459] LOG:  received fast shutdown request
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.598Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:26.595 UTC [459] LOG:  aborting any active transactions
+2025-11-12T12:59:26.598Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:26.596 UTC [459] LOG:  background worker "logical replication launcher" (PID 465) exited with exit code 1
+2025-11-12T12:59:26.598Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:26.597 UTC [460] LOG:  shutting down
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:26.601Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:26.600 UTC [460] LOG:  checkpoint starting: shutdown immediate
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.064Z testcontainers:containers [fe3145a29122] .2025-11-12 12:59:28.064 UTC [460] LOG:  checkpoint complete: wrote 926 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.010 s, sync=1.391 s, total=1.467 s; sync files=301, longest=0.114 s, average=0.005 s; distance=4272 kB, estimate=4272 kB; lsn=0/191E8D8, redo lsn=0/191E8D8
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.070Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:28.069 UTC [459] LOG:  database system is shut down
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.131Z testcontainers:containers [fe3145a29122] done
+2025-11-12T12:59:28.131Z testcontainers:containers [fe3145a29122] server stopped
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.132Z testcontainers:containers [fe3145a29122]
+2025-11-12T12:59:28.132Z testcontainers:containers [fe3145a29122] PostgreSQL init process complete; ready for start up.
+2025-11-12T12:59:28.132Z testcontainers:containers [fe3145a29122]
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.151Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:28.150 UTC [1] LOG:  starting PostgreSQL 16.10 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 14.2.0) 14.2.0, 64-bit
+2025-11-12T12:59:28.151Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:28.150 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+2025-11-12T12:59:28.151Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:28.150 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.184Z testcontainers [DEBUG] [fe3145a29122] Internal port 5432/tcp ready
+2025-11-12T12:59:28.184Z testcontainers [DEBUG] [fe3145a29122] Internal port wait strategy complete
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.189Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:28.188 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.195Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:28.194 UTC [816] LOG:  database system was shut down at 2025-11-12 12:59:28 UTC
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.202Z testcontainers:containers [fe3145a29122] 2025-11-12 12:59:28.201 UTC [1] LOG:  database system is ready to accept connections
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.266Z testcontainers [DEBUG] [fe3145a29122] Health check wait strategy complete
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.266Z testcontainers [DEBUG] [fe3145a29122] Composite wait strategy complete
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:28.266Z testcontainers [INFO] [fe3145a29122] Container is ready
+
+Loaded Prisma config from prisma.config.ts.
+
+Prisma config detected, skipping environment variable loading.
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.148Z testcontainers [DEBUG] Checking if image exists "mindforge-worker:latest"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.372Z testcontainers [DEBUG] Checked if image exists "mindforge-worker:latest"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.373Z testcontainers [DEBUG] Image "mindforge-worker:latest" already exists
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.373Z testcontainers [DEBUG] Creating container for image "mindforge-worker:latest"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.763Z testcontainers [DEBUG] [97937f3de0ce] Created container for image "mindforge-worker:latest"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.763Z testcontainers [INFO] [97937f3de0ce] Starting container for image "mindforge-worker:latest"...
+2025-11-12T12:59:30.763Z testcontainers [DEBUG] [97937f3de0ce] Starting container...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.985Z testcontainers [DEBUG] [97937f3de0ce] Started container
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.985Z testcontainers [INFO] [97937f3de0ce] Started container for image "mindforge-worker:latest"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.986Z testcontainers [DEBUG] [97937f3de0ce] Fetching container logs...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.986Z testcontainers [DEBUG] [97937f3de0ce] Waiting for container to be ready...
+2025-11-12T12:59:30.986Z testcontainers [DEBUG] [97937f3de0ce] Waiting for log message "Question scheduling worker is ready and listening for jobs !"...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:30.986Z testcontainers [DEBUG] [97937f3de0ce] Fetching container logs...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.123Z testcontainers [DEBUG] [97937f3de0ce] Demuxing stream...
+2025-11-12T12:59:31.123Z testcontainers [DEBUG] [97937f3de0ce] Demuxed stream
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.124Z testcontainers [ERROR] [97937f3de0ce] Log stream ended and message "Question scheduling worker is ready and listening for jobs !" was not received
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.124Z testcontainers [ERROR] [97937f3de0ce] Container failed to be ready: Error: Log stream ended and message "Question scheduling worker is ready and listening for jobs !" was not received
+2025-11-12T12:59:31.124Z testcontainers [DEBUG] [97937f3de0ce] Stopping container...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.124Z testcontainers [DEBUG] [97937f3de0ce] Demuxing stream...
+2025-11-12T12:59:31.124Z testcontainers [DEBUG] [97937f3de0ce] Demuxed stream
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.124Z testcontainers:containers [97937f3de0ce] error: Module not found "/app/src/lib/server/jobs/worker.ts"
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.126Z testcontainers [DEBUG] [97937f3de0ce] Container already stopped
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.126Z testcontainers [DEBUG] [97937f3de0ce] Removing container...
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.133Z testcontainers [DEBUG] [97937f3de0ce] Removed container
+
+stdout | src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
+2025-11-12T12:59:31.135Z testcontainers [INFO] [fe3145a29122] Stopping container...
+2025-11-12T12:59:31.135Z testcontainers [INFO] [280ead3e3f45] Stopping container...
+2025-11-12T12:59:31.135Z testcontainers [DEBUG] [fe3145a29122] Stopping container...
+2025-11-12T12:59:31.135Z testcontainers [DEBUG] [280ead3e3f45] Stopping container...
+
+❯  integration  src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts (1 test | 1 skipped) 7741ms
+  ↓ Integration-Listener: ScheduleSessionOnPromotionQuestionPlanned (1)
+    ↓ should schedule a job and have the worker create a question session in the DB
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+FAIL   integration  src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts [ src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts ]
+Error: Log stream ended and message "Question scheduling worker is ready and listening for jobs !" was not received
+❯ LineStream.<anonymous> node_modules/testcontainers/build/wait-strategies/log-wait-strategy.js:56:24
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+FAIL   integration  src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts [ src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts ]
+TypeError: Cannot read properties of undefined (reading 'stop')
+❯ test/setupIntegration.ts:102:86
+   100|  // Disconnect clients first, then stop the containers
+   101|  await prisma.$disconnect();
+   102|  await Promise.all([postgresContainer.stop(), redisContainer.stop(), workerContainer.stop()]);
+      |                                                                                      ^
+   103| }, 20000);
+   104|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+Test Files  1 failed (1)
+     Tests  1 skipped (1)
+  Start at  13:59:23
+  Duration  8.09s (transform 87ms, setup 169ms, collect 105ms, tests 7.74s, environment 0ms, prepare 2ms)
+
+FAIL  Tests failed. Watching for file changes...
+      press h to show help, press q to quit

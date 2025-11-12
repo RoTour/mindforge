@@ -16,18 +16,24 @@ export class ScheduleSessionOnPromotionQuestionPlanned implements IDomainEventLi
 		if (!(event instanceof PromotionQuestionPlanned)) return;
 
 		const { promotionId, questionId, startingOn, endingOn } = event.payload;
+		console.debug('Listener handling payload', event.payload);
 		const now = Date.now();
 		const delay = startingOn.getTime() - now;
 
 		if (delay > 0) {
 			// The start time is in the future, schedule a delayed job.
-			const command = new ScheduleQuestionSessionCommand({ promotionId, questionId, startingOn });
+			const command = new ScheduleQuestionSessionCommand({
+				promotionId,
+				questionId,
+				startingOn,
+				endingOn
+			});
 			await this.mq.add({
 				name: ScheduleQuestionSessionCommand.type,
 				data: command.payload(),
 				opts: {
 					delay,
-					jobId: `${promotionId}-${questionId}` // Prevents duplicate jobs
+					jobId: `${promotionId}-${questionId}-${crypto.randomUUID()}` // Prevents duplicate jobs
 				}
 			});
 			console.log(
