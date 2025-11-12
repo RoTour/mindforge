@@ -7,10 +7,24 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
 	server: {
 		watch: {
-			ignored: ['**/generated/**', '**/.prisma/**', './prisma/generated']
+			ignored: [
+				'**/generated/**',
+				'**/.prisma/**',
+				'**/prisma/generated/**',
+				'**/node_modules/**',
+				'**/dist/**'
+			]
 		}
 	},
 	test: {
+		poolOptions: {
+			threads: {
+				singleThread: true
+			}
+		},
+		// Optional but helpful
+		globals: true,
+		hookTimeout: 60000, // Increase if containers are slow to start
 		projects: [
 			{
 				extends: './vite.config.ts',

@@ -4,9 +4,18 @@ import { afterAll, beforeAll, beforeEach } from 'vitest';
 import { PrismaClient } from '../prisma/generated/client';
 import { execSync } from 'child_process';
 import type { RedisOptions } from 'ioredis';
+import {
+	GenericContainer,
+	Wait,
+	Network,
+	type StartedNetwork,
+	type StartedTestContainer
+} from 'testcontainers';
 
 let postgresContainer: StartedPostgreSqlContainer;
 let redisContainer: StartedRedisContainer;
+let workerContainer: StartedTestContainer;
+let network: StartedNetwork;
 let prisma: PrismaClient;
 let testRedisConnection: RedisOptions;
 
@@ -29,21 +38,25 @@ const resetDb = async () => {
 };
 
 beforeAll(async () => {
+	network = await new Network().start();
+
 	// Start both containers in parallel for faster setup
 	[postgresContainer, redisContainer] = await Promise.all([
-		new PostgreSqlContainer('postgres:16-alpine').start(),
-		// Use the dedicated RedisContainer with the specific image tag for consistency
-		new RedisContainer('redis:8.4-rc1-alpine').start()
+		new PostgreSqlContainer('postgres:16-alpine')
+			.withNetwork(network)
+			.withNetworkAliases('db')
+			.start(),
+		new RedisContainer('redis:7.2-alpine').withNetwork(network).withNetworkAliases('redis').start()
 	]);
 
 	// --- Setup PostgreSQL and Prisma ---
 	const dbUrl = postgresContainer.getConnectionUri();
-	process.env.DATABASE_URL = dbUrl; // Set env var for prisma CLI
-	execSync('bun prisma db push', {
-		env: process.env
-	});
 	prisma = new PrismaClient({
 		datasourceUrl: dbUrl
+	});
+	// We apply migrations using the prisma client from the testcontainers, but we need to set the env var for the worker container
+	execSync('bun prisma db push', {
+		env: { ...process.env, DATABASE_URL: dbUrl }
 	});
 
 	// --- Setup Redis ---
@@ -52,7 +65,24 @@ beforeAll(async () => {
 		port: redisContainer.getMappedPort(6379),
 		maxRetriesPerRequest: null // Recommended for BullMQ
 	};
-}, 30000); // Increase timeout for starting containers
+
+	const container = await GenericContainer.fromDockerfile('../dev').build();
+	// --- Setup Worker ---
+	workerContainer = await container
+		.withNetwork(network)
+		.withEnvironment({
+			DATABASE_URL: postgresContainer.getConnectionUri().replace(postgresContainer.getHost(), 'db'), // Use network alias
+			REDIS_HOST: 'redis',
+			REDIS_PORT: '6379',
+			OPENROUTER_API_KEY: 'test-key', // Provide dummy values
+			OPENROUTER_MODEL_NAME: 'test-model'
+		})
+		.withCommand(['bun', 'run', 'src/lib/server/jobs/worker.ts'])
+		.withWaitStrategy(
+			Wait.forLogMessage('Question scheduling worker is ready and listening for jobs !')
+		)
+		.start();
+}, 60000); // Increase timeout for starting containers
 
 beforeEach(async () => {
 	await resetDb();
@@ -61,8 +91,8 @@ beforeEach(async () => {
 afterAll(async () => {
 	// Disconnect clients first, then stop the containers
 	await prisma.$disconnect();
-	await Promise.all([postgresContainer.stop(), redisContainer.stop()]);
-}, 10000);
+	await Promise.all([postgresContainer.stop(), redisContainer.stop(), workerContainer.stop()]);
+}, 20000);
 
 export const getPrismaTestClient = () => prisma;
 export const getTestRedisConnection = () => testRedisConnection;
