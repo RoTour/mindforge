@@ -68,7 +68,7 @@ export class Promotion extends AggregateRoot<PromotionId> {
 
 		this.plannedQuestions.push(plannedQuestion);
 
-		if (startingOn) {
+		if (startingOn && endingOn) {
 			this.addDomainEvent(
 				new PromotionQuestionPlanned(this.id.id(), questionId.id(), startingOn, endingOn)
 			);

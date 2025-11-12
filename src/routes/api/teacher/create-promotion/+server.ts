@@ -1,7 +1,7 @@
 import { AppError } from '$lib/error/Error';
+import { serviceProvider } from '$lib/server/container';
 import { ApiResponse } from '$lib/svelte/ApiResponse';
 import { ParseStudentListUsecase } from '$quiz/student/application/ParseStudentList.usecase';
-import { ImageStudentListParser } from '$quiz/student/infra/StudentListParser/ImageStudentListParser';
 import { json, type RequestHandler } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request }) => {
@@ -12,7 +12,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json(ApiResponse.failure('File not found'));
 	}
 
-	const usecase = new ParseStudentListUsecase(new ImageStudentListParser());
+	const usecase = new ParseStudentListUsecase(serviceProvider.services.ImageStudentListParser);
 
 	try {
 		const result = await usecase.execute({ file: file as File });

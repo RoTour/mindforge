@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test, vi, type Mock } from 'vi
 import { PromotionQuestionPlanned } from '../../domain/events/PromotionQuestionPlanned.event';
 import { ScheduleSessionOnPromotionQuestionPlanned } from './ScheduleSessionOnPromotionQUestionPlanned.listener';
 import type { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
-import type { IMessageQueue } from '$lib/ddd/interfaces/MessageQueue.interface';
+import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
 
 describe('Listener: ScheduleSessionOnPromotionQuestionPlanned', () => {
 	let listener: ScheduleSessionOnPromotionQuestionPlanned;

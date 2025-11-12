@@ -75,6 +75,12 @@ export class ServiceProviderFactory {
 			},
 			clients: {
 				prisma
+			},
+			services: {
+				ImageStudentListParser: new ImageStudentListParser({
+					apiKey: this.env.OPENROUTER_API_KEY,
+					modelName: this.env.OPENROUTER_MODEL_NAME
+				})
 			}
 		};
 	}
@@ -97,5 +103,8 @@ export type ServiceProvider = {
 	eventListeners: Record<string, IDomainEventListener>;
 	clients: {
 		prisma: PrismaClient;
+	};
+	services: {
+		ImageStudentListParser: IStudentListParser;
 	};
 };

@@ -7,7 +7,7 @@ import type { IEnvironment } from '../IEnvironment';
 // 1. Create an environment implementation specific to the worker
 class WorkerEnvironment implements IEnvironment {
 	get DATABASE_URL(): string {
-		return Bun.env.DATABASE_URL!;
+		return Bun.env.DATABASE_URL_DOCKER!;
 	}
 	get REDIS_HOST(): string {
 		return Bun.env.REDIS_HOST!;
@@ -32,9 +32,9 @@ const redisConnection: WorkerOptions['connection'] = {
 	host: Bun.env.REDIS_HOST ?? 'localhost',
 	port: parseInt(Bun.env.REDIS_PORT!, 10)
 };
+console.log(`Connecting to Redis at ${redisConnection.host}:${redisConnection.port}`);
 
 console.log('Starting question scheduling workers...');
-
 // 4. Start the worker, injecting the required repository from the service provider
 export const workers = [
 	startScheduleQuestionSessionWorker(redisConnection, serviceProvider.QuestionSessionRepository)

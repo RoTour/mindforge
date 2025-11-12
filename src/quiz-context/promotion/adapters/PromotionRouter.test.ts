@@ -1,16 +1,13 @@
 // Example test file
 import '$lib/tests/mocks/serviceProvider.mock';
-import type { DeepMockServiceProvider } from '$lib/tests/mocks/serviceProvider.mock';
 import { beforeEach, describe, test, vi, expect, type Mock } from 'vitest';
 import type { Context } from '$lib/server/trpc/context';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 import type { CreatePromotionCommand } from '$quiz/promotion/application/CreatePromotion.usecase';
 import { PromotionRouter } from './PromotionRouter';
 import { InMemoryPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/InMemoryPromotionRepository';
-
-const { serviceProvider: mockedServiceProvider } = (await import('$lib/server/container')) as {
-	serviceProvider: DeepMockServiceProvider;
-};
+import type { ServiceProvider } from '$lib/server/ServiceProvider';
+import { createMockServiceProvider } from '$lib/tests/mocks/serviceProvider.mock';
 
 describe('Unit-QuizRouter', () => {
 	const trpcCreateContext = (): Context => {
@@ -22,10 +19,13 @@ describe('Unit-QuizRouter', () => {
 		};
 	};
 
+	let mockedServiceProvider: ServiceProvider;
+
 	const caller = PromotionRouter.createCaller(trpcCreateContext());
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockedServiceProvider = createMockServiceProvider();
 	});
 
 	test('Non-authenticated users should get UNAUTHORIZED', async () => {

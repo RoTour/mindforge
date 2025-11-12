@@ -7,8 +7,12 @@ interface RedisConfig {
 }
 
 export const createRedisConnection = (config: RedisConfig): WorkerOptions['connection'] => {
-	return {
+	const connection = {
 		host: config.host,
 		port: config.port
 	};
+
+	console.log(`Connecting to Redis at ${connection.host}:${connection.port}`);
+
+	return connection;
 };

@@ -1,5 +1,5 @@
 // /Users/rotour/projects/mindforge/src/lib/server/bullmq/BullMQ.adapter.ts
-import { Queue, Worker, Job as BullMQJob, type QueueOptions } from 'bullmq';
+import { Queue, Worker, Job as BullMQJob, type QueueOptions, type JobsOptions } from 'bullmq';
 import type { IMessageQueue, Job } from '$ddd/interfaces/IMessageQueue';
 
 export class BullMQAdapter implements IMessageQueue {
@@ -15,15 +15,13 @@ export class BullMQAdapter implements IMessageQueue {
 			queue = new Queue(name, { connection: this.connection });
 			this.queues.set(name, queue);
 		}
-		return queue.add(name, data, opts);
+		// The generic JobOptions are compatible with BullMQ's JobsOptions
+		return queue.add(name, data, opts as JobsOptions);
 	}
 
 	process<T>(name: string, callback: (job: Job<T>) => Promise<void>): void {
 		let worker = this.workers.get(name);
 		if (worker) {
-			// Worker for this queue is already processing.
-			// Depending on the desired behavior, you might want to throw an error,
-			// or simply return. For now, let's just return.
 			return;
 		}
 
@@ -32,7 +30,8 @@ export class BullMQAdapter implements IMessageQueue {
 			async (bullMQJob: BullMQJob) => {
 				const job: Job<T> = {
 					name: bullMQJob.name,
-					data: bullMQJob.data
+					data: bullMQJob.data as T,
+					opts: bullMQJob.opts
 				};
 				await callback(job);
 			},

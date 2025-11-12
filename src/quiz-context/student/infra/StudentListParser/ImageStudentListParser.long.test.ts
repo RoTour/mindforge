@@ -12,7 +12,9 @@ describe('ImageStudentListParser integration tests', () => {
 	itif(!!env.OPENROUTER_API_KEY)(
 		'should parse student data from a test image',
 		async () => {
-			const parser = new ImageStudentListParser();
+			const parser = new ImageStudentListParser({
+				apiKey: env.OPENROUTER_API_KEY
+			});
 			const imagePath = path.resolve(process.cwd(), 'test/example_promotion.png');
 
 			// 1. Check if the test file exists

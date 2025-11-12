@@ -1,14 +1,14 @@
 <!-- /src/routes/teacher/promotions/[promotionId]/questions/QuestionPlanner.svelte -->
 <script lang="ts">
-	import type { Snippet } from 'svelte';
 	import { Button, buttonVariants } from '$lib/components/ui/button';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import { Label } from '$lib/components/ui/label';
-	import { Input } from '$lib/components/ui/input';
-	import * as Popover from '$lib/components/ui/popover';
 	import { Calendar } from '$lib/components/ui/calendar';
-	import { getLocalTimeZone, today, type CalendarDate, fromDate } from '@internationalized/date';
+	import * as Dialog from '$lib/components/ui/dialog';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import * as Popover from '$lib/components/ui/popover';
+	import { fromDate, getLocalTimeZone, today, type DateValue } from '@internationalized/date';
 	import ChevronDown from 'lucide-svelte/icons/chevron-down';
+	import type { Snippet } from 'svelte';
 
 	type Props = {
 		children: Snippet;
@@ -28,7 +28,7 @@
 	let open = $state(false);
 
 	// Helper functions to initialize state from props or defaults
-	function getInitialDate(date: Date | null | undefined): CalendarDate {
+	function getInitialDate(date: Date | null | undefined): DateValue {
 		return date ? fromDate(date, getLocalTimeZone()) : today(getLocalTimeZone());
 	}
 
@@ -39,12 +39,12 @@
 
 	// State for the start date-time picker, initialized from props or defaults
 	let startOpen = $state(false);
-	let startDate = $state<CalendarDate | undefined>(getInitialDate(initialStartingOn));
+	let startDate = $state<DateValue | undefined>(getInitialDate(initialStartingOn));
 	let startTime = $state(getInitialTime(initialStartingOn, '10:00:00'));
 
 	// State for the end date-time picker, initialized from props or defaults
 	let endOpen = $state(false);
-	let endDate = $state<CalendarDate | undefined>(getInitialDate(initialEndingOn));
+	let endDate = $state<DateValue | undefined>(getInitialDate(initialEndingOn));
 	let endTime = $state(getInitialTime(initialEndingOn, '11:00:00'));
 
 	// Effect to ensure end date is never before start date
@@ -127,6 +127,7 @@
 							</Popover.Trigger>
 							<Popover.Content class="w-auto overflow-hidden p-0" align="start">
 								<Calendar
+									type="single"
 									bind:value={startDate}
 									onValueChange={() => {
 										startOpen = false;
@@ -159,6 +160,7 @@
 							</Popover.Trigger>
 							<Popover.Content class="w-auto overflow-hidden p-0" align="start">
 								<Calendar
+									type="single"
 									bind:value={endDate}
 									minValue={startDate}
 									onValueChange={() => {

@@ -1,7 +1,7 @@
 // /Users/rotour/projects/mindforge/src/quiz-context/promotion/domain/PlannedQuestion.test.ts
 import { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { PlannedQuestion } from './PlannedQuestion.valueObject';
+import { PlannedQuestion } from './PlannedQuestion.entity';
 import { EndingDateBeforeStartingDateError } from './PlannedQuestion.errors';
 
 describe('PlannedQuestion', () => {

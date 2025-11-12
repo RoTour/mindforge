@@ -178,6 +178,7 @@
 						{/if}
 						<Card.Footer class="flex justify-end">
 							<QuestionPlanner
+								triggerVariant="default"
 								onSubmit={(payload) => {
 									vm.planQuestionOnPromotion(question.id, payload.startingOn, payload.endingOn);
 								}}
