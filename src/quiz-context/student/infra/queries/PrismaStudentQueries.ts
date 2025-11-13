@@ -1,6 +1,7 @@
 // src/quiz-context/student/infra/queries/PrismaStudentQueries.ts
 import type { PrismaClient } from '$prisma/client';
-import type { IStudentQueries } from '../../application/queries/IStudentQueries';
+import type { StudentPromotionDto } from '../../application/queries/GetStudentPromotions.dto';
+import type { IStudentQueries } from '../../application/interfaces/IStudentQueries';
 
 export class PrismaStudentQueries implements IStudentQueries {
 	constructor(private readonly client: PrismaClient) {}
@@ -24,5 +25,63 @@ export class PrismaStudentQueries implements IStudentQueries {
 			select: { id: true }
 		});
 		return student?.id ?? null;
+	}
+
+	async getStudentPromotions(studentId: string): Promise<StudentPromotionDto[]> {
+		const studentWithPromotions = await this.client.student.findUnique({
+			where: { id: studentId },
+			include: {
+				promotions: {
+					include: {
+						promotion: {
+							include: {
+								_count: {
+									select: { students: true, plannedQuestions: true }
+								},
+								questionSessions: {
+									select: {
+										id: true,
+										answers: {
+											where: {
+												studentId: studentId
+											},
+											select: {
+												id: true
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+
+		if (!studentWithPromotions) {
+			return [];
+		}
+
+		const studentPromotions = studentWithPromotions.promotions.map((sop) => {
+			const promotion = sop.promotion;
+
+			const completedQuestions = promotion.questionSessions.filter(
+				(qs) => qs.answers.length > 0
+			).length;
+
+			return {
+				id: promotion.id,
+				name: promotion.name,
+				// TODO: Add description to Promotion model
+				description: null,
+				progress: {
+					completed: completedQuestions,
+					total: promotion._count.plannedQuestions
+				},
+				studentCount: promotion._count.students
+			};
+		});
+
+		return studentPromotions;
 	}
 }

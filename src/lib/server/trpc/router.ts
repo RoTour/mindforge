@@ -1,6 +1,7 @@
 import { PromotionRouter } from '$quiz/promotion/adapters/PromotionRouter.js';
 import { QuestionRouter } from '$quiz/question/adapters/QuestionRouter.js';
 import { QuestionSessionRouter } from '$quiz/question-session/adapters/QuestionSessionRouter.js';
+import { StudentDashboardRouter } from '$quiz/student/adapters/StudentDashboardRouter.js';
 import { StudentLobbyRouter } from '$quiz/student/adapters/StudentLobbyRouter.js';
 import { StudentsOverviewRouter } from '$quiz/student/adapters/StudentRouter.js';
 import { TeacherRouter } from '$quiz/teacher/adapters/TeacherRouter.js';
@@ -12,7 +13,8 @@ export const appRouter = router({
 	teacher: TeacherRouter,
 	student: StudentsOverviewRouter,
 	studentLobby: StudentLobbyRouter,
-	questionSession: QuestionSessionRouter
+	questionSession: QuestionSessionRouter,
+	studentDashboard: StudentDashboardRouter
 });
 
 export type AppRouter = typeof appRouter;
