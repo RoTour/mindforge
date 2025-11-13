@@ -6,20 +6,21 @@ import { createContext } from '$lib/server/trpc/context';
 import { serialize } from '$lib/lib/utils';
 
 export const load: LayoutServerLoad = async (event) => {
-    const { params } = event;
-    const { promotionId } = params;
+	const { params } = event;
+	const { promotionId } = params;
 
-    try {
-        const activeSession = await StudentLobbyRouter.createCaller(() => createContext(event))
-            .getActiveSession({ promotionId });
+	try {
+		const activeSession = await StudentLobbyRouter.createCaller(() =>
+			createContext(event)
+		).getActiveSession({ promotionId });
 
-        return {
-            activeSession: activeSession ? serialize(activeSession) : null
-        };
-    } catch (e) {
-        redirectOnTRPCError(e, {
-            'UNAUTHORIZED': '/auth/sign-in',
-            'FORBIDDEN': '/'
-        });
-    }
+		return {
+			activeSession: activeSession ? serialize(activeSession) : null
+		};
+	} catch (e) {
+		redirectOnTRPCError(e, {
+			UNAUTHORIZED: '/auth/sign-in',
+			FORBIDDEN: '/'
+		});
+	}
 };

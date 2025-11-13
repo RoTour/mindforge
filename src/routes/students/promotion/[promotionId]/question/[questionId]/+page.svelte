@@ -4,28 +4,31 @@
 		Card,
 		CardContent,
 		CardDescription,
-		CardFooter,
 		CardHeader,
 		CardTitle
 	} from '$lib/components/ui/card';
 	import { Button } from '$lib/components/ui/button';
 	import { Textarea } from '$lib/components/ui/textarea';
 	import { Label } from '$lib/components/ui/label';
+	import { QuestionAnswerVM } from './QuestionAnswerVM.svelte';
 
 	type Props = {
-		question: {
-			id: string;
-			text: string;
+		data: {
+			question: {
+				id: string;
+				text: string;
+			};
+			sessionId: string;
+			promotionId: string;
 		};
 	};
-	let { question }: Props = $props();
+	let { data }: Props = $props();
 
-	let answer = $state('');
+	const vm = new QuestionAnswerVM(data.promotionId, data.sessionId);
 
 	function handleSubmit(event: Event) {
 		event.preventDefault();
-		console.log('Submitting answer:', answer);
-		// Here we would call a tRPC mutation to submit the answer
+		vm.submitAnswer();
 	}
 </script>
 
@@ -36,12 +39,26 @@
 			<CardDescription>Read the question carefully and provide your answer below.</CardDescription>
 		</CardHeader>
 		<CardContent>
-			<p class="mb-4 text-lg">{question.text}</p>
+			<p class="mb-4 text-lg">{data.question.text}</p>
 			<form onsubmit={handleSubmit}>
 				<div class="grid w-full gap-2">
 					<Label for="answer">Your Answer</Label>
-					<Textarea id="answer" bind:value={answer} placeholder="Type your answer here." />
-					<Button type="submit">Submit Answer</Button>
+					<Textarea
+						id="answer"
+						bind:value={vm.answer}
+						placeholder="Type your answer here."
+						disabled={vm.isSubmitting}
+					/>
+					{#if vm.error}
+						<p class="text-destructive text-sm">{vm.error}</p>
+					{/if}
+					<Button type="submit" disabled={vm.isSubmitting}>
+						{#if vm.isSubmitting}
+							Submitting...
+						{:else}
+							Submit Answer
+						{/if}
+					</Button>
 				</div>
 			</form>
 		</CardContent>
