@@ -10,6 +10,7 @@ import {
 	SessionIsNotPendingError,
 	StudentAlreadyAnsweredError
 } from './QuestionSession.errors';
+import { StudentAnswerSubmitted } from './events/StudentAnswerSubmitted.event';
 
 export type QuestionSessionStatus = 'PENDING' | 'ACTIVE' | 'CLOSED' | 'GRADING';
 
@@ -87,5 +88,9 @@ export class QuestionSession extends AggregateRoot<QuestionSessionId> {
 			throw new StudentAlreadyAnsweredError();
 		}
 		this.answers.push(answer);
+
+		this.addDomainEvent(
+			new StudentAnswerSubmitted(this.id.id(), answer.studentId.id(), answer.text)
+		);
 	}
 }

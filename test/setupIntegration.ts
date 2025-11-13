@@ -90,9 +90,7 @@ beforeAll(async () => {
 			OPENROUTER_MODEL_NAME: 'test-model'
 		})
 		.withCommand(['bun', 'run', '/app/src/lib/server/jobs/worker.ts'])
-		.withWaitStrategy(
-			Wait.forLogMessage('Question scheduling worker is ready and listening for jobs !')
-		)
+		.withWaitStrategy(Wait.forLogMessage('Workers are ready and listening for jobs !'))
 		.withLogConsumer((stream) => {
 			stream.on('data', (line) => console.log('[WORKER]', line));
 			stream.on('err', (line) => console.error('[WORKER ERROR]', line));

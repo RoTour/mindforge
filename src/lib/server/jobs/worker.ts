@@ -1,5 +1,6 @@
 // This is a separate process that runs in parallel to the main server process.
 import { startScheduleQuestionSessionWorker } from '$quiz/question-session/adapters/ScheduleQuestionSessionWorker.adapter';
+import { startRegisterStudentAnswerWorker } from '$quiz/question-session/adapters/RegisterStudentAnswerWorker.adapter';
 import type { WorkerOptions } from 'bullmq';
 import { ServiceProviderFactory } from '../ServiceProvider';
 import type { IEnvironment } from '../IEnvironment';
@@ -34,12 +35,13 @@ const redisConnection: WorkerOptions['connection'] = {
 };
 
 // This log is used by testContainers to ensure the worker is ready - do not remove it
-console.log('Question scheduling worker is ready and listening for jobs !');
+console.log('Workers are ready and listening for jobs !');
 
 console.log(`Connecting to Redis at ${redisConnection.host}:${redisConnection.port}`);
 
-console.log('Starting question scheduling workers...');
+console.log('Starting workers...');
 // 4. Start the worker, injecting the required repository from the service provider
 export const workers = [
-	startScheduleQuestionSessionWorker(redisConnection, serviceProvider.QuestionSessionRepository)
+	startScheduleQuestionSessionWorker(redisConnection, serviceProvider.QuestionSessionRepository),
+	startRegisterStudentAnswerWorker(redisConnection, serviceProvider.QuestionSessionRepository)
 ];
