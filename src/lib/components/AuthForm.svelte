@@ -34,29 +34,32 @@
 		error = null;
 		try {
 			if (type === 'signup') {
-				await authClient.signUp.email({
+				const result = await authClient.signUp.email({
 					email,
 					password,
 					name: email
 				});
-				goto(resolve('/'));
-				return;
+				if (result.error === null) {
+					goto(resolve('/'));
+					return;
+				}
+				error = result.error.message ?? 'An unknown error occurred.';
+			} else {
+				const result = await authClient.signIn.email({
+					email,
+					password
+				});
+				if (result.error === null) {
+					console.log('Login successful');
+					goto(resolve('/'));
+					return;
+				}
+				error = result.error.message ?? 'An unknown error occurred.';
 			}
-			await authClient.signIn.email({
-				email,
-				password
-			});
-			goto(resolve('/'));
 		} catch (err) {
 			console.error('Login error:', err);
 			error = (err as Error).message || 'An unknown error occurred.';
 		}
-
-		// if (result.success) {
-		// 	await goto('/teacher/create-promotion', { invalidateAll: true });
-		// } else {
-		// 	error = result.error ?? 'An unknown error occurred.';
-		// }
 		isLoading = false;
 	}
 
