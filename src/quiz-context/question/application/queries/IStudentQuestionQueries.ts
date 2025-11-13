@@ -2,11 +2,10 @@
 import type { QuestionId } from '../../domain/QuestionId.valueObject';
 
 export type QuestionDetailsDTO = {
-    id: string;
-    text: string;
-    keyNotions: any | null;
+	id: string;
+	text: string;
 };
 
 export interface IStudentQuestionQueries {
-    getQuestionDetails(questionId: QuestionId): Promise<QuestionDetailsDTO | null>;
+	getQuestionDetails(questionId: QuestionId): Promise<QuestionDetailsDTO | null>;
 }

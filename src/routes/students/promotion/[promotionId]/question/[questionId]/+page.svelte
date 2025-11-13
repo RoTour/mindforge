@@ -16,7 +16,6 @@
 		question: {
 			id: string;
 			text: string;
-			keyNotions: any | null;
 		};
 	};
 	let { question }: Props = $props();
@@ -37,7 +36,7 @@
 			<CardDescription>Read the question carefully and provide your answer below.</CardDescription>
 		</CardHeader>
 		<CardContent>
-			<p class="mb-4 text-lg">{data.question.text}</p>
+			<p class="mb-4 text-lg">{question.text}</p>
 			<form onsubmit={handleSubmit}>
 				<div class="grid w-full gap-2">
 					<Label for="answer">Your Answer</Label>
@@ -46,17 +45,5 @@
 				</div>
 			</form>
 		</CardContent>
-		{#if data.question.keyNotions}
-			<CardFooter>
-				<div class="flex flex-wrap gap-2">
-					<p class="text-muted-foreground text-sm">Key notions:</p>
-					{#each Object.entries(data.question.keyNotions) as [notion, weight]}
-						<div class="bg-secondary text-secondary-foreground rounded-md px-2 py-1 text-xs">
-							{notion} ({weight})
-						</div>
-					{/each}
-				</div>
-			</CardFooter>
-		{/if}
 	</Card>
 </div>
