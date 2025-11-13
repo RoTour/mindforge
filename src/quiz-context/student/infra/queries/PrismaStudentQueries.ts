@@ -28,7 +28,8 @@ export class PrismaStudentQueries implements IStudentQueries {
 			return {
 				nbPromotionsEnrolled: 0,
 				nbQuestionsAnswered: 0,
-				nbTotalQuestions: 0
+				nbTotalQuestions: 0,
+				fullName: 'Anonymous Student'
 			};
 		}
 
@@ -42,10 +43,18 @@ export class PrismaStudentQueries implements IStudentQueries {
 			where: { studentId: studentId }
 		});
 
+		const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+
 		return {
 			nbPromotionsEnrolled,
 			nbQuestionsAnswered,
-			nbTotalQuestions
+			nbTotalQuestions,
+			fullName: [
+				capitalize(studentWithPromotions.name),
+				capitalize(studentWithPromotions.lastName ?? '')
+			]
+				.join(' ')
+				.trim()
 		};
 	}
 

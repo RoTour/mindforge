@@ -28,7 +28,8 @@ export const load: PageServerLoad = async (event) => {
 				summaryStats: {
 					nbPromotionsEnrolled: 0,
 					nbQuestionsAnswered: 0,
-					nbTotalQuestions: 0
+					nbTotalQuestions: 0,
+					fullName: 'Anonymous Student'
 				}
 			};
 		}

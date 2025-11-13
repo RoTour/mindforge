@@ -29,7 +29,7 @@
 <section class="w-full space-y-6 px-8 py-4 lg:m-auto lg:w-5/6">
 	<header>
 		<div>
-			<h1 class="text-2xl font-bold">Welcome back, John Doe!</h1>
+			<h1 class="text-2xl font-bold">Welcome back, {data.summaryStats.fullName}!</h1>
 			<p class="text-muted-foreground">
 				Continue learning and master new subjects through interactive quizzes
 			</p>
