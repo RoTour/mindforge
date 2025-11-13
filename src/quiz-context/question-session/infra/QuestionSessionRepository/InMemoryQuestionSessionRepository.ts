@@ -15,10 +15,10 @@ export class InMemoryQuestionSessionRepository implements IQuestionSessionReposi
 		return this.sessions.get(id.id()) ?? null;
 	}
 
-	async findActiveByPromotionId(promotionId: PromotionId): Promise<QuestionSession | null> {
-		const session = Array.from(this.sessions.values()).find(
+	async findActiveByPromotionId(promotionId: PromotionId): Promise<QuestionSession[]> {
+		const sessions = Array.from(this.sessions.values()).filter(
 			(s) => s.promotionId.equals(promotionId) && s.status === 'ACTIVE'
 		);
-		return session ?? null;
+		return sessions;
 	}
 }

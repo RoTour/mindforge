@@ -1,11 +1,15 @@
-// src/quiz-context/adapters/QuestionRouter.ts
+// src/quiz-context/question/adapters/QuestionRouter.ts
 import { serviceProvider } from '$lib/server/container';
 import { router } from '$lib/server/trpc/init';
+import { studentProcedure } from '$lib/server/trpc/procedures/studentProcedure';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import {
 	CreateQuestionCommandSchema,
 	CreateQuestionUsecase
 } from '$quiz/question/application/CreateQuestion.usecase';
+import { QuestionId } from '../domain/QuestionId.valueObject';
+import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 
 export const QuestionRouter = router({
 	createQuestion: teacherProcedure
@@ -17,6 +21,23 @@ export const QuestionRouter = router({
 			);
 
 			await usecase.execute({ ...input, authorId: ctx.teacher.id });
+		}),
+	getDetails: studentProcedure
+		.input(
+			z.object({
+				promotionId: z.string(), // from studentProcedure
+				questionId: z.string()
+			})
+		)
+		.query(async ({ input }) => {
+			const { questionId } = input;
+			const details = await serviceProvider.StudentQuestionQueries.getQuestionDetails(
+				new QuestionId(questionId)
+			);
+			if (!details) {
+				throw new TRPCError({ code: 'NOT_FOUND', message: 'Question not found.' });
+			}
+			return details;
 		})
 });
 

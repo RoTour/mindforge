@@ -13,6 +13,10 @@ import type { ITeacherQuestionsQueries } from '$quiz/question/application/interf
 import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
 import { PrismaTeacherQuestionsQueries } from '$quiz/question/infra/queries/PrismaTeacherQuestionsQueries';
 import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
+import type { IStudentQuestionQueries } from '$quiz/question/application/queries/IStudentQuestionQueries';
+import { PrismaStudentQuestionQueries } from '$quiz/question/infra/queries/PrismaStudentQuestionQueries';
+import type { IStudentLobbyQueries } from '$quiz/question-session/application/queries/IStudentLobbyQueries';
+import { PrismaStudentLobbyQueries } from '$quiz/question-session/infra/queries/PrismaStudentLobbyQueries';
 import type { IEnrollQueries } from '$quiz/student/application/interfaces/IEnrollQueries';
 import type { IPromotionStudentsQueries } from '$quiz/student/application/interfaces/IPromotionStudentsQueries';
 import type { IStudentsOverviewQueries } from '$quiz/student/application/interfaces/IStudentsOverviewQueries';
@@ -23,6 +27,8 @@ import { PrismaPromotionStudentsQueries } from '$quiz/student/infra/queries/Pris
 import { PrismaStudentsOverviewQueries } from '$quiz/student/infra/queries/PrismaStudentsOverviewQueries';
 import { ImageStudentListParser } from '$quiz/student/infra/StudentListParser/ImageStudentListParser';
 import { PrismaStudentRepository } from '$quiz/student/infra/StudentRepository/PrismaStudentRepository';
+import type { IStudentQueries } from '$quiz/student/application/queries/IStudentQueries';
+import { PrismaStudentQueries } from '$quiz/student/infra/queries/PrismaStudentQueries';
 import type { ITeacherQueries } from '$quiz/teacher/application/interfaces/ITeacherQueries';
 import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeacherRepository';
 import { PrismaTeacherQueries } from '$quiz/teacher/infra/queries/PrismaTeacherQueries';
@@ -66,6 +72,9 @@ export class ServiceProviderFactory {
 			TeacherPromotionsQueries: new PrismaTeacherPromotionsQueries(prisma),
 			StudentsOverviewQueries: new PrismaStudentsOverviewQueries(prisma),
 			TeacherQuestionsQueries: new PrismaTeacherQuestionsQueries(prisma),
+			StudentQueries: new PrismaStudentQueries(prisma),
+			StudentLobbyQueries: new PrismaStudentLobbyQueries(prisma),
+			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
 			MessageQueue: mq,
 			eventListeners: {
 				scheduleSessionOnPromotionQuestionPlanned: new ScheduleSessionOnPromotionQuestionPlanned(
@@ -99,6 +108,9 @@ export type ServiceProvider = {
 	TeacherPromotionsQueries: ITeacherPromotionsQueries;
 	StudentsOverviewQueries: IStudentsOverviewQueries;
 	TeacherQuestionsQueries: ITeacherQuestionsQueries;
+	StudentQueries: IStudentQueries;
+	StudentLobbyQueries: IStudentLobbyQueries;
+	StudentQuestionQueries: IStudentQuestionQueries;
 	MessageQueue: IMessageQueue;
 	eventListeners: Record<string, IDomainEventListener>;
 	clients: {

@@ -91,8 +91,8 @@ export class PrismaQuestionSessionRepository implements IQuestionSessionReposito
 		return QuestionSessionMapper.fromPrismaToDomain(prismaSession);
 	}
 
-	async findActiveByPromotionId(promotionId: PromotionId): Promise<QuestionSession | null> {
-		const prismaSession = await this.prisma.questionSession.findFirst({
+	async findActiveByPromotionId(promotionId: PromotionId): Promise<QuestionSession[]> {
+		const prismaSessions = await this.prisma.questionSession.findMany({
 			where: {
 				promotionId: promotionId.id(),
 				status: 'ACTIVE'
@@ -100,8 +100,6 @@ export class PrismaQuestionSessionRepository implements IQuestionSessionReposito
 			include: { answers: true }
 		});
 
-		if (!prismaSession) return null;
-
-		return QuestionSessionMapper.fromPrismaToDomain(prismaSession);
+		return prismaSessions.map(QuestionSessionMapper.fromPrismaToDomain);
 	}
 }
