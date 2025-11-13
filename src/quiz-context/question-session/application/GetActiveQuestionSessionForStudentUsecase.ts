@@ -1,22 +1,25 @@
-// src/quiz-context/question-session/application/GetActiveQuestionSessionForStudentUsecase.ts
 import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
-import type {
-	ActiveQuestionSessionDTO,
-	IStudentLobbyQueries
-} from './queries/IStudentLobbyQueries';
+import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
+import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';
+import type { QuestionSession } from '../domain/QuestionSession.entity';
 
 export type GetActiveQuestionSessionForStudentCommand = {
 	promotionId: string;
+	studentId: string;
 };
 
 export class GetActiveQuestionSessionForStudentUsecase {
-	constructor(private readonly studentLobbyQueries: IStudentLobbyQueries) {}
+	constructor(private readonly questionSessionRepository: IQuestionSessionRepository) {}
 
 	async execute(
 		command: GetActiveQuestionSessionForStudentCommand
-	): Promise<ActiveQuestionSessionDTO | null> {
+	): Promise<QuestionSession | null> {
 		const promotionId = new PromotionId(command.promotionId);
-		const activeSessions = await this.studentLobbyQueries.getActiveQuestionSessions(promotionId);
+		const studentId = new StudentId(command.studentId);
+		const activeSessions = await this.questionSessionRepository.findActiveByPromotionIdForStudent(
+			promotionId,
+			studentId
+		);
 
 		if (activeSessions.length === 0) {
 			return null;

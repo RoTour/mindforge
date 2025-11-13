@@ -33,34 +33,45 @@
 </script>
 
 <div class="container mx-auto flex h-full max-w-2xl items-center justify-center">
-	<Card class="w-full">
-		<CardHeader>
-			<CardTitle>Question</CardTitle>
-			<CardDescription>Read the question carefully and provide your answer below.</CardDescription>
-		</CardHeader>
-		<CardContent>
-			<p class="mb-4 text-lg">{data.question.text}</p>
-			<form onsubmit={handleSubmit}>
-				<div class="grid w-full gap-2">
-					<Label for="answer">Your Answer</Label>
-					<Textarea
-						id="answer"
-						bind:value={vm.answer}
-						placeholder="Type your answer here."
-						disabled={vm.isSubmitting}
-					/>
-					{#if vm.error}
-						<p class="text-destructive text-sm">{vm.error}</p>
-					{/if}
-					<Button type="submit" disabled={vm.isSubmitting}>
-						{#if vm.isSubmitting}
-							Submitting...
-						{:else}
-							Submit Answer
+	{#if vm.isSubmitted}
+		<div class="text-center">
+			<h1 class="text-2xl font-bold">Answer submitted!</h1>
+			<p class="text-muted-foreground">
+				You'll be redirected to the lobby in {vm.countdown} seconds...
+			</p>
+		</div>
+	{:else}
+		<Card class="w-full">
+			<CardHeader>
+				<CardTitle>Question</CardTitle>
+				<CardDescription>
+					Read the question carefully and provide your answer below.
+				</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<p class="mb-4 text-lg">{data.question.text}</p>
+				<form onsubmit={handleSubmit}>
+					<div class="grid w-full gap-2">
+						<Label for="answer">Your Answer</Label>
+						<Textarea
+							id="answer"
+							bind:value={vm.answer}
+							placeholder="Type your answer here."
+							disabled={vm.isSubmitting}
+						/>
+						{#if vm.error}
+							<p class="text-destructive text-sm">{vm.error}</p>
 						{/if}
-					</Button>
-				</div>
-			</form>
-		</CardContent>
-	</Card>
+						<Button type="submit" disabled={vm.isSubmitting}>
+							{#if vm.isSubmitting}
+								Submitting...
+							{:else}
+								Submit Answer
+							{/if}
+						</Button>
+					</div>
+				</form>
+			</CardContent>
+		</Card>
+	{/if}
 </div>

@@ -102,4 +102,26 @@ export class PrismaQuestionSessionRepository implements IQuestionSessionReposito
 
 		return prismaSessions.map(QuestionSessionMapper.fromPrismaToDomain);
 	}
+
+	async findActiveByPromotionIdForStudent(
+		promotionId: PromotionId,
+		studentId: StudentId
+	): Promise<QuestionSession[]> {
+		const prismaSessions = await this.prisma.questionSession.findMany({
+			where: {
+				promotionId: promotionId.id(),
+				status: 'ACTIVE',
+				NOT: {
+					answers: {
+						some: {
+							studentId: studentId.id()
+						}
+					}
+				}
+			},
+			include: { answers: true }
+		});
+
+		return prismaSessions.map(QuestionSessionMapper.fromPrismaToDomain);
+	}
 }

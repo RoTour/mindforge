@@ -1,5 +1,6 @@
 // src/quiz-context/infra/QuestionSessionRepository/InMemoryQuestionSessionRepository.ts
 import type { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
+import type { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
 import type { QuestionSession } from '$quiz/question-session/domain/QuestionSession.entity';
 import type { QuestionSessionId } from '$quiz/question-session/domain/QuestionSessionId.valueObject';
@@ -19,6 +20,17 @@ export class InMemoryQuestionSessionRepository implements IQuestionSessionReposi
 		const sessions = Array.from(this.sessions.values()).filter(
 			(s) => s.promotionId.equals(promotionId) && s.status === 'ACTIVE'
 		);
+		return sessions;
+	}
+
+	async findActiveByPromotionIdForStudent(
+		promotionId: PromotionId,
+		studentId: StudentId
+	): Promise<QuestionSession[]> {
+		const sessions = Array.from(this.sessions.values()).filter((s) => {
+			const isAnsweredByStudent = s.answers.some((a) => a.studentId.equals(studentId));
+			return s.promotionId.equals(promotionId) && s.status === 'ACTIVE' && !isAnsweredByStudent;
+		});
 		return sessions;
 	}
 }

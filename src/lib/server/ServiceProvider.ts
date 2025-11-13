@@ -15,8 +15,6 @@ import { PrismaTeacherQuestionsQueries } from '$quiz/question/infra/queries/Pris
 import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
 import type { IStudentQuestionQueries } from '$quiz/question/application/queries/IStudentQuestionQueries';
 import { PrismaStudentQuestionQueries } from '$quiz/question/infra/queries/PrismaStudentQuestionQueries';
-import type { IStudentLobbyQueries } from '$quiz/question-session/application/queries/IStudentLobbyQueries';
-import { PrismaStudentLobbyQueries } from '$quiz/question-session/infra/queries/PrismaStudentLobbyQueries';
 import type { IEnrollQueries } from '$quiz/student/application/interfaces/IEnrollQueries';
 import type { IPromotionStudentsQueries } from '$quiz/student/application/interfaces/IPromotionStudentsQueries';
 import type { IStudentsOverviewQueries } from '$quiz/student/application/interfaces/IStudentsOverviewQueries';
@@ -73,7 +71,6 @@ export class ServiceProviderFactory {
 			StudentsOverviewQueries: new PrismaStudentsOverviewQueries(prisma),
 			TeacherQuestionsQueries: new PrismaTeacherQuestionsQueries(prisma),
 			StudentQueries: new PrismaStudentQueries(prisma),
-			StudentLobbyQueries: new PrismaStudentLobbyQueries(prisma),
 			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
 			MessageQueue: mq,
 			eventListeners: {
@@ -109,7 +106,6 @@ export type ServiceProvider = {
 	StudentsOverviewQueries: IStudentsOverviewQueries;
 	TeacherQuestionsQueries: ITeacherQuestionsQueries;
 	StudentQueries: IStudentQueries;
-	StudentLobbyQueries: IStudentLobbyQueries;
 	StudentQuestionQueries: IStudentQuestionQueries;
 	MessageQueue: IMessageQueue;
 	eventListeners: Record<string, IDomainEventListener>;
