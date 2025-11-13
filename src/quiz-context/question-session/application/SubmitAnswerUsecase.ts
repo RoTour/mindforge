@@ -6,28 +6,30 @@ import { Answer } from '../domain/Answer.entity';
 import { TRPCError } from '@trpc/server';
 
 export type SubmitAnswerCommand = {
-    questionSessionId: string;
-    studentId: string;
-    answerText: string;
+	questionSessionId: string;
+	studentId: string;
+	answerText: string;
 };
 
 export class SubmitAnswerUsecase {
-    constructor(private readonly questionSessionRepository: IQuestionSessionRepository) {}
+	constructor(private readonly questionSessionRepository: IQuestionSessionRepository) {}
 
-    async execute(command: SubmitAnswerCommand): Promise<void> {
-        const session = await this.questionSessionRepository.findById(new QuestionSessionId(command.questionSessionId));
-        if (!session) {
-            throw new TRPCError({ code: 'NOT_FOUND', message: 'Question session not found' });
-        }
+	async execute(command: SubmitAnswerCommand): Promise<void> {
+		const session = await this.questionSessionRepository.findById(
+			new QuestionSessionId(command.questionSessionId)
+		);
+		if (!session) {
+			throw new TRPCError({ code: 'NOT_FOUND', message: 'Question session not found' });
+		}
 
-        const answer = new Answer({
-            studentId: new StudentId(command.studentId),
-            text: command.answerText,
-            submittedAt: new Date()
-        });
+		const answer = new Answer({
+			studentId: new StudentId(command.studentId),
+			text: command.answerText,
+			submittedAt: new Date()
+		});
 
-        session.submitAnswer(answer);
+		session.submitAnswer(answer);
 
-        await this.questionSessionRepository.save(session);
-    }
+		await this.questionSessionRepository.save(session);
+	}
 }
