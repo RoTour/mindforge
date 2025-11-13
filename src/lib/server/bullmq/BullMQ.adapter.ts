@@ -8,7 +8,7 @@ export class BullMQAdapter implements IMessageQueue {
 
 	constructor(private readonly connection: QueueOptions['connection']) {}
 
-	async add<T>(job: Job<T>): Promise<any> {
+	async add<T>(job: Job<T>): Promise<BullMQJob> {
 		const { name, data, opts } = job;
 		let queue = this.queues.get(name);
 		if (!queue) {
@@ -39,5 +39,19 @@ export class BullMQAdapter implements IMessageQueue {
 		);
 
 		this.workers.set(name, worker);
+	}
+
+	async debug(): Promise<void> {
+		const items = await Promise.all(
+			Array.from(this.queues.entries()).map(async ([key, val]) => ({
+				name: key,
+				active: await val.getActiveCount(),
+				completed: await val.getCompletedCount(),
+				failed: await val.getFailedCount(),
+				delayed: await val.getDelayedCount(),
+				waiting: await val.getWaitingCount()
+			}))
+		);
+		console.debug('[DEBUG] BullMQ Adapter', items);
 	}
 }

@@ -13,9 +13,9 @@ export type AcceptAnswerCommand = {
 export class AcceptAnswerUsecase {
 	constructor(private readonly mq: IMessageQueue) {}
 
-	async execute(command: AcceptAnswerCommand): Promise<void> {
+	async execute(command: AcceptAnswerCommand): Promise<any> {
 		const processCommand = new ProcessStudentAnswerCommand(command);
-		await this.mq.add({
+		return this.mq.add({
 			name: ProcessStudentAnswerCommand.type,
 			data: processCommand.payload,
 			opts: {
