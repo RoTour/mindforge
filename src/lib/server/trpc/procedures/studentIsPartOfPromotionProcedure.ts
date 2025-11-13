@@ -4,7 +4,7 @@ import { serviceProvider } from '$lib/server/container';
 import { t } from '../init';
 import { z } from 'zod';
 
-export const studentProcedure = t.procedure
+export const studentIsPartOfPromotionProcedure = t.procedure
 	.input(z.object({ promotionId: z.string() }))
 	.use(async ({ ctx, next, input }) => {
 		const { authUserId } = ctx;

@@ -1,7 +1,7 @@
 // src/quiz-context/question/adapters/QuestionRouter.ts
 import { serviceProvider } from '$lib/server/container';
 import { router } from '$lib/server/trpc/init';
-import { studentProcedure } from '$lib/server/trpc/procedures/studentProcedure';
+import { studentIsPartOfPromotionProcedure } from '$lib/server/trpc/procedures/studentIsPartOfPromotionProcedure';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import {
 	CreateQuestionCommandSchema,
@@ -22,7 +22,7 @@ export const QuestionRouter = router({
 
 			await usecase.execute({ ...input, authorId: ctx.teacher.id });
 		}),
-	getDetails: studentProcedure
+	getDetails: studentIsPartOfPromotionProcedure
 		.input(
 			z.object({
 				promotionId: z.string(), // from studentProcedure

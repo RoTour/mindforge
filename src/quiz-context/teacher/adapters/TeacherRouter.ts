@@ -6,6 +6,9 @@ import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import z from 'zod';
 
 export const TeacherRouter = router({
+	amIaTeacher: teacherProcedure.query(async ({ ctx }) => {
+		return ctx.teacher !== null && ctx.teacher !== undefined;
+	}),
 	listTeacherPromotions: teacherProcedure.query(async ({ ctx }) => {
 		return serviceProvider.TeacherPromotionsQueries.listTeacherPromotions(ctx.teacher.id);
 	}),

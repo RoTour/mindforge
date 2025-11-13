@@ -5,6 +5,17 @@ import { getPrismaTestClient } from '../../../../test/setupIntegration';
 
 export function createMockServiceProvider(overrides?: Partial<ServiceProvider>): ServiceProvider {
 	return {
+		StudentQueries: {
+			getStudentIdByAuthUserId: vi.fn(),
+			getStudentPromotions: vi.fn(),
+			getStudentSummaryStats: vi.fn(),
+			isStudentInPromotion: vi.fn(),
+			...overrides?.StudentQueries
+		},
+		StudentQuestionQueries: {
+			getQuestionDetails: vi.fn(),
+			...overrides?.StudentQuestionQueries
+		},
 		PromotionRepository: {
 			save: vi.fn(),
 			findById: vi.fn(),
@@ -35,6 +46,7 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 			save: vi.fn(),
 			findById: vi.fn(),
 			findActiveByPromotionId: vi.fn(),
+			findActiveByPromotionIdForStudent: vi.fn(),
 			...overrides?.QuestionSessionRepository
 		},
 		StudentListParser: {
