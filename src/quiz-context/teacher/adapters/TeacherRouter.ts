@@ -7,8 +7,8 @@ import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import z from 'zod';
 
 export const TeacherRouter = router({
-	amIaTeacher: authedAnyUserProcedure.query(async () => {
-		const teacher = await serviceProvider.TeacherQueries.findByAuthUserId(authUserId);
+	amIaTeacher: authedAnyUserProcedure.query(async ({ ctx }) => {
+		const teacher = await serviceProvider.TeacherQueries.findByAuthUserId(ctx.authUserId);
 		return !!teacher;
 	}),
 	listTeacherPromotions: teacherProcedure.query(async ({ ctx }) => {
