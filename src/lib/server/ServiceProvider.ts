@@ -25,7 +25,7 @@ import { PrismaPromotionStudentsQueries } from '$quiz/student/infra/queries/Pris
 import { PrismaStudentsOverviewQueries } from '$quiz/student/infra/queries/PrismaStudentsOverviewQueries';
 import { ImageStudentListParser } from '$quiz/student/infra/StudentListParser/ImageStudentListParser';
 import { PrismaStudentRepository } from '$quiz/student/infra/StudentRepository/PrismaStudentRepository';
-import type { IStudentQueries } from '$quiz/student/application/queries/IStudentQueries';
+import type { IStudentQueries } from '$quiz/student/application/interfaces/IStudentQueries';
 import { PrismaStudentQueries } from '$quiz/student/infra/queries/PrismaStudentQueries';
 import type { ITeacherQueries } from '$quiz/teacher/application/interfaces/ITeacherQueries';
 import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeacherRepository';
