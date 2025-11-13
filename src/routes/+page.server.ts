@@ -5,8 +5,13 @@ import { appRouter } from '$lib/server/trpc/router';
 import type { PageServerLoad } from './$types';
 import { redirectOnTRPCError } from '$lib/server/trpc/guard';
 import { TRPCError } from '@trpc/server';
+import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async (event) => {
+	const parentData = await event.parent(); // ensures that the auth load function has run
+	if (parentData.userIsATeacher) {
+		throw redirect(303, '/teacher/promotions');
+	}
 	try {
 		const caller = appRouter.createCaller(await createContext(event));
 		const [promotions, summaryStats] = await Promise.all([

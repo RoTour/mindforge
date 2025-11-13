@@ -6,7 +6,7 @@
 	import { CreatePromotionVM } from './CreatePromotionVM.svelte';
 	import StudentTable from './StudentTable.svelte';
 
-	const vm = new CreatePromotionVM(true);
+	const vm = new CreatePromotionVM(false);
 </script>
 
 <div class="container mx-auto p-8">

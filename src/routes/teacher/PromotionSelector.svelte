@@ -48,7 +48,7 @@
 						{/if}
 					</DropdownMenu.Item>
 				{/each}
-				<DropdownMenu.Item onSelect={() => goto(resolve('/teacher/create-promotion'))}>
+				<DropdownMenu.Item onSelect={() => goto(resolve('/teacher/promotions/create'))}>
 					<Plus />Create new promotion
 				</DropdownMenu.Item>
 			</DropdownMenu.Content>
