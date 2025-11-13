@@ -1,13 +1,15 @@
 import { serviceProvider } from '$lib/server/container';
 import { router } from '$lib/server/trpc/init';
+import { authedAnyUserProcedure } from '$lib/server/trpc/procedures/authedAnyUserProcedure';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import { OwnPromotionMiddleware } from '$quiz/promotion/adapters/OwnPromotion';
 import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import z from 'zod';
 
 export const TeacherRouter = router({
-	amIaTeacher: teacherProcedure.query(async ({ ctx }) => {
-		return ctx.teacher !== null && ctx.teacher !== undefined;
+	amIaTeacher: authedAnyUserProcedure.query(async () => {
+		const teacher = await serviceProvider.TeacherQueries.findByAuthUserId(authUserId);
+		return !!teacher;
 	}),
 	listTeacherPromotions: teacherProcedure.query(async ({ ctx }) => {
 		return serviceProvider.TeacherPromotionsQueries.listTeacherPromotions(ctx.teacher.id);

@@ -11,12 +11,11 @@ type RedirectRules = Partial<Record<TRPC_ERROR_CODE_KEY, string>>;
  * @param e The error caught in a catch block.
  * @param rules A map of tRPC error codes to redirect paths.
  */
-export function redirectOnTRPCError(e: unknown, rules: RedirectRules): never {
+export function redirectOnTRPCError(e: unknown, rules: RedirectRules): void {
 	if (e instanceof TRPCError) {
 		const redirectPath = rules[e.code];
 		if (redirectPath) {
 			throw redirect(303, redirectPath);
 		}
 	}
-	throw e;
 }
