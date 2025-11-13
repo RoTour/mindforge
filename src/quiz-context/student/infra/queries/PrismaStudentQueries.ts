@@ -1,10 +1,53 @@
 // src/quiz-context/student/infra/queries/PrismaStudentQueries.ts
 import type { PrismaClient } from '$prisma/client';
-import type { StudentPromotionDto } from '../../application/queries/GetStudentPromotions.dto';
+import type { StudentPromotionDto } from '../../application/dtos/StudentPromotionsDto';
 import type { IStudentQueries } from '../../application/interfaces/IStudentQueries';
+import type { StudentSummaryStatsDto } from '../../application/dtos/StudentSummaryStatsDto';
 
 export class PrismaStudentQueries implements IStudentQueries {
 	constructor(private readonly client: PrismaClient) {}
+	async getStudentSummaryStats(studentId: string): Promise<StudentSummaryStatsDto> {
+		const studentWithPromotions = await this.client.student.findUnique({
+			where: { id: studentId },
+			include: {
+				promotions: {
+					include: {
+						promotion: {
+							include: {
+								_count: {
+									select: { plannedQuestions: true }
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+
+		if (!studentWithPromotions) {
+			return {
+				nbPromotionsEnrolled: 0,
+				nbQuestionsAnswered: 0,
+				nbTotalQuestions: 0
+			};
+		}
+
+		const nbPromotionsEnrolled = studentWithPromotions.promotions.length;
+
+		const nbTotalQuestions = studentWithPromotions.promotions.reduce((total, sop) => {
+			return total + sop.promotion._count.plannedQuestions;
+		}, 0);
+
+		const nbQuestionsAnswered = await this.client.answer.count({
+			where: { studentId: studentId }
+		});
+
+		return {
+			nbPromotionsEnrolled,
+			nbQuestionsAnswered,
+			nbTotalQuestions
+		};
+	}
 
 	async isStudentInPromotion(authUserId: string, promotionId: string): Promise<boolean> {
 		const count = await this.client.studentsOnPromotions.count({

@@ -9,17 +9,28 @@ import { TRPCError } from '@trpc/server';
 export const load: PageServerLoad = async (event) => {
 	try {
 		const caller = appRouter.createCaller(await createContext(event));
-		const promotions = await caller.studentDashboard.getMyPromotions();
+		const [promotions, summaryStats] = await Promise.all([
+			caller.studentDashboard.getMyPromotions(),
+			caller.studentDashboard.getSummaryStats()
+		]);
 
 		return {
-			promotions: serialize(promotions)
+			promotions: serialize(promotions),
+			summaryStats: serialize(summaryStats)
 		};
 	} catch (e) {
 		if (e instanceof TRPCError && e.code === 'FORBIDDEN') {
 			// User is logged in, but not a student (or has no student profile).
 			// This is not an exceptional case for the home page.
 			// We can show them a different view (e.g. teacher dashboard link).
-			return { promotions: [] };
+			return {
+				promotions: [],
+				summaryStats: {
+					nbPromotionsEnrolled: 0,
+					nbQuestionsAnswered: 0,
+					nbTotalQuestions: 0
+				}
+			};
 		}
 
 		// For other errors, like UNAUTHORIZED, we can redirect.

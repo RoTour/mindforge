@@ -45,7 +45,7 @@
 						</div>
 						<div>
 							<p class="text-muted-foreground text-sm font-medium">Groups joined</p>
-							<p class="text-2xl font-bold">3</p>
+							<p class="text-2xl font-bold">{data.summaryStats.nbPromotionsEnrolled}</p>
 						</div>
 					</Card.Content>
 				</Card.Root>
@@ -58,7 +58,7 @@
 						</div>
 						<div>
 							<p class="text-muted-foreground text-sm font-medium">Completed questions</p>
-							<p class="text-2xl font-bold">1</p>
+							<p class="text-2xl font-bold">{data.summaryStats.nbQuestionsAnswered}</p>
 						</div>
 					</Card.Content>
 				</Card.Root>
@@ -71,7 +71,7 @@
 						</div>
 						<div>
 							<p class="text-muted-foreground text-sm font-medium">Total questions available</p>
-							<p class="text-2xl font-bold">100</p>
+							<p class="text-2xl font-bold">{data.summaryStats.nbTotalQuestions}</p>
 						</div>
 					</Card.Content>
 				</Card.Root>

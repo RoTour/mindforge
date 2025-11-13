@@ -1,5 +1,6 @@
 // src/quiz-context/student/application/queries/IStudentQueries.ts
 import type { StudentPromotionDto } from '../dtos/StudentPromotionsDto';
+import type { StudentSummaryStatsDto } from '../dtos/StudentSummaryStatsDto';
 
 export interface IStudentQueries {
 	isStudentInPromotion(authUserId: string, promotionId: string): Promise<boolean>;
