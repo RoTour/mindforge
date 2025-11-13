@@ -1,7 +1,7 @@
 services:
   db:
     container_name: mindforge_db
-    restart: unless-stopped
+    restart: on-failure[3]
     image: 'postgres:18'
     env_file:
       - .env
@@ -14,6 +14,7 @@ services:
   redis:
     image: 'redis:8.4-rc1-alpine'
     container_name: mindforge_redis_dev
+    restart: on-failure[3]
     ports:
       - '6379:6379' # Expose Redis port to host for local debugging if needed
     volumes:
@@ -26,6 +27,7 @@ services:
       context: .
       dockerfile: ./dev/Dockerfile
     container_name: mindforge_worker_dev
+    restart: on-failure[3]
     volumes:
       - .:/app
     env_file:
@@ -33,7 +35,6 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-
     depends_on:
       - redis
     command: >
