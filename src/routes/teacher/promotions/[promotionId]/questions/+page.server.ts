@@ -3,6 +3,7 @@ import { TeacherRouter } from '$quiz/teacher/adapters/TeacherRouter';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
+	event.depends('promotion:selected');
 	const { promotionId } = event.params;
 	const caller = TeacherRouter.createCaller(() => createContext(event));
 	const [allQuestions, promotionQuestions, plannedQuestions] = await Promise.all([

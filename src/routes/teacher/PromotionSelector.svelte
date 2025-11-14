@@ -6,14 +6,30 @@
 	import GalleryVerticalEndIcon from '@lucide/svelte/icons/gallery-vertical-end';
 	import type { TeacherPromotionsListItem } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
 	import { resolve } from '$app/paths';
-	import { goto } from '$app/navigation';
+	import { goto, invalidate } from '$app/navigation';
 	import Plus from '@lucide/svelte/icons/plus';
+	import { page } from '$app/state';
 
 	type Props = {
 		promotions: TeacherPromotionsListItem[];
 		selectedPromotion: TeacherPromotionsListItem | null;
 	};
 	let { promotions, selectedPromotion = $bindable() }: Props = $props();
+
+	const switchPromotion = async (destPromotionId: string) => {
+		const { pathname } = page.url;
+		const { promotionId: currentPromotionId } = page.params;
+
+		selectedPromotion = promotions.find((p) => p.id === destPromotionId) || null;
+		if (currentPromotionId) {
+			const newPathname = pathname.replace(currentPromotionId, destPromotionId);
+			await goto(resolve(newPathname as '/teacher/promotions/${string}/...'));
+			await invalidate('promotion:selected');
+		} else {
+			// Fallback or default behavior if not in a promotion-specific path
+			await goto(resolve(`/teacher/promotions/${destPromotionId}/students`));
+		}
+	};
 </script>
 
 <Sidebar.Menu>
@@ -41,9 +57,9 @@
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content class="w-(--bits-dropdown-menu-anchor-width)" align="start">
 				{#each promotions as promotion (promotion.id)}
-					<DropdownMenu.Item onSelect={() => (selectedPromotion = promotion)}>
-						{selectedPromotion?.name}
-						{#if promotion === selectedPromotion}
+					<DropdownMenu.Item onSelect={() => switchPromotion(promotion.id)}>
+						{promotion?.name}
+						{#if promotion.id === selectedPromotion?.id}
 							<CheckIcon class="ml-auto" />
 						{/if}
 					</DropdownMenu.Item>

@@ -9,6 +9,7 @@ import { Period } from './Period.valueObject';
 import { PromotionId } from './PromotionId.valueObject';
 
 type CreatePromotionProps = {
+	id?: PromotionId;
 	name: string;
 	period: Period;
 	teacherId: TeacherId;
@@ -31,7 +32,7 @@ export class Promotion extends AggregateRoot<PromotionId> {
 	}
 
 	public static create(props: Omit<CreatePromotionProps, 'plannedQuestions'>): Promotion {
-		const id = new PromotionId();
+		const id = props.id ?? new PromotionId();
 		return new Promotion(id, { ...props, plannedQuestions: [] });
 	}
 

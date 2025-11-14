@@ -1,6 +1,9 @@
+import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 import { AppError } from '$lib/error/Error';
 import { ApiResponse } from '$lib/svelte/ApiResponse';
 import { createTRPC } from '$lib/trpc';
+import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import type { CreateStudentDTO } from '$quiz/student/application/dtos/StudentDTO';
 import { SvelteDate } from 'svelte/reactivity';
 
@@ -10,6 +13,7 @@ export class CreatePromotionVM {
 	errorMessage = $state('');
 	promotionName = $state('');
 	baseYear = $state(new SvelteDate().getFullYear());
+	skippingUpload = $state(false);
 	private trpc = createTRPC();
 
 	constructor(private readonly mockParsing = false) {}
@@ -50,15 +54,22 @@ export class CreatePromotionVM {
 
 	createPromotion = async () => {
 		try {
+			const newPromotionId = new PromotionId();
 			await this.trpc.promotion.createPromotion.mutate({
+				promotionId: newPromotionId.id(),
 				name: this.promotionName,
 				baseYear: this.baseYear,
 				students: this.students
 			});
 			console.debug('Promotion created');
+			goto(resolve(`/teacher/promotions/${newPromotionId.id()}/students`));
 		} catch (error) {
 			console.error(new AppError(error).getMessage());
 		}
+	};
+
+	skipUpload = () => {
+		this.skippingUpload = true;
 	};
 }
 
