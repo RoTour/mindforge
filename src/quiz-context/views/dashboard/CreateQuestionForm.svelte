@@ -25,7 +25,7 @@
 				e.preventDefault();
 				vm.createQuestion();
 			}}
-			class="grid gap-6"
+			class="grid gap-12"
 		>
 			<div class="grid gap-2">
 				<Label for="question-text" class="font-semibold">Question Text</Label>
@@ -34,11 +34,18 @@
 					placeholder="e.g., Explain the main benefits of Dependency Injection..."
 					bind:value={vm.text}
 					required
+					rows={10}
 				/>
+				<p class="text-muted-foreground text-sm">
+					This is what students will see when answering the question.
+				</p>
 			</div>
 
 			<div class="grid gap-4">
 				<Label class="font-semibold">Key Notions (Optional)</Label>
+				<p class="text-muted-foreground -mt-2 text-sm">
+					Key notions are important things students should mention in their answer.
+				</p>
 				{#each vm.keyNotions as notion, i (i)}
 					<div class="border-border flex items-start gap-2 rounded-md border p-3">
 						<div class="grid flex-1 gap-2">
@@ -68,7 +75,7 @@
 			{#if vm.success}
 				<p class="text-sm font-medium text-green-600">Question created successfully!</p>
 			{/if}
-			<Button type="submit" class="w-full" disabled={vm.isLoading}>
+			<Button type="submit" class="mt-4 w-full" disabled={vm.isLoading}>
 				{#if vm.isLoading}Loading...{:else}Create Question{/if}
 			</Button>
 		</form>

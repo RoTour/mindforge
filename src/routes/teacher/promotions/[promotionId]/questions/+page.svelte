@@ -9,7 +9,7 @@
 	import { QuestionsPageVM } from './QuestionsPageVM.svelte';
 	import QuestionPlanner from './QuestionPlanner.svelte';
 	import { resolve } from '$app/paths';
-	import { page } from '$app/stores';
+	import Plus from '@lucide/svelte/icons/plus';
 
 	let { data, params }: PageProps = $props();
 	const vm = new QuestionsPageVM({
@@ -53,11 +53,17 @@
 </script>
 
 <div class="w-full space-y-8 p-4 md:p-6 lg:w-3/5">
-	<div class="space-y-2">
-		<h1 class="text-2xl font-bold">Questions</h1>
-		<p class="text-muted-foreground">
-			Manage questions for this promotion or browse all your available questions.
-		</p>
+	<div class="flex items-center space-y-2">
+		<div>
+			<h1 class="text-2xl font-bold">Questions</h1>
+			<p class="text-muted-foreground">
+				Manage questions for this promotion or browse all your available questions.
+			</p>
+		</div>
+		<Button class="ms-auto">
+			<Plus />
+			New Question
+		</Button>
 	</div>
 
 	<Separator />
@@ -183,7 +189,7 @@
 									vm.planQuestionOnPromotion(question.id, payload.startingOn, payload.endingOn);
 								}}
 							>
-								Use in this promotion
+								Plan Question
 							</QuestionPlanner>
 						</Card.Footer>
 					</Card.Root>

@@ -13,3 +13,7 @@ export function createTRPC() {
 		]
 	});
 }
+
+// Should be used like this:
+// trpc: TRPCClient<AppRouter> = createTRPC();
+export type TRPCClient = ReturnType<typeof createTRPC>;
