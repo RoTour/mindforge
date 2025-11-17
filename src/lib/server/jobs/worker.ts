@@ -8,7 +8,7 @@ import type { IEnvironment } from '../IEnvironment';
 // 1. Create an environment implementation specific to the worker
 class WorkerEnvironment implements IEnvironment {
 	get DATABASE_URL(): string {
-		return Bun.env.DATABASE_URL_DOCKER!;
+		return Bun.env.DATABASE_URL!;
 	}
 	get REDIS_HOST(): string {
 		return Bun.env.REDIS_HOST!;

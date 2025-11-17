@@ -87,7 +87,9 @@ beforeAll(async () => {
 			REDIS_HOST: 'redis',
 			REDIS_PORT: '6379',
 			OPENROUTER_API_KEY: 'test-key', // Provide dummy values
-			OPENROUTER_MODEL_NAME: 'test-model'
+			OPENROUTER_MODEL_NAME: 'test-model',
+			RESEND_API_KEY: process.env.RESEND_API_KEY || 'test-resend-key',
+			RESEND_FROM_EMAIL: 'mindforge@test.com'
 		})
 		.withCommand(['bun', 'run', '/app/src/lib/server/jobs/worker.ts'])
 		.withWaitStrategy(Wait.forLogMessage('Workers are ready and listening for jobs !'))
