@@ -136,4 +136,22 @@ export class PrismaStudentQueries implements IStudentQueries {
 
 		return studentPromotions;
 	}
+
+	async doesUnlinkedStudentExistWithEmail(
+		email: string
+	): Promise<{ exists: false } | { exists: true; studentId: string }> {
+		const student = await this.client.student.findFirst({
+			where: {
+				email: email,
+				authUserId: null
+			},
+			select: {
+				id: true
+			}
+		});
+		if (student) {
+			return { exists: true, studentId: student.id };
+		}
+		return { exists: false };
+	}
 }

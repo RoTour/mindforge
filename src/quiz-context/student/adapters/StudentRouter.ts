@@ -1,5 +1,6 @@
 import { serviceProvider } from '$lib/server/container';
 import { router } from '$lib/server/trpc/init';
+import { authedAnyUserProcedure } from '$lib/server/trpc/procedures/authedAnyUserProcedure';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import z from 'zod';
 
@@ -18,6 +19,17 @@ export const StudentsOverviewRouter = router({
 				teacherId.id()
 			);
 			return students;
+		}),
+	doesStudentExist: authedAnyUserProcedure
+		.input(
+			z.object({
+				email: z.email()
+			})
+		)
+		.query(async ({ input }) => {
+			const { email } = input;
+			const student = await serviceProvider.StudentQueries.doesUnlinkedStudentExistWithEmail(email);
+			return { success: student !== null };
 		})
 });
 

@@ -7,4 +7,7 @@ export interface IStudentQueries {
 	getStudentIdByAuthUserId(authUserId: string): Promise<string | null>;
 	getStudentPromotions(studentId: string): Promise<StudentPromotionDto[]>;
 	getStudentSummaryStats(studentId: string): Promise<StudentSummaryStatsDto>;
+	doesUnlinkedStudentExistWithEmail(
+		email: string
+	): Promise<{ exists: false } | { exists: true; studentId: string }>;
 }

@@ -6,4 +6,6 @@ export interface IEnvironment {
 	REDIS_PORT: string;
 	OPENROUTER_API_KEY: string;
 	OPENROUTER_MODEL_NAME?: string;
+	RESEND_API_KEY: string;
+	RESEND_FROM_EMAIL: string;
 }

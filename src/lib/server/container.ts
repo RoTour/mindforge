@@ -19,6 +19,12 @@ class SvelteKitEnvironment implements IEnvironment {
 	get OPENROUTER_MODEL_NAME(): string | undefined {
 		return env.OPENROUTER_MODEL_NAME;
 	}
+	get RESEND_API_KEY(): string {
+		return env.RESEND_API_KEY;
+	}
+	get RESEND_FROM_EMAIL(): string {
+		return env.RESEND_FROM_EMAIL;
+	}
 }
 
 const factory = new ServiceProviderFactory(new SvelteKitEnvironment());

@@ -185,3 +185,13 @@ model Answer {
   // Enforce that a student can only answer once per session
   @@unique([questionSessionId, studentId])
 }
+
+model OTP {
+  id        String   @id
+  code      String
+  expiresAt DateTime
+  email     String
+  used      Boolean  @default(false)
+  subjectId String
+  purpose   String
+}

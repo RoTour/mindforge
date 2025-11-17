@@ -36,6 +36,9 @@ import { createPrismaClient } from './prisma/prisma';
 import { createRedisConnection } from './redis';
 import type { IEnvironment } from './IEnvironment';
 import type { PrismaClient } from '$prisma/client';
+import { ResendEmailService } from '$quiz/student/application/services/ResendEmailService';
+import type { IEmailService } from '$quiz/student/application/interfaces/IEmailService';
+import { createResendClient } from './resend/resend';
 
 export class ServiceProviderFactory {
 	private readonly env: IEnvironment;
@@ -54,16 +57,21 @@ export class ServiceProviderFactory {
 		const mq = new BullMQAdapter(redisConnection);
 		const questionSessionRepository = new PrismaQuestionSessionRepository(prisma);
 
+		const imageStudentListParser = new ImageStudentListParser({
+			apiKey: this.env.OPENROUTER_API_KEY,
+			modelName: this.env.OPENROUTER_MODEL_NAME
+		});
+
+		const resend = createResendClient(this.env.RESEND_API_KEY);
+		const emailService = new ResendEmailService(resend, this.env.RESEND_FROM_EMAIL);
+
 		return {
 			PromotionRepository: new PrismaPromotionRepository(prisma),
 			StudentRepository: new PrismaStudentRepository(prisma),
 			TeacherRepository: new PrismaTeacherRepository(prisma),
 			QuestionRepository: new PrismaQuestionRepository(prisma),
 			QuestionSessionRepository: questionSessionRepository,
-			StudentListParser: new ImageStudentListParser({
-				apiKey: this.env.OPENROUTER_API_KEY,
-				modelName: this.env.OPENROUTER_MODEL_NAME
-			}),
+			StudentListParser: imageStudentListParser,
 			PromotionStudentsQueries: new PrismaPromotionStudentsQueries(prisma),
 			EnrollQueries: new PrismaEnrollQueries(prisma),
 			TeacherQueries: new PrismaTeacherQueries(prisma),
@@ -83,10 +91,8 @@ export class ServiceProviderFactory {
 				prisma
 			},
 			services: {
-				ImageStudentListParser: new ImageStudentListParser({
-					apiKey: this.env.OPENROUTER_API_KEY,
-					modelName: this.env.OPENROUTER_MODEL_NAME
-				})
+				ImageStudentListParser: imageStudentListParser,
+				EmailService: emailService
 			}
 		};
 	}
@@ -114,5 +120,6 @@ export type ServiceProvider = {
 	};
 	services: {
 		ImageStudentListParser: IStudentListParser;
+		EmailService: IEmailService;
 	};
 };
