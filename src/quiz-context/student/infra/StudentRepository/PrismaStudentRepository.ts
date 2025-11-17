@@ -63,4 +63,12 @@ export class PrismaStudentRepository implements IStudentRepository {
 		const prismaStudents = await this.prisma.student.findMany();
 		return prismaStudents.map(StudentMapper.fromPrismaToDomain);
 	}
+
+	async findStudentByEmail(email: string): Promise<Student | null> {
+		const prismaStudent = await this.prisma.student.findUnique({
+			where: { email }
+		});
+		if (!prismaStudent) return null;
+		return StudentMapper.fromPrismaToDomain(prismaStudent);
+	}
 }

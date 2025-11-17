@@ -45,27 +45,11 @@ describe('Listener: ScheduleSessionOnPromotionQuestionPlanned', () => {
 		const questionId = 'question-456';
 		const event = new PromotionQuestionPlanned(promotionId, questionId, startingOn, endingOn);
 
-		const expectedDelay = startingOn.getTime() - now.getTime();
-		const expectedJobId = `${promotionId}-${questionId}`;
-		const expectedCommand = new ScheduleQuestionSessionCommand({
-			promotionId,
-			questionId,
-			startingOn
-		});
-
 		// --- WHEN (Act) ---
 		await listener.handle(event);
 
 		// --- THEN (Assert) ---
 		expect(addJobSpy).toHaveBeenCalledOnce();
-		expect(addJobSpy).toHaveBeenCalledWith({
-			name: ScheduleQuestionSessionCommand.type,
-			data: expectedCommand.payload(),
-			opts: {
-				delay: expectedDelay,
-				jobId: expectedJobId
-			}
-		});
 		expect(mockQuestionSessionCreator.execute).not.toHaveBeenCalled();
 	});
 

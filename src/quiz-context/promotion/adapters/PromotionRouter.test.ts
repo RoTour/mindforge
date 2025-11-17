@@ -1,13 +1,10 @@
 // Example test file
-import '$lib/tests/mocks/serviceProvider.mock';
 import { beforeEach, describe, test, vi, expect, type Mock } from 'vitest';
 import type { Context } from '$lib/server/trpc/context';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 import type { CreatePromotionCommand } from '$quiz/promotion/application/CreatePromotion.usecase';
 import { PromotionRouter } from './PromotionRouter';
 import { InMemoryPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/InMemoryPromotionRepository';
-import type { ServiceProvider } from '$lib/server/ServiceProvider';
-import { createMockServiceProvider } from '$lib/tests/mocks/serviceProvider.mock';
 
 describe('Unit-QuizRouter', () => {
 	const trpcCreateContext = (): Context => {
@@ -19,13 +16,12 @@ describe('Unit-QuizRouter', () => {
 		};
 	};
 
-	let mockedServiceProvider: ServiceProvider;
-
-	const caller = PromotionRouter.createCaller(trpcCreateContext());
+	let caller: ReturnType<typeof PromotionRouter.createCaller>;
 
 	beforeEach(() => {
 		vi.clearAllMocks();
-		mockedServiceProvider = createMockServiceProvider();
+		// Reset all mocks to their default implementation
+		caller = PromotionRouter.createCaller(trpcCreateContext());
 	});
 
 	test('Non-authenticated users should get UNAUTHORIZED', async () => {
@@ -34,24 +30,22 @@ describe('Unit-QuizRouter', () => {
 			name: 'Promotion 2025',
 			students: []
 		};
-
-		const caller = PromotionRouter.createCaller(() => ({ authUserId: null, teacher: null }));
-
-		await expect(caller.createPromotion(createPromotionPayload)).rejects.toHaveProperty(
+		const unauthCaller = PromotionRouter.createCaller(() => ({ authUserId: null, teacher: null }));
+		await expect(unauthCaller.createPromotion(createPromotionPayload)).rejects.toHaveProperty(
 			'code',
 			'UNAUTHORIZED'
 		);
 	});
 
 	test('Non-teacher users should get FORBIDDEN', async () => {
+		const { serviceProvider } = await import('$lib/server/container');
+
 		const createPromotionPayload: Omit<CreatePromotionCommand, 'teacherId'> = {
 			baseYear: 2025,
 			name: 'Promotion 2025',
 			students: []
 		};
-
-		(mockedServiceProvider.TeacherQueries.findByAuthUserId as Mock).mockResolvedValueOnce(null);
-
+		(serviceProvider.TeacherQueries.findByAuthUserId as Mock).mockResolvedValueOnce(null);
 		await expect(caller.createPromotion(createPromotionPayload)).rejects.toHaveProperty(
 			'code',
 			'FORBIDDEN'
@@ -59,27 +53,34 @@ describe('Unit-QuizRouter', () => {
 	});
 
 	test('Should create promotion for authenticated teacher', async () => {
+		const { serviceProvider } = await import('$lib/server/container');
+		console.log(
+			'findByAuthUserId is mock?',
+			vi.isMockFunction(serviceProvider.TeacherQueries.findByAuthUserId)
+		);
+
 		const createPromotionPayload: Omit<CreatePromotionCommand, 'teacherId'> = {
 			baseYear: 2025,
 			name: 'Promotion 2025',
 			students: []
 		};
-
 		const mockTeacher = {
 			id: new TeacherId(),
 			name: 'John Doe',
 			authUserId: 'auth-user-1234'
 		};
 
-		(mockedServiceProvider.TeacherQueries.findByAuthUserId as Mock).mockResolvedValueOnce(
-			mockTeacher
-		);
-		mockedServiceProvider.PromotionRepository = new InMemoryPromotionRepository();
-		(mockedServiceProvider.TeacherRepository.findById as Mock).mockResolvedValueOnce(mockTeacher);
+		// Mock the teacher lookup
+		(serviceProvider.TeacherQueries.findByAuthUserId as Mock).mockResolvedValueOnce(mockTeacher);
+
+		// Replace with in-memory repository for this test
+		serviceProvider.PromotionRepository = new InMemoryPromotionRepository();
+
+		(serviceProvider.TeacherRepository.findById as Mock).mockResolvedValueOnce(mockTeacher);
 
 		await caller.createPromotion(createPromotionPayload);
 
-		const promotions = await mockedServiceProvider.PromotionRepository.findAll();
+		const promotions = await serviceProvider.PromotionRepository.findAll();
 		expect(promotions.length).toBe(1);
 		expect(promotions[0].name).toBe('Promotion 2025');
 	});

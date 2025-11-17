@@ -1,7 +1,7 @@
-// __tests__/helpers/mockServiceProvider.ts
+// tests/mocks/serviceProvider.mock.ts
 import { vi } from 'vitest';
 import type { ServiceProvider } from '$lib/server/ServiceProvider';
-import { getPrismaTestClient } from '../../../../test/setupIntegration';
+import type { PrismaClient } from '$prisma/client';
 
 export function createMockServiceProvider(overrides?: Partial<ServiceProvider>): ServiceProvider {
 	return {
@@ -10,6 +10,7 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 			getStudentPromotions: vi.fn(),
 			getStudentSummaryStats: vi.fn(),
 			isStudentInPromotion: vi.fn(),
+			doesUnlinkedStudentExistWithEmail: vi.fn(),
 			...overrides?.StudentQueries
 		},
 		StudentQuestionQueries: {
@@ -28,6 +29,7 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 			findById: vi.fn(),
 			findAll: vi.fn(),
 			saveMany: vi.fn(),
+			findStudentByEmail: vi.fn(),
 			...overrides?.StudentRepository
 		},
 		TeacherRepository: {
@@ -63,6 +65,7 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 		},
 		TeacherQueries: {
 			findByAuthUserId: vi.fn(),
+
 			...overrides?.TeacherQueries
 		},
 		TeacherPromotionsQueries: {
@@ -91,12 +94,18 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 			...overrides?.eventListeners
 		},
 		clients: {
-			prisma: getPrismaTestClient(),
+			prisma: {} as unknown as PrismaClient,
 			...overrides?.clients
 		},
 		services: {
 			ImageStudentListParser: {
 				parse: vi.fn()
+			},
+			EmailService: {
+				sendEmail: vi.fn()
+			},
+			StudentVerificationService: {
+				requestVerification: vi.fn()
 			},
 			...overrides?.services
 		}

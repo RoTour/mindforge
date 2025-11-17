@@ -32,12 +32,16 @@ import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeache
 import { PrismaTeacherQueries } from '$quiz/teacher/infra/queries/PrismaTeacherQueries';
 import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/PrismaTeacherRepository';
 import { BullMQAdapter } from './bullmq/BullMQ.adapter';
-import { createPrismaClient } from './prisma/prisma';
-import { createRedisConnection } from './redis';
 import type { IEnvironment } from './IEnvironment';
 import type { PrismaClient } from '$prisma/client';
 import { ResendEmailService } from '$quiz/student/application/services/ResendEmailService';
 import type { IEmailService } from '$quiz/student/application/interfaces/IEmailService';
+import { PrismaOTPRepository } from '$auth/otp/infra/OTPRepository/PrismaOTPRepository';
+import { GenerateAndSendOtpUsecase } from '$auth/otp/application/GenerateAndSendOtp.usecase';
+import { AuthContextACL } from '$quiz/student/infra/auth/AuthContextACL';
+import type { IStudentVerificationService } from '$quiz/student/domain/interfaces/IStudentVerificationService';
+import { createPrismaClient } from './prisma/prisma';
+import { createRedisConnection } from './redis';
 import { createResendClient } from './resend/resend';
 
 export class ServiceProviderFactory {
@@ -64,6 +68,10 @@ export class ServiceProviderFactory {
 
 		const resend = createResendClient(this.env.RESEND_API_KEY);
 		const emailService = new ResendEmailService(resend, this.env.RESEND_FROM_EMAIL);
+
+		const otpRepository = new PrismaOTPRepository(prisma);
+		const generateAndSendOtpUsecase = new GenerateAndSendOtpUsecase(otpRepository, emailService);
+		const studentVerificationService = new AuthContextACL(generateAndSendOtpUsecase);
 
 		return {
 			PromotionRepository: new PrismaPromotionRepository(prisma),
@@ -92,7 +100,8 @@ export class ServiceProviderFactory {
 			},
 			services: {
 				ImageStudentListParser: imageStudentListParser,
-				EmailService: emailService
+				EmailService: emailService,
+				StudentVerificationService: studentVerificationService
 			}
 		};
 	}
@@ -121,5 +130,6 @@ export type ServiceProvider = {
 	services: {
 		ImageStudentListParser: IStudentListParser;
 		EmailService: IEmailService;
+		StudentVerificationService: IStudentVerificationService;
 	};
 };

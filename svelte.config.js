@@ -12,7 +12,8 @@ const config = {
 			$ddd: 'src/lib/ddd',
 			$quiz: 'src/quiz-context',
 			$prisma: 'prisma/generated',
-			$test: 'src/test'
+			$test: 'src/test',
+			$auth: 'src/auth-context'
 		}
 	}
 };

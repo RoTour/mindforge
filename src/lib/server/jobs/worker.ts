@@ -22,6 +22,12 @@ class WorkerEnvironment implements IEnvironment {
 	get OPENROUTER_MODEL_NAME(): string | undefined {
 		return Bun.env.OPENROUTER_MODEL_NAME;
 	}
+	get RESEND_API_KEY(): string {
+		return Bun.env.RESEND_API_KEY!;
+	}
+	get RESEND_FROM_EMAIL(): string {
+		return Bun.env.RESEND_FROM_EMAIL!;
+	}
 }
 
 // 2. Use the factory to create a serviceProvider instance for the worker
