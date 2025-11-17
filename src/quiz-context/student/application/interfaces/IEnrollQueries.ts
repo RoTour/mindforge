@@ -6,4 +6,6 @@ export type PromotionDetails = {
 
 export interface IEnrollQueries {
 	getPromotionDetails(promotionId: PromotionId): Promise<PromotionDetails>;
+	findStudentByFullName(name: string): Promise<{ studentId: string } | null>;
+	findStudentByEmail(email: string): Promise<{ studentId: string } | null>;
 }
