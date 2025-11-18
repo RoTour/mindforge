@@ -12,7 +12,8 @@ export class PrismaEnrollQueries implements IEnrollQueries {
 				id: promotionId.id()
 			},
 			select: {
-				name: true
+				name: true,
+				id: true
 			}
 		});
 

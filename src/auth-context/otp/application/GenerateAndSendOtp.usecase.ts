@@ -9,7 +9,11 @@ export class GenerateAndSendOtpUsecase {
 		private readonly emailService: IEmailService
 	) {}
 
-	public async execute(input: { subjectId: string; email: string; purpose: string }): Promise<void> {
+	public async execute(input: {
+		subjectId: string;
+		email: string;
+		purpose: string;
+	}): Promise<void> {
 		const { subjectId, email, purpose } = input;
 
 		// The repository's findBy... method should only return an active OTP.
@@ -27,6 +31,7 @@ export class GenerateAndSendOtpUsecase {
 		const emailSubject = this.getSubjectForPurpose(purpose);
 		const emailBody = `<p>Your verification code is: <strong>${otp.code}</strong>. It will expire in 10 minutes.</p>`;
 
+		console.debug('Sending OTP email to:', email, otp.code, emailBody);
 		await this.emailService.sendEmail(email, emailSubject, emailBody);
 	}
 

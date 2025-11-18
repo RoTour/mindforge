@@ -27,6 +27,7 @@ export class TryLinkingStudentUsecase {
 		}
 
 		// Delegate sending the verification to the ACL
+		console.debug('this.studentVerificationService.requestVerification');
 		await this.studentVerificationService.requestVerification(student.id, student.email);
 
 		return { success: true };

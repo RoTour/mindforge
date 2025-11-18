@@ -3,6 +3,8 @@ import { router } from '$lib/server/trpc/init';
 import { authedAnyUserProcedure } from '$lib/server/trpc/procedures/authedAnyUserProcedure';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import z from 'zod';
+import { ConfirmStudentEnrollmentUsecase } from '../application/ConfirmStudentEnrollment.usecase';
+import { TryLinkingStudentUsecase } from '../application/TryLinkingStudent.usecase';
 
 export const StudentsOverviewRouter = router({
 	getStudentsFromPromotion: teacherProcedure
@@ -20,16 +22,37 @@ export const StudentsOverviewRouter = router({
 			);
 			return students;
 		}),
-	doesStudentExist: authedAnyUserProcedure
+	tryLinkingStudent: authedAnyUserProcedure
+		.input(z.object({ email: z.email() }))
+		.mutation(async ({ input }) => {
+			const usecase = new TryLinkingStudentUsecase(
+				serviceProvider.StudentRepository,
+				serviceProvider.services.StudentVerificationService
+			);
+			const result = await usecase.execute(input.email);
+			return result;
+		}),
+	enrollToPromotion: authedAnyUserProcedure
 		.input(
 			z.object({
-				email: z.email()
+				promotionId: z.string(),
+				email: z.email(),
+				otp: z.string().min(6).max(6)
 			})
 		)
-		.query(async ({ input }) => {
-			const { email } = input;
-			const student = await serviceProvider.StudentQueries.doesUnlinkedStudentExistWithEmail(email);
-			return { success: student !== null };
+		.mutation(async ({ input, ctx }) => {
+			const { email, otp } = input;
+			const { authUserId } = ctx;
+			const usecase = new ConfirmStudentEnrollmentUsecase(
+				serviceProvider.services.StudentVerificationService,
+				serviceProvider.StudentRepository
+			);
+			const result = await usecase.execute({
+				otp,
+				authId: authUserId,
+				userToLinkEmail: email
+			});
+			return result;
 		})
 });
 

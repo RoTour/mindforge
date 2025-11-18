@@ -9,6 +9,7 @@ export class ResendEmailService implements IEmailService {
 	) {}
 
 	async sendEmail(to: string, subject: string, body: string): Promise<void> {
+		console.debug('ResendEmailService.sendEmail');
 		await this.resend.emails.send({
 			from: this.from,
 			to: to,

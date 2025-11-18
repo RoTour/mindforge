@@ -43,6 +43,7 @@ import type { IStudentVerificationService } from '$quiz/student/domain/interface
 import { createPrismaClient } from './prisma/prisma';
 import { createRedisConnection } from './redis';
 import { createResendClient } from './resend/resend';
+import { VerifyOtpUsecase } from '$auth/otp/application/VerifyOtp.usecase';
 
 export class ServiceProviderFactory {
 	private readonly env: IEnvironment;
@@ -68,10 +69,7 @@ export class ServiceProviderFactory {
 
 		const resend = createResendClient(this.env.RESEND_API_KEY);
 		const emailService = new ResendEmailService(resend, this.env.RESEND_FROM_EMAIL);
-
 		const otpRepository = new PrismaOTPRepository(prisma);
-		const generateAndSendOtpUsecase = new GenerateAndSendOtpUsecase(otpRepository, emailService);
-		const studentVerificationService = new AuthContextACL(generateAndSendOtpUsecase);
 
 		return {
 			PromotionRepository: new PrismaPromotionRepository(prisma),
@@ -101,7 +99,13 @@ export class ServiceProviderFactory {
 			services: {
 				ImageStudentListParser: imageStudentListParser,
 				EmailService: emailService,
-				StudentVerificationService: studentVerificationService
+				StudentVerificationService: new AuthContextACL(
+					new GenerateAndSendOtpUsecase(
+						otpRepository,
+						new ResendEmailService(resend, this.env.RESEND_FROM_EMAIL)
+					),
+					new VerifyOtpUsecase(otpRepository)
+				)
 			}
 		};
 	}

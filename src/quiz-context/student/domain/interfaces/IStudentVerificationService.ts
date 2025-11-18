@@ -3,4 +3,5 @@ import type { StudentId } from '../StudentId.valueObject';
 
 export interface IStudentVerificationService {
 	requestVerification(studentId: StudentId, email: string): Promise<void>;
+	verify(studentId: StudentId, otp: string): Promise<{ success: boolean; error?: string }>;
 }

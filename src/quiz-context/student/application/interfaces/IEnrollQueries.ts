@@ -1,6 +1,7 @@
 import type { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 
 export type PromotionDetails = {
+	id: string;
 	name: string;
 };
 

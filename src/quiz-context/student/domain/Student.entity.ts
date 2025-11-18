@@ -6,19 +6,22 @@ type StudentProps = {
 	name: string;
 	lastName?: string;
 	email?: string;
+	authId?: string;
 };
 
 export class Student extends AggregateRoot<StudentId> {
 	email: string | undefined;
 	name: string;
 	lastName: string | undefined;
+	authId: string | undefined;
 
 	private constructor(props: StudentProps) {
-		const { id, email, name, lastName } = props;
+		const { id, email, name, lastName, authId } = props;
 		super(id);
 		this.name = name;
 		this.email = email;
 		this.lastName = lastName;
+		this.authId = authId;
 	}
 
 	static create(props: Omit<StudentProps, 'id'> & Partial<Pick<StudentProps, 'id'>>) {
@@ -30,5 +33,9 @@ export class Student extends AggregateRoot<StudentId> {
 
 	static rehydrate(props: StudentProps): Student {
 		return new Student(props);
+	}
+
+	linkToUserAccount(userId: string) {
+		this.authId = userId;
 	}
 }
