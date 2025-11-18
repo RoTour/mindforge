@@ -3,9 +3,11 @@ import { goto } from '$app/navigation';
 import { resolve } from '$app/paths';
 import { createTRPC, type TRPCClient } from '$lib/trpc';
 import type { PromotionDetails } from '$quiz/student/application/interfaces/IEnrollQueries';
+import qrcode from 'qrcode-generator';
 
 type Props = {
 	promotion: PromotionDetails;
+	pageOrigin: string;
 };
 
 const REDIRECTION_DELAY_MS = 3000;
@@ -26,9 +28,14 @@ export class EnrollToPromotionVM {
 	otp: string = $state('');
 	promotion: PromotionDetails;
 	redirectionTimeout: NodeJS.Timeout | null = null;
+	qrCodeSvg: string | null = $state(null);
+	pageOrigin: string;
+	qrCodeUrl: string | null = $state(null);
+	isUrlCopied: boolean = $state(false);
 
-	constructor({ promotion }: Props) {
+	constructor({ promotion, pageOrigin }: Props) {
 		this.promotion = promotion;
+		this.pageOrigin = pageOrigin;
 	}
 
 	// Step 1: User inputs email and clicks "Join"
@@ -55,6 +62,40 @@ export class EnrollToPromotionVM {
 			return;
 		}
 		this.authStep = 'manual verification';
+		this._generateQrCode();
+	};
+
+	copyQrCodeUrl = async () => {
+		if (!this.qrCodeUrl) return;
+		try {
+			await navigator.clipboard.writeText(this.qrCodeUrl);
+			this.isUrlCopied = true;
+			setTimeout(() => {
+				this.isUrlCopied = false;
+			}, 2000); // Reset after 2 seconds
+		} catch (err) {
+			console.error('Failed to copy: ', err);
+			// Maybe show an error to the user
+		}
+	};
+
+	private _generateQrCode = () => {
+		const payload = {
+			firstName: this.inputFirstName,
+			lastName: this.inputLastName,
+			email: this.inputEmail,
+			promotionId: this.promotion.id
+		};
+		const jsonPayload = JSON.stringify(payload);
+		const b64Payload = btoa(jsonPayload);
+
+		const url = `${this.pageOrigin}/teacher/promotions/${this.promotion.id}/invite?payload=${b64Payload}`;
+		this.qrCodeUrl = url;
+
+		const qr = qrcode(0, 'L');
+		qr.addData(url);
+		qr.make();
+		this.qrCodeSvg = qr.createSvgTag({ cellSize: 4, margin: 4 });
 	};
 
 	onVerifyOtp = async () => {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
 	import { Button } from '$lib/components/ui/button';
 	import {
 		Card,
@@ -9,18 +10,20 @@
 		CardTitle
 	} from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
-	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
 	import { Label } from '$lib/components/ui/label';
-	import { AlertCircle } from 'lucide-svelte';
+	import { CircleAlert, Copy, Check } from 'lucide-svelte';
 	import { onDestroy } from 'svelte';
 	import type { PageProps } from './$types';
 	import { EnrollToPromotionVM } from './EnrollToPromotionVM.svelte';
+	import { page } from '$app/state';
 
 	let { data }: PageProps = $props();
 	const promotion = data.promotion;
 
-	const vm = new EnrollToPromotionVM({ promotion });
+	const vm = new EnrollToPromotionVM({ promotion, pageOrigin: page.url.origin });
+
+	$inspect('INSPECT', page);
 
 	onDestroy(() => {
 		vm.dispose();
@@ -77,9 +80,9 @@
 			{#if vm.authStep === 'student not found'}
 				<div class="flex flex-col gap-4">
 					<Alert variant="destructive">
-						<AlertCircle class="h-4 w-4" />
+						<CircleAlert class="h-4 w-4" />
 						<AlertTitle>Student not found</AlertTitle>
-						<AlertDescription>
+						<AlertDescription class="block">
 							We couldn't find a student with the email <strong>{vm.inputEmail}</strong>.
 						</AlertDescription>
 					</Alert>
@@ -109,6 +112,26 @@
 					Congratulations! You have successfully enrolled in the promotion: {vm.promotion.name}.
 				</p>
 			{/if}
+
+			{#if vm.authStep === 'manual verification'}
+				<div class="flex flex-col items-center justify-center gap-4 text-center">
+					<p class="text-muted-foreground">
+						Please show this QR code to your teacher to complete your enrollment.
+					</p>
+					<div class="rounded-lg border p-4">
+						{@html vm.qrCodeSvg}
+					</div>
+					<Button variant="outline" onclick={vm.copyQrCodeUrl}>
+						{#if vm.isUrlCopied}
+							<Check class="mr-2 h-4 w-4" />
+							Copied!
+						{:else}
+							<Copy class="mr-2 h-4 w-4" />
+							Copy URL
+						{/if}
+					</Button>
+				</div>
+			{/if}
 		</CardContent>
 		<CardFooter class="flex justify-between">
 			{#if vm.authStep === 'enter email'}
@@ -120,6 +143,9 @@
 			{#if vm.authStep === 'student not found'}
 				<Button variant="outline" onclick={vm.backToEmailStep}>Edit Email</Button>
 				<Button onclick={vm.onEnterName}>Request Verification</Button>
+			{/if}
+			{#if vm.authStep === 'manual verification'}
+				<Button variant="outline" onclick={vm.backToEmailStep}>Back</Button>
 			{/if}
 		</CardFooter>
 	</Card>
