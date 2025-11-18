@@ -17,8 +17,12 @@ export class EnrollToPromotionVM {
 		| 'searching student'
 		| 'student found' // Showing OTP input
 		| 'student not found'
+		| 'manual verification'
+		| 'wait for teacher approval'
 		| 'enrolled' = $state('enter email');
 	inputEmail: string = $state('');
+	inputFirstName: string = $state('');
+	inputLastName: string = $state('');
 	otp: string = $state('');
 	promotion: PromotionDetails;
 	redirectionTimeout: NodeJS.Timeout | null = null;
@@ -27,25 +31,34 @@ export class EnrollToPromotionVM {
 		this.promotion = promotion;
 	}
 
+	// Step 1: User inputs email and clicks "Join"
 	onJoinPromotion = async () => {
 		this.authStep = 'searching student';
 		this.trpc ??= createTRPC();
 		const result = await this.trpc.student.tryLinkingStudent.mutate({
 			email: this.inputEmail
 		});
+
+		// Student not found, Should ask for firstname/lastname
 		if (result.success === false) {
 			this.authStep = 'student not found';
 			return;
 		}
+
+		// Student found, OTP has been sent
 		this.authStep = 'student found';
 	};
 
-	onVerifyOtp = async () => {
-		// Here would be the call to the backend to verify the OTP
-		console.log('Verifying OTP:', this.otp);
-		if (this.otp.length === 6) {
-			this.authStep = 'enrolled';
+	onEnterName = () => {
+		if (!this.inputFirstName || !this.inputLastName) {
+			// TODO: Show an error to the user
+			return;
 		}
+		this.authStep = 'manual verification';
+	};
+
+	onVerifyOtp = async () => {
+		console.debug('Verifying OTP:', this.otp);
 
 		this.trpc ??= createTRPC();
 		const result = await this.trpc.student.enrollToPromotion.mutate({
@@ -67,6 +80,13 @@ export class EnrollToPromotionVM {
 
 	redirectToLobby = async (promotionId: string) => {
 		await goto(resolve(`/students/promotion/${promotionId}/lobby`));
+	};
+
+	backToEmailStep = () => {
+		this.authStep = 'enter email';
+		this.inputFirstName = '';
+		this.inputLastName = '';
+		this.otp = '';
 	};
 
 	dispose() {
