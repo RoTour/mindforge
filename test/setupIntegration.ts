@@ -3,12 +3,12 @@ import { RedisContainer, type StartedRedisContainer } from '@testcontainers/redi
 import { execSync } from 'child_process';
 import type { RedisOptions } from 'ioredis';
 import {
-	GenericContainer,
-	Network,
-	Wait,
-	type ImagePullPolicy,
-	type StartedNetwork,
-	type StartedTestContainer
+    GenericContainer,
+    Network,
+    Wait,
+    type ImagePullPolicy,
+    type StartedNetwork,
+    type StartedTestContainer
 } from 'testcontainers';
 import { afterAll, beforeAll, beforeEach } from 'vitest';
 import { PrismaClient } from '../prisma/generated/client';

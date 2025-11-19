@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, mock } from 'bun:test';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IStudentRepository } from '../domain/interfaces/IStudentRepository';
 import { Student } from '../domain/Student.entity';
 import { StudentId } from '../domain/StudentId.valueObject';
@@ -11,11 +11,11 @@ describe('LinkStudentToUserUsecase', () => {
 
 	beforeEach(() => {
 		mockStudentRepository = {
-			findById: mock(),
-			save: mock(),
-			saveMany: mock(),
-			findStudentByEmail: mock(),
-			findAll: mock()
+			findById: vi.fn(),
+			save: vi.fn(),
+			saveMany: vi.fn(),
+			findStudentByEmail: vi.fn(),
+			findAll: vi.fn()
 		};
 		usecase = new LinkStudentToUserUsecase(mockStudentRepository);
 	});
@@ -41,7 +41,7 @@ describe('LinkStudentToUserUsecase', () => {
 	it('should throw error if student not found', async () => {
 		(mockStudentRepository.findById as any).mockResolvedValue(null);
 
-		expect(
+		await expect(
 			usecase.execute('non-existent-id', 'auth-123', 'email@example.com')
 		).rejects.toThrow(StudentNotFoundError);
 	});
@@ -58,7 +58,7 @@ describe('LinkStudentToUserUsecase', () => {
 
 		(mockStudentRepository.findById as any).mockResolvedValue(student);
 
-		expect(
+		await expect(
 			usecase.execute(studentId.toString(), 'auth-123', 'email@example.com')
 		).rejects.toThrow(StudentAlreadyLinkedError);
 	});

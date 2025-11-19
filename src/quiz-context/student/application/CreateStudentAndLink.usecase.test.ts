@@ -4,7 +4,7 @@ import { Period } from '$quiz/promotion/domain/Period.valueObject';
 import { Promotion } from '$quiz/promotion/domain/Promotion.entity';
 import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
-import { beforeEach, describe, expect, it, mock } from 'bun:test';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { IStudentRepository } from '../domain/interfaces/IStudentRepository';
 import { Student } from '../domain/Student.entity';
 import { CreateStudentAndLinkUsecase } from './CreateStudentAndLink.usecase';
@@ -16,17 +16,17 @@ describe('CreateStudentAndLinkUsecase', () => {
 
 	beforeEach(() => {
 		mockStudentRepository = {
-			findById: mock(),
-			save: mock(),
-			saveMany: mock(),
-			findStudentByEmail: mock(),
-			findAll: mock()
+			findById: vi.fn(),
+			save: vi.fn(),
+			saveMany: vi.fn(),
+			findStudentByEmail: vi.fn(),
+			findAll: vi.fn()
 		};
 		mockPromotionRepository = {
-			findById: mock(),
-			save: mock(),
-			findAll: mock(),
-			findByOwnerId: mock()
+			findById: vi.fn(),
+			save: vi.fn(),
+			findAll: vi.fn(),
+			findByOwnerId: vi.fn()
 		};
 		usecase = new CreateStudentAndLinkUsecase(mockStudentRepository, mockPromotionRepository);
 	});
@@ -67,7 +67,7 @@ describe('CreateStudentAndLinkUsecase', () => {
 	it('should throw error if promotion not found', async () => {
 		(mockPromotionRepository.findById as any).mockResolvedValue(null);
 
-		expect(
+		await expect(
 			usecase.execute({
 				firstName: 'Jane',
 				lastName: 'Doe',
