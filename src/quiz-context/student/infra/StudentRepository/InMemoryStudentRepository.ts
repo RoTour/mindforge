@@ -21,4 +21,13 @@ export class InMemoryStudentRepository implements IStudentRepository {
 			this.students.set(student.id.id(), student);
 		}
 	}
+
+	async findStudentByEmail(email: string): Promise<Student | null> {
+		for (const student of this.students.values()) {
+			if (student.email === email) {
+				return student;
+			}
+		}
+		return null;
+	}
 }

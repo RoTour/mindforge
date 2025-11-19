@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import { Alert, AlertDescription, AlertTitle } from '$lib/components/ui/alert';
 	import { Button } from '$lib/components/ui/button';
 	import {
@@ -12,16 +13,19 @@
 	import { Input } from '$lib/components/ui/input';
 	import * as InputOTP from '$lib/components/ui/input-otp/index.js';
 	import { Label } from '$lib/components/ui/label';
-	import { CircleAlert, Copy, Check } from 'lucide-svelte';
+	import { Check, CircleAlert, Copy } from 'lucide-svelte';
 	import { onDestroy } from 'svelte';
 	import type { PageProps } from './$types';
 	import { EnrollToPromotionVM } from './EnrollToPromotionVM.svelte';
-	import { page } from '$app/state';
 
 	let { data }: PageProps = $props();
 	const promotion = data.promotion;
 
-	const vm = new EnrollToPromotionVM({ promotion, pageOrigin: page.url.origin });
+	const vm = new EnrollToPromotionVM({
+		promotion,
+		pageOrigin: page.url.origin,
+		authId: data.authUserId ?? ''
+	});
 
 	$inspect('INSPECT', page);
 

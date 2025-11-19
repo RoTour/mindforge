@@ -1,16 +1,17 @@
 // src/routes/teacher/promotions/[promotionId]/invite/+page.server.ts
-import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
-import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
-import { z } from 'zod';
 import { serviceProvider } from '$lib/server/container';
+import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
+import { error } from '@sveltejs/kit';
+import { z } from 'zod';
+import type { PageServerLoad } from './$types';
 
 // Payload no longer needs promotionId
 const payloadSchema = z.object({
 	firstName: z.string(),
 	lastName: z.string(),
 	email: z.email(),
-	promotionId: z.string()
+	promotionId: z.string(),
+	authId: z.string()
 });
 
 export const load: PageServerLoad = async ({ url, parent, params }) => {
@@ -42,7 +43,8 @@ export const load: PageServerLoad = async ({ url, parent, params }) => {
 			user,
 			unlinkedStudents,
 			promotionId,
-			email: user.email
+			email: user.email,
+			authId: user.authId
 		};
 	} catch (e) {
 		console.error(e);

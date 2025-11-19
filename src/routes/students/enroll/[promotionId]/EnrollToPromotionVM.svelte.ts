@@ -8,6 +8,7 @@ import qrcode from 'qrcode-generator';
 type Props = {
 	promotion: PromotionDetails;
 	pageOrigin: string;
+	authId: string;
 };
 
 const REDIRECTION_DELAY_MS = 3000;
@@ -30,12 +31,14 @@ export class EnrollToPromotionVM {
 	redirectionTimeout: NodeJS.Timeout | null = null;
 	qrCodeSvg: string | null = $state(null);
 	pageOrigin: string;
+	authId: string;
 	qrCodeUrl: string | null = $state(null);
 	isUrlCopied: boolean = $state(false);
 
-	constructor({ promotion, pageOrigin }: Props) {
+	constructor({ promotion, pageOrigin, authId }: Props) {
 		this.promotion = promotion;
 		this.pageOrigin = pageOrigin;
+		this.authId = authId;
 	}
 
 	// Step 1: User inputs email and clicks "Join"
@@ -84,7 +87,8 @@ export class EnrollToPromotionVM {
 			firstName: this.inputFirstName,
 			lastName: this.inputLastName,
 			email: this.inputEmail,
-			promotionId: this.promotion.id
+			promotionId: this.promotion.id,
+			authId: this.authId
 		};
 		const jsonPayload = JSON.stringify(payload);
 		const b64Payload = btoa(jsonPayload);

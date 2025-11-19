@@ -9,7 +9,8 @@ class StudentMapper {
 			id: new StudentId(prismaStudent.id),
 			name: prismaStudent.name,
 			lastName: prismaStudent.lastName ?? undefined,
-			email: prismaStudent.email ?? undefined
+			email: prismaStudent.email ?? undefined,
+			authId: prismaStudent.authUserId ?? undefined
 		});
 	}
 
@@ -18,7 +19,8 @@ class StudentMapper {
 			id: domainStudent.id.id(),
 			name: domainStudent.name,
 			lastName: domainStudent.lastName,
-			email: domainStudent.email
+			email: domainStudent.email,
+			authUserId: domainStudent.authId
 		};
 	}
 }

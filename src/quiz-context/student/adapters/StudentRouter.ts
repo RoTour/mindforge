@@ -4,6 +4,8 @@ import { authedAnyUserProcedure } from '$lib/server/trpc/procedures/authedAnyUse
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import z from 'zod';
 import { ConfirmStudentEnrollmentUsecase } from '../application/ConfirmStudentEnrollment.usecase';
+import { CreateStudentAndLinkUsecase } from '../application/CreateStudentAndLink.usecase';
+import { LinkStudentToUserUsecase } from '../application/LinkStudentToUser.usecase';
 import { TryLinkingStudentUsecase } from '../application/TryLinkingStudent.usecase';
 
 export const StudentsOverviewRouter = router({
@@ -53,6 +55,36 @@ export const StudentsOverviewRouter = router({
 				userToLinkEmail: email
 			});
 			return result;
+		}),
+	linkStudentToUser: teacherProcedure
+		.input(
+			z.object({
+				studentId: z.string(),
+				authId: z.string(),
+				email: z.string().email()
+			})
+		)
+		.mutation(async ({ input }) => {
+			const { studentId, authId, email } = input;
+			const usecase = new LinkStudentToUserUsecase(serviceProvider.StudentRepository);
+			await usecase.execute(studentId, authId, email);
+		}),
+	createStudentAndLink: teacherProcedure
+		.input(
+			z.object({
+				firstName: z.string(),
+				lastName: z.string(),
+				authId: z.string(),
+				email: z.string().email(),
+				promotionId: z.string()
+			})
+		)
+		.mutation(async ({ input }) => {
+			const usecase = new CreateStudentAndLinkUsecase(
+				serviceProvider.StudentRepository,
+				serviceProvider.PromotionRepository
+			);
+			await usecase.execute(input);
 		})
 });
 

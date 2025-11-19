@@ -29,7 +29,8 @@ const handleAuthContext: Handle = async ({ event, resolve }) => {
 
 const handleDebug: Handle = async ({ event, resolve }) => {
 	console.debug('Debug Hook', {
-		url: event.url.href
+		url: event.url.href,
+		authUserId: event.locals.authUserId
 	});
 	return resolve(event);
 };

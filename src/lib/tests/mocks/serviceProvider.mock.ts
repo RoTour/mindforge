@@ -1,7 +1,7 @@
 // tests/mocks/serviceProvider.mock.ts
-import { vi } from 'vitest';
 import type { ServiceProvider } from '$lib/server/ServiceProvider';
 import type { PrismaClient } from '$prisma/client';
+import { vi } from 'vitest';
 
 export function createMockServiceProvider(overrides?: Partial<ServiceProvider>): ServiceProvider {
 	return {
@@ -105,9 +105,14 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 				sendEmail: vi.fn()
 			},
 			StudentVerificationService: {
-				requestVerification: vi.fn()
+				requestVerification: vi.fn(),
+				verify: vi.fn()
 			},
 			...overrides?.services
+		},
+		UnlinkedStudentsQueries: {
+			getUnlinkedStudents: vi.fn(),
+			...overrides?.UnlinkedStudentsQueries
 		}
 	} satisfies ServiceProvider;
 }
