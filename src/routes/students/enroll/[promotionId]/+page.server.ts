@@ -10,6 +10,11 @@ export const load: PageServerLoad = async ({ params, locals }) => {
 		new PromotionId(promotionId)
 	);
 
+	if (!locals.authUserId) {
+		const next = resolve('/students/enroll/[promotionId]', { promotionId });
+		throw redirect(303, resolve('/auth/sign-in') + `?next=${encodeURIComponent(next)}`);
+	}
+
 	if (locals.userEmail && locals.authUserId) {
 		const checkAndLinkUsecase = serviceProvider.CheckAndLinkStudentByEmailUsecase;
 		const result = await checkAndLinkUsecase.execute(locals.userEmail, locals.authUserId);

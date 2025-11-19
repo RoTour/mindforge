@@ -1,4 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { page } from '$app/stores';
+	import { cn, type WithElementRef } from '$lib/lib/utils.js';
+	import type { HTMLFormAttributes } from 'svelte/elements';
 	import { authClient } from '../auth-client.js';
 	import { Alert, AlertDescription } from './ui/alert/index.js';
 	import { Button } from './ui/button/index.js';
@@ -10,10 +15,6 @@
 		FieldSeparator
 	} from './ui/field/index.js';
 	import { Input } from './ui/input/index.js';
-	import { cn, type WithElementRef } from '$lib/lib/utils.js';
-	import type { HTMLFormAttributes } from 'svelte/elements';
-	import { resolve } from '$app/paths';
-	import { goto } from '$app/navigation';
 
 	let {
 		ref = $bindable(null),
@@ -40,7 +41,8 @@
 					name: email
 				});
 				if (result.error === null) {
-					goto(resolve('/'));
+					const next = $page.url.searchParams.get('next');
+					goto(next ? decodeURIComponent(next) : resolve('/'));
 					return;
 				}
 				error = result.error.message ?? 'An unknown error occurred.';
@@ -51,7 +53,8 @@
 				});
 				if (result.error === null) {
 					console.log('Login successful');
-					goto(resolve('/'));
+					const next = $page.url.searchParams.get('next');
+					goto(next ? decodeURIComponent(next) : resolve('/'));
 					return;
 				}
 				error = result.error.message ?? 'An unknown error occurred.';
@@ -134,7 +137,7 @@
 			<FieldDescription class="text-center">
 				Don't have an account?
 				<a
-					href={resolve(`/auth/${type === 'signin' ? 'sign-up' : 'sign-in'}`)}
+					href={resolve(`/auth/${type === 'signin' ? 'sign-up' : 'sign-in'}`) + $page.url.search}
 					class="underline underline-offset-4"
 				>
 					{#if type === 'signin'}

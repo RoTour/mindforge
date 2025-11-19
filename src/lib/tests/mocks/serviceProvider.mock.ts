@@ -1,6 +1,7 @@
 // tests/mocks/serviceProvider.mock.ts
 import type { ServiceProvider } from '$lib/server/ServiceProvider';
 import type { PrismaClient } from '$prisma/client';
+import type { CheckAndLinkStudentByEmailUsecase } from '$quiz/student/application/CheckAndLinkStudentByEmail.usecase';
 import { vi } from 'vitest';
 
 export function createMockServiceProvider(overrides?: Partial<ServiceProvider>): ServiceProvider {
@@ -113,6 +114,10 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 		UnlinkedStudentsQueries: {
 			getUnlinkedStudents: vi.fn(),
 			...overrides?.UnlinkedStudentsQueries
-		}
+		},
+		CheckAndLinkStudentByEmailUsecase: {
+			execute: vi.fn(),
+			...overrides?.CheckAndLinkStudentByEmailUsecase
+		} as unknown as CheckAndLinkStudentByEmailUsecase
 	} satisfies ServiceProvider;
 }
