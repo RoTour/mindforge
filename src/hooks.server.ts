@@ -1,12 +1,12 @@
-import { auth } from '$lib/auth';
-import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
-import { redirect, type Handle } from '@sveltejs/kit';
 import { resolve as resolvePath } from '$app/paths';
-import { sequence } from '@sveltejs/kit/hooks';
-import '$lib/server/bullmq/bullmq';
-import { TRPCError } from '@trpc/server';
 import { env } from '$env/dynamic/private';
+import { auth } from '$lib/auth';
+import '$lib/server/bullmq/bullmq';
+import { redirect, type Handle } from '@sveltejs/kit';
+import { sequence } from '@sveltejs/kit/hooks';
+import { TRPCError } from '@trpc/server';
+import { svelteKitHandler } from 'better-auth/svelte-kit';
 
 const handleAuthRoot: Handle = async ({ event, resolve }) => {
 	const pathname = event.url.pathname;
@@ -23,6 +23,7 @@ const handleAuth: Handle = async ({ event, resolve }) => {
 const handleAuthContext: Handle = async ({ event, resolve }) => {
 	const currentUser = await auth.api.getSession(event.request);
 	event.locals.authUserId = currentUser?.user.id ?? null;
+	event.locals.userEmail = currentUser?.user.email ?? null;
 
 	return resolve(event);
 };

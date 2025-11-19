@@ -1,6 +1,10 @@
 // @path: /Users/rotour/projects/mindforge/src/lib/server/ServiceProvider.ts
+import { GenerateAndSendOtpUsecase } from '$auth/otp/application/GenerateAndSendOtp.usecase';
+import { VerifyOtpUsecase } from '$auth/otp/application/VerifyOtp.usecase';
+import { PrismaOTPRepository } from '$auth/otp/infra/OTPRepository/PrismaOTPRepository';
 import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
+import type { PrismaClient } from '$prisma/client';
 import type { ITeacherPromotionsQueries } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
 import { ScheduleSessionOnPromotionQuestionPlanned } from '$quiz/promotion/application/listeners/ScheduleSessionOnPromotionQUestionPlanned.listener';
 import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
@@ -10,42 +14,39 @@ import { CreateQuestionSessionUsecase } from '$quiz/question-session/application
 import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
 import { PrismaQuestionSessionRepository } from '$quiz/question-session/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
 import type { ITeacherQuestionsQueries } from '$quiz/question/application/interfaces/ITeacherQuestionsQueries';
+import type { IStudentQuestionQueries } from '$quiz/question/application/queries/IStudentQuestionQueries';
 import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
+import { PrismaStudentQuestionQueries } from '$quiz/question/infra/queries/PrismaStudentQuestionQueries';
 import { PrismaTeacherQuestionsQueries } from '$quiz/question/infra/queries/PrismaTeacherQuestionsQueries';
 import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
-import type { IStudentQuestionQueries } from '$quiz/question/application/queries/IStudentQuestionQueries';
-import type { IUnlinkedStudentsQueries } from '$quiz/student/application/interfaces/IUnlinkedStudentsQueries';
-import { PrismaStudentQuestionQueries } from '$quiz/question/infra/queries/PrismaStudentQuestionQueries';
-import { PrismaUnlinkedStudentsQueries } from '$quiz/student/infra/queries/PrismaUnlinkedStudentsQueries';
+import { CheckAndLinkStudentByEmailUsecase } from '$quiz/student/application/CheckAndLinkStudentByEmail.usecase';
+import type { IEmailService } from '$quiz/student/application/interfaces/IEmailService';
 import type { IEnrollQueries } from '$quiz/student/application/interfaces/IEnrollQueries';
 import type { IPromotionStudentsQueries } from '$quiz/student/application/interfaces/IPromotionStudentsQueries';
+import type { IStudentQueries } from '$quiz/student/application/interfaces/IStudentQueries';
 import type { IStudentsOverviewQueries } from '$quiz/student/application/interfaces/IStudentsOverviewQueries';
+import type { IUnlinkedStudentsQueries } from '$quiz/student/application/interfaces/IUnlinkedStudentsQueries';
+import { ResendEmailService } from '$quiz/student/application/services/ResendEmailService';
 import type { IStudentListParser } from '$quiz/student/domain/interfaces/IStudentParser';
 import type { IStudentRepository } from '$quiz/student/domain/interfaces/IStudentRepository';
+import type { IStudentVerificationService } from '$quiz/student/domain/interfaces/IStudentVerificationService';
+import { AuthContextACL } from '$quiz/student/infra/auth/AuthContextACL';
 import { PrismaEnrollQueries } from '$quiz/student/infra/queries/PrismaEnrollQueries';
 import { PrismaPromotionStudentsQueries } from '$quiz/student/infra/queries/PrismaPromotionStudentsQueries';
+import { PrismaStudentQueries } from '$quiz/student/infra/queries/PrismaStudentQueries';
 import { PrismaStudentsOverviewQueries } from '$quiz/student/infra/queries/PrismaStudentsOverviewQueries';
+import { PrismaUnlinkedStudentsQueries } from '$quiz/student/infra/queries/PrismaUnlinkedStudentsQueries';
 import { ImageStudentListParser } from '$quiz/student/infra/StudentListParser/ImageStudentListParser';
 import { PrismaStudentRepository } from '$quiz/student/infra/StudentRepository/PrismaStudentRepository';
-import type { IStudentQueries } from '$quiz/student/application/interfaces/IStudentQueries';
-import { PrismaStudentQueries } from '$quiz/student/infra/queries/PrismaStudentQueries';
 import type { ITeacherQueries } from '$quiz/teacher/application/interfaces/ITeacherQueries';
 import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeacherRepository';
 import { PrismaTeacherQueries } from '$quiz/teacher/infra/queries/PrismaTeacherQueries';
 import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/PrismaTeacherRepository';
 import { BullMQAdapter } from './bullmq/BullMQ.adapter';
 import type { IEnvironment } from './IEnvironment';
-import type { PrismaClient } from '$prisma/client';
-import { ResendEmailService } from '$quiz/student/application/services/ResendEmailService';
-import type { IEmailService } from '$quiz/student/application/interfaces/IEmailService';
-import { PrismaOTPRepository } from '$auth/otp/infra/OTPRepository/PrismaOTPRepository';
-import { GenerateAndSendOtpUsecase } from '$auth/otp/application/GenerateAndSendOtp.usecase';
-import { AuthContextACL } from '$quiz/student/infra/auth/AuthContextACL';
-import type { IStudentVerificationService } from '$quiz/student/domain/interfaces/IStudentVerificationService';
 import { createPrismaClient } from './prisma/prisma';
 import { createRedisConnection } from './redis';
 import { createResendClient } from './resend/resend';
-import { VerifyOtpUsecase } from '$auth/otp/application/VerifyOtp.usecase';
 
 export class ServiceProviderFactory {
 	private readonly env: IEnvironment;
@@ -89,6 +90,9 @@ export class ServiceProviderFactory {
 			StudentQueries: new PrismaStudentQueries(prisma),
 			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
 			UnlinkedStudentsQueries: new PrismaUnlinkedStudentsQueries(prisma),
+			CheckAndLinkStudentByEmailUsecase: new CheckAndLinkStudentByEmailUsecase(
+				new PrismaStudentRepository(prisma)
+			),
 			MessageQueue: mq,
 			eventListeners: {
 				scheduleSessionOnPromotionQuestionPlanned: new ScheduleSessionOnPromotionQuestionPlanned(
@@ -130,6 +134,7 @@ export type ServiceProvider = {
 	StudentQueries: IStudentQueries;
 	StudentQuestionQueries: IStudentQuestionQueries;
 	UnlinkedStudentsQueries: IUnlinkedStudentsQueries;
+	CheckAndLinkStudentByEmailUsecase: CheckAndLinkStudentByEmailUsecase;
 	MessageQueue: IMessageQueue;
 	eventListeners: Record<string, IDomainEventListener>;
 	clients: {

@@ -9,6 +9,7 @@ import { getPrismaTestClient } from '../../../../test/setupIntegration';
 import { Student } from '../domain/Student.entity';
 import { StudentId } from '../domain/StudentId.valueObject';
 import { PrismaStudentRepository } from '../infra/StudentRepository/PrismaStudentRepository';
+import { CheckAndLinkStudentByEmailUsecase } from './CheckAndLinkStudentByEmail.usecase';
 import { CreateStudentAndLinkUsecase } from './CreateStudentAndLink.usecase';
 import { LinkStudentToUserUsecase } from './LinkStudentToUser.usecase';
 
@@ -111,5 +112,29 @@ describe('Auth Flow Integration Test', () => {
 		// Verify student is in promotion
 		const updatedPromotion = await promotionRepository.findById(promotion.id.toString());
 		expect(updatedPromotion?.studentIds.some((id) => id.equals(createdStudent!.id))).toBe(true);
+	});
+
+	test('Auth flow: When logged user has same email as an unlinked student, should automatically link on enrollment page visit', async () => {
+		// GIVEN: An existing unlinked student with the same email as the user
+		const userEmail = 'matching-email@school.com';
+		const userAuthId = 'user-auth-789';
+		
+		const student = Student.create({
+			id: new StudentId(),
+			name: 'Auto',
+			lastName: 'Link',
+			email: userEmail
+		});
+		await studentRepository.save(student);
+
+		// WHEN: The CheckAndLinkStudentByEmailUsecase is executed (simulating page load)
+		const checkAndLinkUsecase = new CheckAndLinkStudentByEmailUsecase(studentRepository);
+		const result = await checkAndLinkUsecase.execute(userEmail, userAuthId);
+
+		// THEN: The student should be linked
+		expect(result.status).toBe('LINKED');
+
+		const updatedStudent = await studentRepository.findById(student.id.toString());
+		expect(updatedStudent?.authId).toBe(userAuthId);
 	});
 });
