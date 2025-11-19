@@ -14,7 +14,9 @@ import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQues
 import { PrismaTeacherQuestionsQueries } from '$quiz/question/infra/queries/PrismaTeacherQuestionsQueries';
 import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
 import type { IStudentQuestionQueries } from '$quiz/question/application/queries/IStudentQuestionQueries';
+import type { IUnlinkedStudentsQueries } from '$quiz/student/application/interfaces/IUnlinkedStudentsQueries';
 import { PrismaStudentQuestionQueries } from '$quiz/question/infra/queries/PrismaStudentQuestionQueries';
+import { PrismaUnlinkedStudentsQueries } from '$quiz/student/infra/queries/PrismaUnlinkedStudentsQueries';
 import type { IEnrollQueries } from '$quiz/student/application/interfaces/IEnrollQueries';
 import type { IPromotionStudentsQueries } from '$quiz/student/application/interfaces/IPromotionStudentsQueries';
 import type { IStudentsOverviewQueries } from '$quiz/student/application/interfaces/IStudentsOverviewQueries';
@@ -86,6 +88,7 @@ export class ServiceProviderFactory {
 			TeacherQuestionsQueries: new PrismaTeacherQuestionsQueries(prisma),
 			StudentQueries: new PrismaStudentQueries(prisma),
 			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
+			UnlinkedStudentsQueries: new PrismaUnlinkedStudentsQueries(prisma),
 			MessageQueue: mq,
 			eventListeners: {
 				scheduleSessionOnPromotionQuestionPlanned: new ScheduleSessionOnPromotionQuestionPlanned(
@@ -126,6 +129,7 @@ export type ServiceProvider = {
 	TeacherQuestionsQueries: ITeacherQuestionsQueries;
 	StudentQueries: IStudentQueries;
 	StudentQuestionQueries: IStudentQuestionQueries;
+	UnlinkedStudentsQueries: IUnlinkedStudentsQueries;
 	MessageQueue: IMessageQueue;
 	eventListeners: Record<string, IDomainEventListener>;
 	clients: {

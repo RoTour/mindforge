@@ -53,7 +53,7 @@ The system now checks how to link the `User` to a `Student` in the promotion lis
       2.  **Collect Info:** The system asks the user for their `firstName` and `lastName`.
       3.  **Generate QR:** The system generates a `Join link QR code`. This QR code contains a secure payload with the `User.authId`, `firstName`, and `lastName`.
       4.  **Teacher Action:** The user must show this QR code to their teacher. The teacher scans it.
-      5.  **Teacher Redirect:** The teacher's device is redirected to a URL like `/teacher/invite?payload=[data]`.
+      5.  **Teacher Redirect:** The teacher's device is redirected to a URL like `/teacher/promotions/[promotionId]/invite?payload=[b64json]`.
       6.  **The "Find and Link" UI (Your Fix):** The teacher's screen now shows:
           - The `User`'s details from the payload (e.g., "User 'Rotour' wants to enroll").
           - A list of all **un-linked students** (those with no `authId` or `email`) from that promotion.

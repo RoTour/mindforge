@@ -1,7 +1,6 @@
 import { appRouter } from '$lib/server/trpc/router';
 import type { LayoutServerLoad } from './$types';
 import { createContext } from '$lib/server/trpc/context';
-import { redirectOnTRPCError } from '$lib/server/trpc/guard';
 
 export const load: LayoutServerLoad = async (event) => {
 	try {
@@ -10,10 +9,10 @@ export const load: LayoutServerLoad = async (event) => {
 		return {
 			userIsATeacher: userIsTeacher
 		};
-	} catch (e) {
-		redirectOnTRPCError(e, {
-			UNAUTHORIZED: '/auth/sign-in'
-		});
+	} catch {
+		// redirectOnTRPCError(e, {
+		// 	UNAUTHORIZED: '/auth/sign-in'
+		// });
 		return {
 			userIsATeacher: false
 		};

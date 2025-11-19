@@ -13,6 +13,7 @@ type RedirectRules = Partial<Record<TRPC_ERROR_CODE_KEY, string>>;
  */
 export function redirectOnTRPCError(e: unknown, rules: RedirectRules): void {
 	if (e instanceof TRPCError) {
+		console.warn('redirectOnTRPCError invoked', e.message);
 		const redirectPath = rules[e.code];
 		if (redirectPath) {
 			throw redirect(303, redirectPath);
