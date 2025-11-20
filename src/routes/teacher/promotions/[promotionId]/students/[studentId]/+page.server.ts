@@ -3,12 +3,13 @@ import { StudentsOverviewRouter } from '$quiz/student/adapters/StudentRouter';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
-	event.depends('promotion:selected');
-	const { promotionId } = event.params;
+	const { promotionId, studentId } = event.params;
 	const caller = StudentsOverviewRouter.createCaller(await createContext(event));
-	const students = await caller.getStudentsFromPromotion({ promotionId });
+	const history = await caller.getStudentHistory({ promotionId, studentId });
+
 	return {
-		students,
-		promotionId
+		history,
+		promotionId,
+		studentId
 	};
 };

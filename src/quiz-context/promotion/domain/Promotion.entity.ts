@@ -3,9 +3,9 @@ import type { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import type { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 import { PromotionQuestionPlanned } from './events/PromotionQuestionPlanned.event';
+import { Period } from './Period.valueObject';
 import { PlannedQuestion } from './PlannedQuestion.entity';
 import type { PlannedQuestionId } from './PlannedQuestionId.valueObject';
-import { Period } from './Period.valueObject';
 import { PromotionId } from './PromotionId.valueObject';
 
 type CreatePromotionProps = {
@@ -58,6 +58,10 @@ export class Promotion extends AggregateRoot<PromotionId> {
 		const allIds = [...this.studentIds.map((it) => it.id()), ...newStudentIds.map((it) => it.id())];
 		const deduplicatedIds = Array.from(new Set(allIds)).map((id) => new StudentId(id));
 		this.studentIds = deduplicatedIds;
+	}
+
+	public removeStudent(studentId: StudentId) {
+		this.studentIds = this.studentIds.filter((id) => !id.equals(studentId));
 	}
 
 	public planQuestion(questionId: QuestionId, startingOn?: Date, endingOn?: Date): void {

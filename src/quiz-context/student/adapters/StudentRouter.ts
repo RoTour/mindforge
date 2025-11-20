@@ -6,7 +6,9 @@ import z from 'zod';
 import { ConfirmStudentEnrollmentUsecase } from '../application/ConfirmStudentEnrollment.usecase';
 import { CreateStudentAndLinkUsecase } from '../application/CreateStudentAndLink.usecase';
 import { LinkStudentToUserUsecase } from '../application/LinkStudentToUser.usecase';
+import { RemoveStudentFromPromotionUsecase } from '../application/RemoveStudentFromPromotion.usecase';
 import { TryLinkingStudentUsecase } from '../application/TryLinkingStudent.usecase';
+import { CreateStudentForPromotionUsecase } from '../application/CreateStudentForPromotion.usecase';
 
 export const StudentsOverviewRouter = router({
 	getStudentsFromPromotion: teacherProcedure
@@ -85,6 +87,49 @@ export const StudentsOverviewRouter = router({
 				serviceProvider.PromotionRepository
 			);
 			await usecase.execute(input);
+		}),
+	removeStudentFromPromotion: teacherProcedure
+		.input(
+			z.object({
+				studentId: z.string(),
+				promotionId: z.string()
+			})
+		)
+		.mutation(async ({ input }) => {
+			const { studentId, promotionId } = input;
+			const usecase = new RemoveStudentFromPromotionUsecase(serviceProvider.PromotionRepository);
+			await usecase.execute(promotionId, studentId);
+		}),
+	createStudentForPromotion: teacherProcedure
+		.input(
+			z.object({
+				firstName: z.string(),
+				lastName: z.string(),
+				email: z.string().email(),
+				promotionId: z.string()
+			})
+		)
+		.mutation(async ({ input }) => {
+			const usecase = new CreateStudentForPromotionUsecase(
+				serviceProvider.StudentRepository,
+				serviceProvider.PromotionRepository
+			);
+			await usecase.execute(input);
+		}),
+	getStudentHistory: teacherProcedure
+		.input(
+			z.object({
+				studentId: z.string(),
+				promotionId: z.string()
+			})
+		)
+		.query(async ({ input }) => {
+			const { studentId, promotionId } = input;
+			const history = await serviceProvider.StudentHistoryQueries.getStudentHistory(
+				studentId,
+				promotionId
+			);
+			return history;
 		})
 });
 

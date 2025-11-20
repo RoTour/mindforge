@@ -23,6 +23,7 @@ import { CheckAndLinkStudentByEmailUsecase } from '$quiz/student/application/Che
 import type { IEmailService } from '$quiz/student/application/interfaces/IEmailService';
 import type { IEnrollQueries } from '$quiz/student/application/interfaces/IEnrollQueries';
 import type { IPromotionStudentsQueries } from '$quiz/student/application/interfaces/IPromotionStudentsQueries';
+import type { IStudentHistoryQueries } from '$quiz/student/application/interfaces/IStudentHistoryQueries';
 import type { IStudentQueries } from '$quiz/student/application/interfaces/IStudentQueries';
 import type { IStudentsOverviewQueries } from '$quiz/student/application/interfaces/IStudentsOverviewQueries';
 import type { IUnlinkedStudentsQueries } from '$quiz/student/application/interfaces/IUnlinkedStudentsQueries';
@@ -33,6 +34,7 @@ import type { IStudentVerificationService } from '$quiz/student/domain/interface
 import { AuthContextACL } from '$quiz/student/infra/auth/AuthContextACL';
 import { PrismaEnrollQueries } from '$quiz/student/infra/queries/PrismaEnrollQueries';
 import { PrismaPromotionStudentsQueries } from '$quiz/student/infra/queries/PrismaPromotionStudentsQueries';
+import { PrismaStudentHistoryQueries } from '$quiz/student/infra/queries/PrismaStudentHistoryQueries';
 import { PrismaStudentQueries } from '$quiz/student/infra/queries/PrismaStudentQueries';
 import { PrismaStudentsOverviewQueries } from '$quiz/student/infra/queries/PrismaStudentsOverviewQueries';
 import { PrismaUnlinkedStudentsQueries } from '$quiz/student/infra/queries/PrismaUnlinkedStudentsQueries';
@@ -87,6 +89,7 @@ export class ServiceProviderFactory {
 			TeacherPromotionsQueries: new PrismaTeacherPromotionsQueries(prisma),
 			StudentsOverviewQueries: new PrismaStudentsOverviewQueries(prisma),
 			TeacherQuestionsQueries: new PrismaTeacherQuestionsQueries(prisma),
+			StudentHistoryQueries: new PrismaStudentHistoryQueries(prisma),
 			StudentQueries: new PrismaStudentQueries(prisma),
 			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
 			UnlinkedStudentsQueries: new PrismaUnlinkedStudentsQueries(prisma),
@@ -131,6 +134,7 @@ export type ServiceProvider = {
 	TeacherPromotionsQueries: ITeacherPromotionsQueries;
 	StudentsOverviewQueries: IStudentsOverviewQueries;
 	TeacherQuestionsQueries: ITeacherQuestionsQueries;
+	StudentHistoryQueries: IStudentHistoryQueries;
 	StudentQueries: IStudentQueries;
 	StudentQuestionQueries: IStudentQuestionQueries;
 	UnlinkedStudentsQueries: IUnlinkedStudentsQueries;

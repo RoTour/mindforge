@@ -118,6 +118,10 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 		CheckAndLinkStudentByEmailUsecase: {
 			execute: vi.fn(),
 			...overrides?.CheckAndLinkStudentByEmailUsecase
-		} as unknown as CheckAndLinkStudentByEmailUsecase
+		} as unknown as CheckAndLinkStudentByEmailUsecase,
+		StudentHistoryQueries: {
+			getStudentHistory: vi.fn(),
+			...overrides?.StudentHistoryQueries
+		}
 	} satisfies ServiceProvider;
 }
