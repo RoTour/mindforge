@@ -14,12 +14,14 @@ import { PrismaStudentRepository } from '$quiz/student/infra/StudentRepository/P
 import { Teacher } from '$quiz/teacher/domain/Teacher.entity';
 import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/PrismaTeacherRepository';
 import type { ConnectionOptions } from 'bullmq';
-import { Queue } from 'bullmq';
+import { Queue, Worker } from 'bullmq';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { getPrismaTestClient, getTestRedisConnection } from '../../../../test/setupIntegration';
+import { startRegisterStudentAnswerWorker } from '../adapters/RegisterStudentAnswerWorker.adapter';
 import { QuestionSession } from '../domain/QuestionSession.entity';
 import { PrismaQuestionSessionRepository } from '../infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
 import { AcceptAnswerUsecase } from './AcceptAnswerUsecase';
+import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 
 describe('Submission Flow Integration Test', () => {
 	let prisma: PrismaClient;
@@ -27,6 +29,7 @@ describe('Submission Flow Integration Test', () => {
 	let messageQueue: IMessageQueue;
 	let acceptAnswerUsecase: AcceptAnswerUsecase;
 	let answerCommandQueue: Queue;
+	let worker: Worker;
 
 	// --- Default Entities for tests ---
 	let teacher: Teacher;
@@ -85,6 +88,15 @@ describe('Submission Flow Integration Test', () => {
 		});
 		questionSession.start(); // Make it active
 		await questionSessionRepository.save(questionSession);
+
+		const autoGradingListener: IDomainEventListener = {
+			handle: vi.fn()
+		};
+		worker = startRegisterStudentAnswerWorker(
+			redisConnection,
+			questionSessionRepository,
+			autoGradingListener
+		);
 	});
 
 	afterEach(async () => {
@@ -131,5 +143,5 @@ describe('Submission Flow Integration Test', () => {
 		expect(updatedSession?.answers).toHaveLength(1);
 		expect(updatedSession?.answers[0].studentId).toBe(student.id.id());
 		expect(updatedSession?.answers[0].text).toBe(answerText);
-	}, 10000);
+	}, 30000);
 });

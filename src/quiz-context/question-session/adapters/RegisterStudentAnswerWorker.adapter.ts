@@ -1,26 +1,32 @@
 // src/quiz-context/question-session/adapters/RegisterStudentAnswerWorker.adapter.ts
-import { Worker, type WorkerOptions } from 'bullmq';
+import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 import { ProcessStudentAnswerCommand } from '$quiz/common/domain/commands/ProcessStudentAnswer.command';
-import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';
+import { Worker, type WorkerOptions } from 'bullmq';
 import {
 	RegisterStudentAnswerUsecase,
 	type RegisterStudentAnswerCommand
 } from '../application/RegisterStudentAnswerUsecase';
+import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';
 
 export const startRegisterStudentAnswerWorker = (
 	connection: WorkerOptions['connection'],
-	questionSessionRepository: IQuestionSessionRepository
+	questionSessionRepository: IQuestionSessionRepository,
+	scheduleAutoGradingListener: IDomainEventListener
 ) => {
-	const usecase = new RegisterStudentAnswerUsecase(questionSessionRepository);
+	const usecase = new RegisterStudentAnswerUsecase(
+		questionSessionRepository,
+		scheduleAutoGradingListener
+	);
 
 	const worker = new Worker(
 		ProcessStudentAnswerCommand.type,
 		async (job) => {
-			const { questionSessionId, studentId, answerText } =
-				job.data as RegisterStudentAnswerCommand;
-			console.log(
-				`Processing job ${job.id}: Registering answer for student ${studentId} in session ${questionSessionId}`
-			);
+			const { questionSessionId, studentId, answerText } = job.data as RegisterStudentAnswerCommand;
+			console.log(`Processing job: Registering answer for student in session`, {
+				jobId: job.id,
+				questionSessionId,
+				studentId
+			});
 
 			await usecase.execute({
 				questionSessionId,

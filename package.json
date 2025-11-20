@@ -20,7 +20,8 @@
 		"test:long": "vitest --project long-running",
 		"test:e2e": "playwright test",
 		"storybook": "storybook dev -p 6006",
-		"build-storybook": "storybook build"
+		"build-storybook": "storybook build",
+		"cleanup:redis": "docker compose -f docker-compose.dev.yaml down -v redis"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^4.1.1",

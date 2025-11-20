@@ -1,4 +1,5 @@
-// src/quiz-context/question-session/application/RegisterStudentAnswerUsecase.ts
+import { DomainEventPublisher } from '$ddd/events/DomainEventPublisher';
+import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import { Answer } from '../domain/Answer.entity';
 import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';
@@ -12,14 +13,19 @@ export type RegisterStudentAnswerCommand = {
 
 // Called by message queue consumer to register student answers without concurrency issues
 export class RegisterStudentAnswerUsecase {
-	constructor(private readonly questionSessionRepository: IQuestionSessionRepository) {}
+	constructor(
+		private readonly questionSessionRepository: IQuestionSessionRepository,
+		// In a full DDD setup, we'd use an EventBus. Injecting specific listener for simplicity/pragmatism here.
+		private readonly scheduleAutoGradingListener: IDomainEventListener
+	) {}
 
 	async execute(command: RegisterStudentAnswerCommand): Promise<void> {
+		console.log('RegisterStudentAnswerUsecase executing', command);
 		const session = await this.questionSessionRepository.findById(
 			new QuestionSessionId(command.questionSessionId)
 		);
 		if (!session) {
-			console.error('Question session not found in RegisterStudentAnswerUsecase', { command });
+			console.error('QuestionSession not found in RegisterStudentAnswerUsecase', { command });
 			return;
 		}
 
@@ -38,9 +44,12 @@ export class RegisterStudentAnswerUsecase {
 			});
 			return;
 		}
+		DomainEventPublisher.subscribe(this.scheduleAutoGradingListener);
 
 		await this.questionSessionRepository.save(session);
 
-		// Domain events could be published here if other listeners need them.
+		// Publish domain events
+		await Promise.all(session.getDomainEvents().map((e) => DomainEventPublisher.publish(e)));
+		session.clearDomainEvents();
 	}
 }

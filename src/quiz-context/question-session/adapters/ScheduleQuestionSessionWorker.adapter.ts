@@ -16,7 +16,12 @@ export const startScheduleQuestionSessionWorker = (
 			const { promotionId, questionId, endingOn, startingOn } =
 				job.data as PromotionQuestionPlanned['payload'];
 			console.log(
-				`Processing job ${job.id}: Starting session for question ${questionId} in promotion ${promotionId} from ${startingOn} to ${endingOn}`
+				`Processing job : Starting session for question from ${startingOn} to ${endingOn}`,
+				{
+					jobId: job.id,
+					promotionId,
+					questionId
+				}
 			);
 
 			await usecase.execute({

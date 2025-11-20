@@ -1,16 +1,18 @@
 // @path: /Users/rotour/projects/mindforge/src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.int.test.ts
 import { getPrismaTestClient, getTestRedisConnection } from '../../../../../test/setupIntegration';
-import { describe, test, expect } from 'vitest';
+import { describe, test, expect, beforeEach } from 'vitest';
 import { BullMQAdapter } from '$lib/server/bullmq/BullMQ.adapter';
 import { PrismaQuestionSessionRepository } from '$quiz/question-session/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
 import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
 import { ScheduleSessionOnPromotionQuestionPlanned } from './ScheduleSessionOnPromotionQUestionPlanned.listener';
 import { PromotionQuestionPlanned } from '../../domain/events/PromotionQuestionPlanned.event';
-import type { QuestionSession } from '$prisma/client';
+import type { PrismaClient, QuestionSession } from '$prisma/client';
 import { Teacher } from '$quiz/teacher/domain/Teacher.entity';
 import { Promotion } from '../../domain/Promotion.entity';
 import { Question } from '$quiz/question/domain/Question.entity';
 import { Period } from '$quiz/promotion/domain/Period.valueObject';
+import type { RedisConnection, RedisOptions, Worker } from 'bullmq';
+import { startScheduleQuestionSessionWorker } from '$quiz/question-session/adapters/ScheduleQuestionSessionWorker.adapter';
 
 // Helper function to poll the database until a condition is met or timeout
 async function poll<T>(
@@ -30,15 +32,26 @@ async function poll<T>(
 }
 
 describe('Integration-Listener: ScheduleSessionOnPromotionQuestionPlanned', () => {
+	let prisma: PrismaClient;
+	let redis: RedisOptions;
+
+	let questionSessionRepository: PrismaQuestionSessionRepository;
+
+	let mq: BullMQAdapter;
+	let worker: Worker;
+
+	beforeEach(() => {
+		prisma = getPrismaTestClient();
+		redis = getTestRedisConnection();
+
+		questionSessionRepository = new PrismaQuestionSessionRepository(prisma);
+
+		mq = new BullMQAdapter(redis);
+		worker = startScheduleQuestionSessionWorker(redis, questionSessionRepository);
+	});
+
 	test('should schedule a job and have the worker create a question session in the DB', async () => {
 		// --- ARRANGE ---
-		// 1. Get connections to the test containers
-		const prisma = getPrismaTestClient();
-		const redisConnection = getTestRedisConnection();
-
-		// 2. Instantiate real dependencies
-		const mq = new BullMQAdapter(redisConnection);
-		const questionSessionRepository = new PrismaQuestionSessionRepository(prisma);
 		const createQuestionSessionUsecase = new CreateQuestionSessionUsecase(
 			questionSessionRepository
 		);
@@ -58,7 +71,7 @@ describe('Integration-Listener: ScheduleSessionOnPromotionQuestionPlanned', () =
 		});
 
 		const teacher = Teacher.create({ authUserId: user.id });
-		const savedTeacher = await prisma.teacher.create({
+		await prisma.teacher.create({
 			data: { id: teacher.id.id(), authUserId: teacher.authUserId }
 		});
 

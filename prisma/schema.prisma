@@ -5,8 +5,8 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "./generated"
+  provider      = "prisma-client"
+  output        = "./generated"
   binaryTargets = ["native", "darwin-arm64", "linux-arm64-openssl-1.1.x", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x", "linux-arm64-openssl-3.0.x"]
 }
 
@@ -16,39 +16,35 @@ datasource db {
 }
 
 model Teacher {
-  id          String      @id @default(cuid())
-  authUserId  String      @unique
+  id         String @id @default(cuid())
+  authUserId String @unique
 
-  promotions  Promotion[]
+  promotions       Promotion[]
   createdQuestions Question[]
 }
 
-
-
 model Promotion {
+  id       String @id @default(cuid())
+  name     String
+  baseYear Int
 
-  id        String @id @default(cuid())
-  name      String
-  baseYear  Int
-
-  teacher   Teacher @relation(fields: [teacherId], references: [id])
-  teacherId String
-  students  StudentsOnPromotions[]
+  teacher          Teacher                @relation(fields: [teacherId], references: [id])
+  teacherId        String
+  students         StudentsOnPromotions[]
   questionSessions QuestionSession[]
   plannedQuestions PlannedQuestion[]
 }
 
 model Student {
-  id       String  @id @default(cuid())
-  name     String
-  lastName String?
-  email    String? @unique
+  id         String  @id @default(cuid())
+  name       String
+  lastName   String?
+  email      String? @unique
   authUserId String? @unique
-
 
   // Relation to the join table
   promotions StudentsOnPromotions[]
-  answers Answer[]
+  answers    Answer[]
 }
 
 // Explicit many-to-many join table
@@ -125,10 +121,10 @@ model Verification {
 // --- Add to your existing schema.prisma ---
 
 model Question {
-  id        String   @id @default(cuid())
-  text      String   @db.Text // The content of the question
-  authorId  String   // Foreign key to the Teacher who created it
-  author    Teacher  @relation(fields: [authorId], references: [id])
+  id         String  @id @default(cuid())
+  text       String  @db.Text // The content of the question
+  authorId   String // Foreign key to the Teacher who created it
+  author     Teacher @relation(fields: [authorId], references: [id])
   keyNotions Json?
 
   // A single Question template can be used in many live sessions
@@ -137,50 +133,56 @@ model Question {
 }
 
 model PlannedQuestion {
-  id          String    @id @default(cuid())
+  id String @id @default(cuid())
 
   promotionId String
   promotion   Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
 
-  questionId  String
-  question    Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
-  startingOn  DateTime?
-  endingOn    DateTime?
+  startingOn DateTime?
+  endingOn   DateTime?
 }
 
 model QuestionSession {
-  id          String    @id @default(cuid())
+  id String @id @default(cuid())
 
-  questionId  String
-  question    Question  @relation(fields: [questionId], references: [id])
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
 
   promotionId String
   promotion   Promotion @relation(fields: [promotionId], references: [id])
 
-  startedAt   DateTime  // When the session was started
-  endsAt      DateTime  // When students can no longer answer
-  status      String    // e.g., "PENDING", "ACTIVE", "CLOSED", "GRADING"
+  startedAt DateTime // When the session was started
+  endsAt    DateTime // When students can no longer answer
+  status    String // e.g., "PENDING", "ACTIVE", "CLOSED", "GRADING"
 
   // A session aggregates all the answers
-  answers     Answer[]
+  answers Answer[]
 }
 
 model Answer {
-  id                String   @id @default(cuid())
+  id String @id @default(cuid())
 
   questionSessionId String
   questionSession   QuestionSession @relation(fields: [questionSessionId], references: [id], onDelete: Cascade)
 
-  studentId         String
-  student           Student @relation(fields: [studentId], references: [id])
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id])
 
-  text              String   @db.Text // The student's answer
-  submittedAt       DateTime @default(now())
+  text        String   @db.Text // The student's answer
+  submittedAt DateTime @default(now())
 
   // Fields for the future LLM assessment
-  grade             Float?
-  assessment        String?  @db.Text
+  // Fields for the future LLM assessment
+  autoGradeId String? @unique
+  autoGrade   Grade?  @relation("AutoGrade", fields: [autoGradeId], references: [id])
+
+  teacherGradeId String? @unique
+  teacherGrade   Grade?  @relation("TeacherGrade", fields: [teacherGradeId], references: [id])
+
+  isPublished Boolean @default(false)
 
   // Enforce that a student can only answer once per session
   @@unique([questionSessionId, studentId])
@@ -194,4 +196,15 @@ model OTP {
   used      Boolean  @default(false)
   subjectId String
   purpose   String
+}
+
+model Grade {
+  id                String   @id @default(cuid())
+  skillsMastered    String[]
+  skillsToReinforce String[]
+  comment           String?
+
+  // Relations back to Answer
+  answerAuto    Answer? @relation("AutoGrade")
+  answerTeacher Answer? @relation("TeacherGrade")
 }

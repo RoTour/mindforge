@@ -11,7 +11,9 @@ import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPr
 import { PrismaPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/PrismaPromotionRepository';
 import { PrismaTeacherPromotionsQueries } from '$quiz/promotion/infra/queries/PrismaTeacherPromotionsQueries';
 import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
+import type { IGradingService } from '$quiz/question-session/domain/IGradingService';
 import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
+import { OpenRouterGradingService } from '$quiz/question-session/infra/OpenRouterGradingService';
 import { PrismaQuestionSessionRepository } from '$quiz/question-session/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
 import type { ITeacherQuestionsQueries } from '$quiz/question/application/interfaces/ITeacherQuestionsQueries';
 import type { IStudentQuestionQueries } from '$quiz/question/application/queries/IStudentQuestionQueries';
@@ -72,6 +74,11 @@ export class ServiceProviderFactory {
 			modelName: this.env.OPENROUTER_MODEL_NAME
 		});
 
+		const openRouterGradingService = new OpenRouterGradingService({
+			apiKey: this.env.OPENROUTER_API_KEY,
+			modelName: this.env.OPENROUTER_MODEL_NAME
+		});
+
 		const resend = createResendClient(this.env.RESEND_API_KEY);
 		const emailService = new ResendEmailService(resend, this.env.RESEND_FROM_EMAIL);
 		const otpRepository = new PrismaOTPRepository(prisma);
@@ -108,6 +115,7 @@ export class ServiceProviderFactory {
 			},
 			services: {
 				ImageStudentListParser: imageStudentListParser,
+				GradingService: openRouterGradingService,
 				EmailService: emailService,
 				StudentVerificationService: new AuthContextACL(
 					new GenerateAndSendOtpUsecase(
@@ -146,6 +154,7 @@ export type ServiceProvider = {
 	};
 	services: {
 		ImageStudentListParser: IStudentListParser;
+		GradingService: IGradingService;
 		EmailService: IEmailService;
 		StudentVerificationService: IStudentVerificationService;
 	};

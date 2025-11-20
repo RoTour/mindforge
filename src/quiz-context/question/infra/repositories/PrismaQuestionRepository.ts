@@ -1,10 +1,10 @@
 // src/quiz-context/infra/QuestionRepository/PrismaQuestionRepository.ts
 import type { Prisma, PrismaClient, Question as PrismaQuestion } from '$prisma/client';
+import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
+import type { KeyNotionProps } from '$quiz/question/domain/KeyNotion.valueObject';
 import { Question } from '$quiz/question/domain/Question.entity';
 import { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
 import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
-import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
-import type { KeyNotionProps } from '$quiz/question/domain/KeyNotion.valueObject';
 
 // Mapper
 class QuestionMapper {

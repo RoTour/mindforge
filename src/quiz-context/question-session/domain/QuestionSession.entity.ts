@@ -1,15 +1,17 @@
 // src/quiz-context/domain/QuestionSession.entity.ts
 import { AggregateRoot } from '$lib/ddd/interfaces/AggregateRoot';
-import { QuestionSessionId } from './QuestionSessionId.valueObject';
-import type { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
 import type { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
+import type { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
+import type { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import { Answer, type AnswerProps } from './Answer.entity';
+import type { Grade } from './Grade.valueObject';
 import {
 	SessionHasEndedError,
 	SessionIsNotActiveError,
 	SessionIsNotPendingError,
 	StudentAlreadyAnsweredError
 } from './QuestionSession.errors';
+import { QuestionSessionId } from './QuestionSessionId.valueObject';
 import { StudentAnswerSubmitted } from './events/StudentAnswerSubmitted.event';
 
 export type QuestionSessionStatus = 'PENDING' | 'ACTIVE' | 'CLOSED' | 'GRADING';
@@ -92,5 +94,34 @@ export class QuestionSession extends AggregateRoot<QuestionSessionId> {
 		this.addDomainEvent(
 			new StudentAnswerSubmitted(this.id.id(), answer.studentId.id(), answer.text)
 		);
+	}
+
+	public getAnswerFromStudent(studentId: StudentId): Answer | undefined {
+		return this.answers.find((a) => a.studentId.equals(studentId));
+	}
+
+	public autoGradeAnswer(studentId: StudentId, grade: Grade) {
+		const answer = this.answers.find((a) => a.studentId.equals(studentId));
+		if (!answer) {
+			throw new Error('Answer not found');
+		}
+		answer.assignAutoGrade(grade);
+		// We could emit an event here if needed, e.g. AnswerAutoGraded
+	}
+
+	public teacherGradeAnswer(studentId: StudentId, grade: Grade) {
+		const answer = this.answers.find((a) => a.studentId.equals(studentId));
+		if (!answer) {
+			throw new Error('Answer not found');
+		}
+		answer.assignTeacherGrade(grade);
+	}
+
+	public publishGrade(studentId: StudentId) {
+		const answer = this.answers.find((a) => a.studentId.equals(studentId));
+		if (!answer) {
+			throw new Error('Answer not found');
+		}
+		answer.publishGrade();
 	}
 }

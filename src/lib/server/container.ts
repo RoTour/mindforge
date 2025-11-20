@@ -27,5 +27,15 @@ class SvelteKitEnvironment implements IEnvironment {
 	}
 }
 
-const factory = new ServiceProviderFactory(new SvelteKitEnvironment());
+const appEnv = new SvelteKitEnvironment();
+const factory = new ServiceProviderFactory(appEnv);
 export const serviceProvider = factory.create();
+console.debug('App env init', {
+	REDIS_HOST: appEnv.REDIS_HOST,
+	REDIS_PORT: appEnv.REDIS_PORT,
+	DATABASE_URL: appEnv.DATABASE_URL,
+	OPENROUTER_API_KEY: appEnv.OPENROUTER_API_KEY ? '****' : undefined,
+	OPENROUTER_MODEL_NAME: appEnv.OPENROUTER_MODEL_NAME,
+	RESEND_API_KEY: appEnv.RESEND_API_KEY ? '****' : undefined,
+	RESEND_FROM_EMAIL: appEnv.RESEND_FROM_EMAIL
+});
