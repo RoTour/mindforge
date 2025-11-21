@@ -1,11 +1,11 @@
+import { DomainEventPublisher } from '$ddd/events/DomainEventPublisher';
+import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 import { NotFoundError } from '$quiz/common/application/errors/NotFoundError';
 import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
 import { QuestionId } from '$quiz/question/domain/QuestionId.valueObject';
 import z from 'zod';
 import type { IPromotionRepository } from '../domain/interfaces/IPromotionRepository';
 import { PlannedQuestionId } from '../domain/PlannedQuestionId.valueObject';
-import { DomainEventPublisher } from '$lib/ddd/events/DomainEventPublisher';
-import type { IDomainEventListener } from '$lib/ddd/interfaces/IDomainEventListener';
 
 export const PlanQuestionSchema = z.object({
 	id: z.string().optional(),
@@ -24,33 +24,34 @@ export class PlanQuestionUsecase {
 		private readonly scheduleSessionListener: IDomainEventListener
 	) {}
 
-	async execute(command: PlanQuestionCommand) {
+	async execute(command: PlanQuestionCommand): Promise<void> {
 		const { id, promotionId, questionId, startingOn, endingOn } = command;
+
+		const promotion = await this.promotionRepository.findById(promotionId);
+		if (!promotion) {
+			throw new NotFoundError(`Promotion with ID ${promotionId} not found`);
+		}
+
+		const question = await this.questionRepository.findById(new QuestionId(questionId));
+		if (!question) {
+			throw new NotFoundError(`Question with ID ${questionId} not found`);
+		}
 
 		DomainEventPublisher.subscribe(this.scheduleSessionListener);
 
 		try {
-			const question = await this.questionRepository.findById(new QuestionId(command.questionId));
-			if (!question) {
-				throw new NotFoundError(`Question with ID ${questionId} not found`);
-			}
-
-			const promotion = await this.promotionRepository.findById(promotionId);
-			if (!promotion) {
-				throw new NotFoundError(`Promotion with ID ${promotionId} not found`);
-			}
-
 			const updatingExistingPlannedQuestion = !!id;
 			if (updatingExistingPlannedQuestion) {
 				promotion.updatePlannedQuestionSchedule(new PlannedQuestionId(id), startingOn, endingOn);
-				await this.promotionRepository.save(promotion);
-				return;
+			} else {
+				promotion.planQuestion(question.id, startingOn, endingOn);
 			}
 
-			promotion.planQuestion(question.id, startingOn, endingOn);
 			await this.promotionRepository.save(promotion);
 
-			await Promise.all(promotion.getDomainEvents().map((e) => DomainEventPublisher.publish(e)));
+			// Manually publish events
+			const events = promotion.getDomainEvents();
+			await Promise.all(events.map((event) => DomainEventPublisher.publish(event)));
 			promotion.clearDomainEvents();
 		} finally {
 			DomainEventPublisher.unsubscribe(this.scheduleSessionListener);

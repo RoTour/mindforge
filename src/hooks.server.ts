@@ -2,6 +2,7 @@ import { building } from '$app/environment';
 import { resolve as resolvePath } from '$app/paths';
 import { env } from '$env/dynamic/private';
 import { auth } from '$lib/auth';
+import { DomainEventPublisher } from '$lib/ddd/events/DomainEventPublisher';
 import '$lib/server/bullmq/bullmq';
 import { redirect, type Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
@@ -36,7 +37,18 @@ const handleDebug: Handle = async ({ event, resolve }) => {
 	return resolve(event);
 };
 
-export const handle = sequence(handleAuthRoot, handleAuth, handleAuthContext, handleDebug);
+const handleDomainEventReset: Handle = async ({ event, resolve }) => {
+	DomainEventPublisher.reset();
+	return resolve(event);
+};
+
+export const handle = sequence(
+	handleAuthRoot,
+	handleAuth,
+	handleAuthContext,
+	handleDomainEventReset,
+	handleDebug
+);
 
 export const handleError = async ({ error }) => {
 	const { DEBUG } = env;

@@ -1,7 +1,7 @@
 // src/quiz-context/question-session/application/AcceptAnswerUsecase.ts
 import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
 import { ProcessStudentAnswerCommand } from '$quiz/common/domain/commands/ProcessStudentAnswer.command';
-import { v7 as randomUUIDv7, v7 } from 'uuid';
+import { v7 as randomUUIDv7 } from 'uuid';
 
 export type AcceptAnswerCommand = {
 	questionSessionId: string;

@@ -1,8 +1,8 @@
 import type {
-	Prisma,
-	PrismaClient,
-	PlannedQuestion as PrismaPlannedQuestion,
-	Promotion as PrismaPromotion
+    Prisma,
+    PrismaClient,
+    PlannedQuestion as PrismaPlannedQuestion,
+    Promotion as PrismaPromotion
 } from '$prisma/client';
 import { Period } from '$quiz/promotion/domain/Period.valueObject';
 import { PlannedQuestion as PlannedQuestionEntity } from '$quiz/promotion/domain/PlannedQuestion.entity';

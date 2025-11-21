@@ -1,22 +1,22 @@
+import type { IMessageQueue } from '$ddd/interfaces/IMessageQueue';
 import { DomainEventPublisher } from '$lib/ddd/events/DomainEventPublisher';
+import { BullMQAdapter } from '$lib/server/bullmq/BullMQ.adapter';
+import type { PrismaClient } from '$prisma/client';
 import { ScheduleQuestionSessionCommand } from '$quiz/common/domain/commands/ScheduleQuestionSession.command';
-import { Question } from '$quiz/question/domain/Question.entity';
-import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
 import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
 import { PrismaQuestionSessionRepository } from '$quiz/question-session/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
+import { Question } from '$quiz/question/domain/Question.entity';
+import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
 import { Teacher } from '$quiz/teacher/domain/Teacher.entity';
 import { PrismaTeacherRepository } from '$quiz/teacher/infra/TeacherRepository/PrismaTeacherRepository';
+import { Queue } from 'bullmq';
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 import { getPrismaTestClient, getTestRedisConnection } from '../../../../test/setupIntegration';
 import { Period } from '../domain/Period.valueObject';
 import { Promotion } from '../domain/Promotion.entity';
 import { PrismaPromotionRepository } from '../infra/PromotionRepository/PrismaPromotionRepository';
 import { ScheduleSessionOnPromotionQuestionPlanned } from './listeners/ScheduleSessionOnPromotionQUestionPlanned.listener';
-import type { PrismaClient } from '$prisma/client';
 import { PlanQuestionUsecase } from './PlanQuestion.usecase';
-import { BullMQAdapter } from '$lib/server/bullmq/BullMQ.adapter';
-import type { IMessageQueue } from '$ddd/interfaces/IMessageQueue';
-import { Queue } from 'bullmq';
 
 describe('Full Planning Flow Integration Test', () => {
 	let prisma: PrismaClient;

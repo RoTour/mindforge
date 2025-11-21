@@ -1,3 +1,4 @@
+
 import { DomainEventPublisher } from '$ddd/events/DomainEventPublisher';
 import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
@@ -15,41 +16,45 @@ export type RegisterStudentAnswerCommand = {
 export class RegisterStudentAnswerUsecase {
 	constructor(
 		private readonly questionSessionRepository: IQuestionSessionRepository,
-		// In a full DDD setup, we'd use an EventBus. Injecting specific listener for simplicity/pragmatism here.
 		private readonly scheduleAutoGradingListener: IDomainEventListener
 	) {}
 
 	async execute(command: RegisterStudentAnswerCommand): Promise<void> {
-		console.log('RegisterStudentAnswerUsecase executing', command);
 		const session = await this.questionSessionRepository.findById(
 			new QuestionSessionId(command.questionSessionId)
 		);
+
 		if (!session) {
 			console.error('QuestionSession not found in RegisterStudentAnswerUsecase', { command });
 			return;
 		}
 
-		const answer = new Answer({
-			studentId: new StudentId(command.studentId),
-			text: command.answerText,
-			submittedAt: new Date()
-		});
+		DomainEventPublisher.subscribe(this.scheduleAutoGradingListener);
 
 		try {
+			const answer = new Answer({
+				studentId: new StudentId(command.studentId),
+				text: command.answerText,
+				submittedAt: new Date(),
+				isPublished: false
+			});
+
 			session.submitAnswer(answer);
+
+			await this.questionSessionRepository.save(session);
+
+			// Manually publish events
+			const events = session.getDomainEvents();
+			await Promise.all(events.map((event) => DomainEventPublisher.publish(event)));
+			session.clearDomainEvents();
 		} catch (e) {
 			console.warn('Error submitting answer in RegisterStudentAnswerUsecase', {
 				message: (e as Error).message,
 				command
 			});
-			return;
+			throw e;
+		} finally {
+			DomainEventPublisher.unsubscribe(this.scheduleAutoGradingListener);
 		}
-		DomainEventPublisher.subscribe(this.scheduleAutoGradingListener);
-
-		await this.questionSessionRepository.save(session);
-
-		// Publish domain events
-		await Promise.all(session.getDomainEvents().map((e) => DomainEventPublisher.publish(e)));
-		session.clearDomainEvents();
 	}
 }
