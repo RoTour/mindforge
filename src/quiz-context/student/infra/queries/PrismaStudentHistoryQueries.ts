@@ -1,7 +1,7 @@
 import type { PrismaClient } from '$prisma/client';
 import type {
-    IStudentHistoryQueries,
-    StudentHistoryDTO
+	IStudentHistoryQueries,
+	StudentHistoryDTO
 } from '../../application/interfaces/IStudentHistoryQueries';
 
 export class PrismaStudentHistoryQueries implements IStudentHistoryQueries {

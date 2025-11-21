@@ -11,9 +11,11 @@ import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPr
 import { PrismaPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/PrismaPromotionRepository';
 import { PrismaTeacherPromotionsQueries } from '$quiz/promotion/infra/queries/PrismaTeacherPromotionsQueries';
 import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
+import type { ITeacherAnswersQueries } from '$quiz/question-session/application/interfaces/ITeacherAnswersQueries';
 import type { IGradingService } from '$quiz/question-session/domain/IGradingService';
 import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
 import { OpenRouterGradingService } from '$quiz/question-session/infra/OpenRouterGradingService';
+import { PrismaTeacherAnswersQueries } from '$quiz/question-session/infra/queries/PrismaTeacherAnswersQueries';
 import { PrismaQuestionSessionRepository } from '$quiz/question-session/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
 import type { ITeacherQuestionsQueries } from '$quiz/question/application/interfaces/ITeacherQuestionsQueries';
 import type { IStudentQuestionQueries } from '$quiz/question/application/queries/IStudentQuestionQueries';
@@ -99,6 +101,7 @@ export class ServiceProviderFactory {
 			StudentHistoryQueries: new PrismaStudentHistoryQueries(prisma),
 			StudentQueries: new PrismaStudentQueries(prisma),
 			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
+			TeacherAnswersQueries: new PrismaTeacherAnswersQueries(prisma),
 			UnlinkedStudentsQueries: new PrismaUnlinkedStudentsQueries(prisma),
 			CheckAndLinkStudentByEmailUsecase: new CheckAndLinkStudentByEmailUsecase(
 				new PrismaStudentRepository(prisma)
@@ -145,6 +148,7 @@ export type ServiceProvider = {
 	StudentHistoryQueries: IStudentHistoryQueries;
 	StudentQueries: IStudentQueries;
 	StudentQuestionQueries: IStudentQuestionQueries;
+	TeacherAnswersQueries: ITeacherAnswersQueries;
 	UnlinkedStudentsQueries: IUnlinkedStudentsQueries;
 	CheckAndLinkStudentByEmailUsecase: CheckAndLinkStudentByEmailUsecase;
 	MessageQueue: IMessageQueue;

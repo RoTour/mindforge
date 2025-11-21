@@ -1,8 +1,8 @@
 // /src/quiz-context/infra/queries/PrismaStudentsOverviewQueries.ts
 import type { PrismaClient } from '$prisma/client';
 import type {
-    IStudentsOverviewQueries,
-    StudentsFromPromotionDTO
+	IStudentsOverviewQueries,
+	StudentsFromPromotionDTO
 } from '../../application/interfaces/IStudentsOverviewQueries';
 
 export class PrismaStudentsOverviewQueries implements IStudentsOverviewQueries {

@@ -1,6 +1,6 @@
 import type { IStudentRepository } from '../domain/interfaces/IStudentRepository';
 
-type CheckAndLinkOutput = 
+type CheckAndLinkOutput =
 	| { status: 'LINKED' }
 	| { status: 'ALREADY_LINKED' }
 	| { status: 'NOT_FOUND' };
@@ -21,8 +21,8 @@ export class CheckAndLinkStudentByEmailUsecase {
 
 		student.linkToUserAccount(authId);
 		// Ensure email is set (though it matched, so it should be set, but good for consistency)
-		student.email = email; 
-		
+		student.email = email;
+
 		await this.studentRepository.save(student);
 
 		return { status: 'LINKED' };

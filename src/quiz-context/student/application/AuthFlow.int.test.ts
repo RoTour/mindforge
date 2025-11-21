@@ -59,15 +59,15 @@ describe('Auth Flow Integration Test', () => {
 			email: 'original-email@school.com'
 		});
 		await studentRepository.save(student);
-		
+
 		// Add student to promotion manually for setup (or via repository if method exists, but here we manipulate entities)
 		// Since Promotion.addStudents updates the promotion entity, we need to save it.
 		// However, PrismaPromotionRepository might handle the relation. Let's check.
-		// Actually, we should probably use the repository to add the student to the promotion if possible, 
+		// Actually, we should probably use the repository to add the student to the promotion if possible,
 		// or just rely on the fact that the use case links them.
-		// Wait, LinkStudentToUser doesn't add to promotion, it assumes student is already there? 
+		// Wait, LinkStudentToUser doesn't add to promotion, it assumes student is already there?
 		// The UI shows "unlinked students" from the promotion. So the student must be in the promotion.
-		
+
 		promotion.addStudents([student.id]);
 		await promotionRepository.save(promotion);
 
@@ -118,7 +118,7 @@ describe('Auth Flow Integration Test', () => {
 		// GIVEN: An existing unlinked student with the same email as the user
 		const userEmail = 'matching-email@school.com';
 		const userAuthId = 'user-auth-789';
-		
+
 		const student = Student.create({
 			id: new StudentId(),
 			name: 'Auto',

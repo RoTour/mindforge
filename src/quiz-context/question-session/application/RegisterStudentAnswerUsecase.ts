@@ -1,4 +1,3 @@
-
 import { DomainEventPublisher } from '$ddd/events/DomainEventPublisher';
 import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';

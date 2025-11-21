@@ -20,8 +20,5 @@ export type StudentHistoryDTO = {
 };
 
 export interface IStudentHistoryQueries {
-	getStudentHistory(
-		studentId: string,
-		promotionId: string
-	): Promise<StudentHistoryDTO>;
+	getStudentHistory(studentId: string, promotionId: string): Promise<StudentHistoryDTO>;
 }

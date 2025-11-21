@@ -1,10 +1,11 @@
 <script lang="ts">
-	import SearchForm from './SearchForm.svelte';
-	import PromotionSelector from './PromotionSelector.svelte';
+	import { page } from '$app/state';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import type { ComponentProps } from 'svelte';
 	import type { TeacherPromotionsListItem } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
-	import { page } from '$app/stores';
+	import type { ComponentProps } from 'svelte';
+	import PromotionSelector from './PromotionSelector.svelte';
+	import SearchForm from './SearchForm.svelte';
+	import { resolve } from '$app/paths';
 
 	let {
 		ref = $bindable(null),
@@ -17,7 +18,6 @@
 		navMain: [
 			{
 				title: 'Students',
-				url: '#',
 				shown: !!selectedPromotion,
 				items: [
 					{
@@ -25,14 +25,13 @@
 						url: `/teacher/promotions/${selectedPromotion?.id}/students`
 					},
 					{
-						title: 'Project Structure',
-						url: '#'
+						title: 'Answer History',
+						url: `/teacher/promotions/${selectedPromotion?.id}/answers`
 					}
 				]
 			},
 			{
 				title: 'Questions',
-				url: '#',
 				shown: !!selectedPromotion,
 				items: [
 					{
@@ -64,9 +63,9 @@
 						<Sidebar.Menu>
 							{#each group.items as item (item.title)}
 								<Sidebar.MenuItem>
-									<Sidebar.MenuButton isActive={$page.url.pathname === item.url}>
+									<Sidebar.MenuButton isActive={page.url.pathname === item.url}>
 										{#snippet child({ props })}
-											<a href={item.url} {...props}>{item.title}</a>
+											<a href={resolve(item.url)} {...props}>{item.title}</a>
 										{/snippet}
 									</Sidebar.MenuButton>
 								</Sidebar.MenuItem>
