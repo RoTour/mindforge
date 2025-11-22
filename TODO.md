@@ -1,1 +1,5 @@
-- [ ] Review QuizRouter component for clearer logic flow
+- [ ] Improve the home page design with cards for Mastered skills and skills to work on. Should put them right under summary stats.
+- [ ] Add a way for teachers to unpublish a grade.
+- [ ] Create a series of scripts to load test setup on an empty db:
+  - [ ] Script to create a large number of users, that will then join a promotion
+  - [ ] Script for a whole promotion to answer questions in a question session at the same time

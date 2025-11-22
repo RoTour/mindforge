@@ -23,7 +23,7 @@ export class GradingPanelVM {
 		this.comment = answer.teacherGrade?.comment ?? '';
 	}
 
-	async handleSave() {
+	async handleSave(shouldPublish = false) {
 		if (!this.answer) return;
 
 		this.isSaving = true;
@@ -42,9 +42,10 @@ export class GradingPanelVM {
 						.map((s) => s.trim())
 						.filter((s) => s),
 					comment: this.comment || null
-				}
+				},
+				shouldPublish
 			});
-			toast.success('Grade saved successfully');
+			toast.success(shouldPublish ? 'Grade saved and published' : 'Grade saved successfully');
 			this.onGradeSaved();
 		} catch (e) {
 			console.error(e);

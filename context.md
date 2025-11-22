@@ -30,3 +30,6 @@ Good examples of tests:
 - "Auth flow: When logged user is different from student email, and provided school email is not the one the student has been created with, and student does not exist in list, should create a new student in promotion"
 
 **By default, vitest starts in watch mode. To run tests once, use `bun vitest run ...` instead of `bun vitest ...`**
+
+## Validations
+Always validate your work by running `bun run check`

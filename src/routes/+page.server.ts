@@ -1,11 +1,11 @@
 // src/routes/+page.server.ts
 import { serialize } from '$lib/lib/utils';
 import { createContext } from '$lib/server/trpc/context';
-import { appRouter } from '$lib/server/trpc/router';
-import type { PageServerLoad } from './$types';
 import { redirectOnTRPCError } from '$lib/server/trpc/guard';
-import { TRPCError } from '@trpc/server';
+import { appRouter } from '$lib/server/trpc/router';
 import { redirect } from '@sveltejs/kit';
+import { TRPCError } from '@trpc/server';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	const parentData = await event.parent(); // ensures that the auth load function has run
@@ -14,14 +14,18 @@ export const load: PageServerLoad = async (event) => {
 	}
 	try {
 		const caller = appRouter.createCaller(await createContext(event));
-		const [promotions, summaryStats] = await Promise.all([
+		const [promotions, summaryStats, lastGradedQuestions, studentSkills] = await Promise.all([
 			caller.studentDashboard.getMyPromotions(),
-			caller.studentDashboard.getSummaryStats()
+			caller.studentDashboard.getSummaryStats(),
+			caller.studentDashboard.getLastGradedQuestions(),
+			caller.studentDashboard.getStudentSkills()
 		]);
 
 		return {
 			promotions: serialize(promotions),
-			summaryStats: serialize(summaryStats)
+			summaryStats: serialize(summaryStats),
+			lastGradedQuestions: serialize(lastGradedQuestions),
+			studentSkills: serialize(studentSkills)
 		};
 	} catch (e) {
 		if (e instanceof TRPCError && e.code === 'FORBIDDEN') {
@@ -35,6 +39,11 @@ export const load: PageServerLoad = async (event) => {
 					nbQuestionsAnswered: 0,
 					nbTotalQuestions: 0,
 					fullName: 'Anonymous Student'
+				},
+				lastGradedQuestions: [],
+				studentSkills: {
+					mastered: [],
+					toReinforce: []
 				}
 			};
 		}

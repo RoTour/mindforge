@@ -1,5 +1,5 @@
 import { AutoGradeAnswerCommand } from '$quiz/common/domain/commands/AutoGradeAnswer.command';
-import type { IQuestionRepository } from '$quiz/question/domain/IQuestionRepository';
+import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
 import { Worker, type WorkerOptions } from 'bullmq';
 import { AutoGradeAnswerUsecase } from '../application/AutoGradeAnswer.usecase';
 import type { IGradingService } from '../domain/IGradingService';
@@ -31,7 +31,7 @@ export const startAutoGradeAnswerWorker = (
 	});
 
 	worker.on('failed', (job, err) => {
-		console.error(`Auto-grading job ${job.id} failed: ${err.message}`);
+		console.error(`Auto-grading job ${job?.id} failed: ${err.message}`);
 	});
 
 	return worker;

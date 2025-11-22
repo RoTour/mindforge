@@ -27,6 +27,7 @@ import { CheckAndLinkStudentByEmailUsecase } from '$quiz/student/application/Che
 import type { IEmailService } from '$quiz/student/application/interfaces/IEmailService';
 import type { IEnrollQueries } from '$quiz/student/application/interfaces/IEnrollQueries';
 import type { IPromotionStudentsQueries } from '$quiz/student/application/interfaces/IPromotionStudentsQueries';
+import type { IStudentDashboardQueries } from '$quiz/student/application/interfaces/IStudentDashboardQueries';
 import type { IStudentHistoryQueries } from '$quiz/student/application/interfaces/IStudentHistoryQueries';
 import type { IStudentQueries } from '$quiz/student/application/interfaces/IStudentQueries';
 import type { IStudentsOverviewQueries } from '$quiz/student/application/interfaces/IStudentsOverviewQueries';
@@ -38,6 +39,7 @@ import type { IStudentVerificationService } from '$quiz/student/domain/interface
 import { AuthContextACL } from '$quiz/student/infra/auth/AuthContextACL';
 import { PrismaEnrollQueries } from '$quiz/student/infra/queries/PrismaEnrollQueries';
 import { PrismaPromotionStudentsQueries } from '$quiz/student/infra/queries/PrismaPromotionStudentsQueries';
+import { PrismaStudentDashboardQueries } from '$quiz/student/infra/queries/PrismaStudentDashboardQueries';
 import { PrismaStudentHistoryQueries } from '$quiz/student/infra/queries/PrismaStudentHistoryQueries';
 import { PrismaStudentQueries } from '$quiz/student/infra/queries/PrismaStudentQueries';
 import { PrismaStudentsOverviewQueries } from '$quiz/student/infra/queries/PrismaStudentsOverviewQueries';
@@ -76,7 +78,7 @@ export class ServiceProviderFactory {
 			modelName: this.env.OPENROUTER_MODEL_NAME
 		});
 
-		const openRouterGradingService = new OpenRouterGradingService({
+		const openRouterGradingService: IGradingService = new OpenRouterGradingService({
 			apiKey: this.env.OPENROUTER_API_KEY,
 			modelName: this.env.OPENROUTER_MODEL_NAME
 		});
@@ -102,6 +104,7 @@ export class ServiceProviderFactory {
 			StudentQueries: new PrismaStudentQueries(prisma),
 			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
 			TeacherAnswersQueries: new PrismaTeacherAnswersQueries(prisma),
+			StudentDashboardQueries: new PrismaStudentDashboardQueries(prisma),
 			UnlinkedStudentsQueries: new PrismaUnlinkedStudentsQueries(prisma),
 			CheckAndLinkStudentByEmailUsecase: new CheckAndLinkStudentByEmailUsecase(
 				new PrismaStudentRepository(prisma)
@@ -118,7 +121,7 @@ export class ServiceProviderFactory {
 			},
 			services: {
 				ImageStudentListParser: imageStudentListParser,
-				GradingService: openRouterGradingService,
+				GradingService: openRouterGradingService as IGradingService,
 				EmailService: emailService,
 				StudentVerificationService: new AuthContextACL(
 					new GenerateAndSendOtpUsecase(
@@ -149,6 +152,7 @@ export type ServiceProvider = {
 	StudentQueries: IStudentQueries;
 	StudentQuestionQueries: IStudentQuestionQueries;
 	TeacherAnswersQueries: ITeacherAnswersQueries;
+	StudentDashboardQueries: IStudentDashboardQueries;
 	UnlinkedStudentsQueries: IUnlinkedStudentsQueries;
 	CheckAndLinkStudentByEmailUsecase: CheckAndLinkStudentByEmailUsecase;
 	MessageQueue: IMessageQueue;

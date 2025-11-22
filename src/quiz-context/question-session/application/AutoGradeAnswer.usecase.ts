@@ -1,5 +1,5 @@
 import type { AutoGradeAnswerCommandPayload } from '$quiz/common/domain/commands/AutoGradeAnswer.command';
-import type { IQuestionRepository } from '$quiz/question/domain/IQuestionRepository';
+import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import type { IGradingService } from '../domain/IGradingService';
 import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';

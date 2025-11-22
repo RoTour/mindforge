@@ -13,12 +13,13 @@ export type AnswerListItem = {
 		skillsToReinforce: string[];
 		comment: string | null;
 	};
-	teacherGrade?: {
+	teacherGrade: {
 		score: number;
 		skillsMastered: string[];
 		skillsToReinforce: string[];
 		comment: string | null;
-	};
+	} | null;
+	isPublished: boolean;
 };
 
 export interface ITeacherAnswersQueries {

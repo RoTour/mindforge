@@ -59,9 +59,10 @@ export class PrismaTeacherAnswersQueries implements ITeacherAnswersQueries {
 								score: 0,
 								skillsMastered: answer.teacherGrade.skillsMastered,
 								skillsToReinforce: answer.teacherGrade.skillsToReinforce,
-								comment: answer.teacherGrade.comment
+								comment: answer.teacherGrade?.comment ?? null
 							}
-						: undefined
+						: null,
+					isPublished: answer.isPublished
 				});
 			}
 		}

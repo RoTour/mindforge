@@ -116,13 +116,26 @@
 				<Textarea id="comment" bind:value={vm.comment} placeholder="Add your feedback here..." />
 			</div>
 		</Card.Content>
-		<Card.Footer>
-			<Button onclick={() => vm.handleSave()} disabled={vm.isSaving} class="w-full">
+		<Card.Footer class="flex flex-col gap-2">
+			<Button onclick={() => vm.handleSave(false)} disabled={vm.isSaving} class="w-full">
 				{#if vm.isSaving}
 					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
 					Saving...
 				{:else}
 					Save Grade
+				{/if}
+			</Button>
+			<Button
+				variant="secondary"
+				onclick={() => vm.handleSave(true)}
+				disabled={vm.isSaving}
+				class="w-full"
+			>
+				{#if vm.isSaving}
+					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+					Saving...
+				{:else}
+					Save and Publish
 				{/if}
 			</Button>
 		</Card.Footer>

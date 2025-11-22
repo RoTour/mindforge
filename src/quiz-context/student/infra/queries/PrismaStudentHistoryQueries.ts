@@ -43,8 +43,6 @@ export class PrismaStudentHistoryQueries implements IStudentHistoryQueries {
 				questionText: a.questionSession.question.text,
 				answerText: a.text,
 				submittedAt: a.submittedAt,
-				grade: a.grade ?? undefined,
-				assessment: a.assessment ?? undefined,
 				session: {
 					startedAt: a.questionSession.startedAt,
 					status: a.questionSession.status

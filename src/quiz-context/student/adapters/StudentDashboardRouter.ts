@@ -12,5 +12,13 @@ export const StudentDashboardRouter = router({
 		const { id: studentId } = ctx.student;
 		const stats = await serviceProvider.StudentQueries.getStudentSummaryStats(studentId);
 		return stats;
+	}),
+	getLastGradedQuestions: authedStudentProcedure.query(async ({ ctx }) => {
+		const { id: studentId } = ctx.student;
+		return serviceProvider.StudentDashboardQueries.getLastGradedQuestions(studentId, 5);
+	}),
+	getStudentSkills: authedStudentProcedure.query(async ({ ctx }) => {
+		const { id: studentId } = ctx.student;
+		return serviceProvider.StudentDashboardQueries.getStudentSkills(studentId);
 	})
 });

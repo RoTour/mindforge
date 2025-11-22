@@ -102,6 +102,9 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 			ImageStudentListParser: {
 				parse: vi.fn()
 			},
+			GradingService: {
+				gradeAnswer: vi.fn()
+			},
 			EmailService: {
 				sendEmail: vi.fn()
 			},
@@ -122,6 +125,15 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 		StudentHistoryQueries: {
 			getStudentHistory: vi.fn(),
 			...overrides?.StudentHistoryQueries
+		},
+		TeacherAnswersQueries: {
+			getAnswersForPromotion: vi.fn(),
+			...overrides?.TeacherAnswersQueries
+		},
+		StudentDashboardQueries: {
+			getLastGradedQuestions: vi.fn(),
+			getStudentSkills: vi.fn(),
+			...overrides?.StudentDashboardQueries
 		}
 	} satisfies ServiceProvider;
 }

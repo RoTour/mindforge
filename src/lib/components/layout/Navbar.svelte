@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { authClient } from '$lib/auth-client';
 	import { resolve } from '$app/paths';
+	import { authClient } from '$lib/auth-client';
 	import { Button } from '../ui/button';
 
-	// type Props = {
-	// 	userIsATeacher: boolean;
-	// };
-	// let { userIsATeacher }: Props = $props();
+	type Props = {
+		userIsATeacher: boolean;
+	};
+	let { userIsATeacher }: Props = $props();
 
 	const signOut = () => {
 		authClient.signOut();
