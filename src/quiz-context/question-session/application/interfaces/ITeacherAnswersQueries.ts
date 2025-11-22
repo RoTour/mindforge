@@ -5,12 +5,19 @@ export type AnswerListItem = {
 	questionText: string;
 	answerText: string;
 	submittedAt: Date;
+	questionSessionId: string;
 	autoGrade?: {
-		score: number; // Assuming score is derived from skills or just presence for now, checking Grade value object
-		status: 'PENDING' | 'COMPLETED' | 'FAILED'; // We might need to infer this
+		score: number;
+		status: 'PENDING' | 'COMPLETED' | 'FAILED';
+		skillsMastered: string[];
+		skillsToReinforce: string[];
+		comment: string | null;
 	};
 	teacherGrade?: {
 		score: number;
+		skillsMastered: string[];
+		skillsToReinforce: string[];
+		comment: string | null;
 	};
 };
 

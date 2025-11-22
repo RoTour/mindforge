@@ -4,6 +4,7 @@ import { authedAnyUserProcedure } from '$lib/server/trpc/procedures/authedAnyUse
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import { OwnPromotionMiddleware } from '$quiz/promotion/adapters/OwnPromotion';
 import { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
+import { TeacherAnswersRouter } from '$quiz/question-session/adapters/TeacherAnswersRouter';
 import z from 'zod';
 
 export const TeacherRouter = router({
@@ -39,5 +40,6 @@ export const TeacherRouter = router({
 				new PromotionId(promotionId),
 				ctx.teacher.id
 			);
-		})
+		}),
+	answers: TeacherAnswersRouter
 });

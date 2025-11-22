@@ -104,5 +104,9 @@ describe('PrismaTeacherAnswersQueries Integration Test', () => {
 		expect(answers[0].answerText).toBe('Test Answer');
 		expect(answers[0].autoGrade).toBeDefined();
 		expect(answers[0].autoGrade?.status).toBe('COMPLETED');
+		expect(answers[0].autoGrade?.skillsMastered).toEqual([]);
+		expect(answers[0].autoGrade?.skillsToReinforce).toEqual([]);
+		expect(answers[0].autoGrade?.comment).toBe('Good job');
+		expect(answers[0].questionSessionId).toBe(sessionId);
 	});
 });

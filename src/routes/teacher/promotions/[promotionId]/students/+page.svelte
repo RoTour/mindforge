@@ -66,8 +66,8 @@
 							</div>
 						</Table.Cell>
 						<Table.Cell>
-							<div class="flex w-full max-w-[200px] flex-col gap-2">
-								<div class="text-right text-sm font-medium">
+							<div class="flex w-full max-w-[200px] flex-col items-end">
+								<div class="text-muted-foreground text-right text-xs font-medium">
 									{student.stats.answered} / {student.stats.total}
 								</div>
 								<Progress
