@@ -80,6 +80,50 @@
 		</div>
 	</header>
 
+	<div class="mt-8 grid gap-8 lg:grid-cols-2">
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Skills Mastered</Card.Title>
+				<Card.Description>Skills you have demonstrated proficiency in</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				{#if data.studentSkills && data.studentSkills.mastered.length > 0}
+					<div class="flex flex-wrap gap-2">
+						{#each data.studentSkills.mastered as skill}
+							<Badge variant="secondary" class="bg-green-100 text-green-800 hover:bg-green-100">
+								{skill}
+							</Badge>
+						{/each}
+					</div>
+				{:else}
+					<p class="text-muted-foreground text-sm">Keep practicing to master skills!</p>
+				{/if}
+			</Card.Content>
+		</Card.Root>
+
+		<Card.Root>
+			<Card.Header>
+				<Card.Title>Skills to Work On</Card.Title>
+				<Card.Description>Skills that need a bit more practice</Card.Description>
+			</Card.Header>
+			<Card.Content>
+				{#if data.studentSkills && data.studentSkills.toReinforce.length > 0}
+					<div class="flex flex-wrap gap-2">
+						{#each data.studentSkills.toReinforce as skill}
+							<Badge variant="secondary" class="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+								{skill}
+							</Badge>
+						{/each}
+					</div>
+				{:else}
+					<p class="text-muted-foreground text-sm">
+						Great job! No specific skills to reinforce right now.
+					</p>
+				{/if}
+			</Card.Content>
+		</Card.Root>
+	</div>
+
 	<div class="mt-12">
 		<h2 class="text-xl font-bold">My Promotions</h2>
 		{#if promotions && promotions.length > 0}
@@ -187,38 +231,6 @@
 			{:else}
 				<p class="text-muted-foreground">No graded questions yet.</p>
 			{/if}
-		</div>
-
-		<div class="space-y-8">
-			<div>
-				<h2 class="mb-4 text-xl font-bold">Skills Mastered</h2>
-				{#if data.studentSkills && data.studentSkills.mastered.length > 0}
-					<div class="flex flex-wrap gap-2">
-						{#each data.studentSkills.mastered as skill}
-							<Badge variant="secondary" class="bg-green-100 text-green-800 hover:bg-green-100">
-								{skill}
-							</Badge>
-						{/each}
-					</div>
-				{:else}
-					<p class="text-muted-foreground">Keep practicing to master skills!</p>
-				{/if}
-			</div>
-
-			<div>
-				<h2 class="mb-4 text-xl font-bold">Skills to Work On</h2>
-				{#if data.studentSkills && data.studentSkills.toReinforce.length > 0}
-					<div class="flex flex-wrap gap-2">
-						{#each data.studentSkills.toReinforce as skill}
-							<Badge variant="secondary" class="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-								{skill}
-							</Badge>
-						{/each}
-					</div>
-				{:else}
-					<p class="text-muted-foreground">Great job! No specific skills to reinforce right now.</p>
-				{/if}
-			</div>
 		</div>
 	</div>
 </section>

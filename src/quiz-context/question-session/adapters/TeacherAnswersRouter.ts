@@ -4,6 +4,7 @@ import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
 import { PublishGradeUsecase } from '$quiz/question-session/application/PublishGrade.usecase';
 import z from 'zod';
 import { TeacherGradeAnswerUsecase } from '../application/TeacherGradeAnswer.usecase';
+import { UnpublishGradeUsecase } from '../application/UnpublishGrade.usecase';
 
 export const TeacherAnswersRouter = router({
 	getAnswersForPromotion: teacherProcedure
@@ -51,6 +52,18 @@ export const TeacherAnswersRouter = router({
 		.mutation(async ({ input }) => {
 			const { questionSessionId, studentId } = input;
 			const useCase = new PublishGradeUsecase(serviceProvider.QuestionSessionRepository);
+			await useCase.execute(questionSessionId, studentId);
+		}),
+	unpublishGrade: teacherProcedure
+		.input(
+			z.object({
+				questionSessionId: z.string(),
+				studentId: z.string()
+			})
+		)
+		.mutation(async ({ input }) => {
+			const { questionSessionId, studentId } = input;
+			const useCase = new UnpublishGradeUsecase(serviceProvider.QuestionSessionRepository);
 			await useCase.execute(questionSessionId, studentId);
 		})
 });

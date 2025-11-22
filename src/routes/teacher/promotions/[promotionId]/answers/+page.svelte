@@ -110,6 +110,21 @@
 			toast.error('Failed to publish grade');
 		}
 	}
+
+	async function handleUnpublish(answer: AnswerListItem) {
+		const trpc = createTRPC();
+		try {
+			await trpc.teacher.answers.unpublishGrade.mutate({
+				questionSessionId: answer.questionSessionId,
+				studentId: answer.studentId
+			});
+			toast.success('Grade unpublished');
+			invalidateAll();
+		} catch (e) {
+			console.error(e);
+			toast.error('Failed to unpublish grade');
+		}
+	}
 </script>
 
 <div class="flex h-full flex-col gap-4 p-4">
@@ -177,9 +192,22 @@
 						</Table.Cell>
 						<Table.Cell>
 							{#if answer.isPublished}
-								<Badge variant="secondary" class="bg-green-100 text-green-800 hover:bg-green-100">
-									Published
-								</Badge>
+								<div class="flex items-center gap-2">
+									<Badge variant="secondary" class="bg-green-100 text-green-800 hover:bg-green-100">
+										Published
+									</Badge>
+									<Button
+										variant="ghost"
+										size="sm"
+										class="text-muted-foreground h-6 px-2 hover:text-red-600"
+										onclick={(e: MouseEvent) => {
+											e.stopPropagation();
+											handleUnpublish(answer);
+										}}
+									>
+										Unpublish
+									</Button>
+								</div>
 							{:else}
 								<Button
 									variant="ghost"

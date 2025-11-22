@@ -35,7 +35,8 @@ export default defineConfig({
 					environment: 'node',
 					include: ['src/**/*.int.{test,spec}.{js,ts}'],
 					exclude: ['src/**/*.svelte.test.{js,ts}'],
-					setupFiles: ['./test/setupIntegration.ts']
+					setupFiles: ['./test/setupIntegration.ts'],
+					hookTimeout: 60000
 				}
 			},
 			{

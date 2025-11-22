@@ -38,4 +38,8 @@ export class Answer {
 	public publishGrade() {
 		this.isPublished = true;
 	}
+
+	public unpublishGrade() {
+		this.isPublished = false;
+	}
 }

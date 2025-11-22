@@ -124,4 +124,12 @@ export class QuestionSession extends AggregateRoot<QuestionSessionId> {
 		}
 		answer.publishGrade();
 	}
+
+	public unpublishGrade(studentId: StudentId) {
+		const answer = this.answers.find((a) => a.studentId.equals(studentId));
+		if (!answer) {
+			throw new Error('Answer not found');
+		}
+		answer.unpublishGrade();
+	}
 }

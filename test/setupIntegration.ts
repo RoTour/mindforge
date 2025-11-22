@@ -1,8 +1,7 @@
-import dotenv from 'dotenv';
-dotenv.config();
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer, type StartedRedisContainer } from '@testcontainers/redis';
 import { execSync } from 'child_process';
+import dotenv from 'dotenv';
 import type { RedisOptions } from 'ioredis';
 import {
 	Network,
@@ -14,6 +13,7 @@ import {
 } from 'testcontainers';
 import { afterAll, beforeAll, beforeEach } from 'vitest';
 import { PrismaClient } from '../prisma/generated/client';
+dotenv.config();
 
 let postgresContainer: StartedPostgreSqlContainer;
 let redisContainer: StartedRedisContainer;
@@ -108,7 +108,7 @@ beforeAll(async () => {
 	// 		stream.on('err', (line) => console.error('[WORKER ERROR]', line));
 	// 	})
 	// 	.start();
-}, 30000); // Increase timeout for starting containers
+});
 
 beforeEach(async () => {
 	await resetDb();
