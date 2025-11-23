@@ -1,15 +1,15 @@
 // /Users/rotour/projects/mindforge/src/quiz-context/application/CreatePromotion.usecase.ts
-import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
-import type { IStudentRepository } from '$quiz/student/domain/interfaces/IStudentRepository';
-import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeacherRepository';
-import { Period } from '$quiz/promotion/domain/Period.valueObject';
-import { Promotion } from '$quiz/promotion/domain/Promotion.entity';
-import z from 'zod';
-import { CreateStudentDTO, StudentDTOSchema } from '$quiz/student/application/dtos/StudentDTO';
 import { BadRequestError } from '$quiz/common/application/errors/BadRequestError';
 import { NotFoundError } from '$quiz/common/application/errors/NotFoundError';
-import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
+import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
+import { Period } from '$quiz/promotion/domain/Period.valueObject';
+import { Promotion } from '$quiz/promotion/domain/Promotion.entity';
+import { CreateStudentDTO, StudentDTOSchema } from '$quiz/student/application/dtos/StudentDTO';
+import type { IStudentRepository } from '$quiz/student/domain/interfaces/IStudentRepository';
 import type { Student } from '$quiz/student/domain/Student.entity';
+import type { ITeacherRepository } from '$quiz/teacher/domain/interfaces/ITeacherRepository';
+import { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
+import z from 'zod';
 import { PromotionId } from '../domain/PromotionId.valueObject';
 
 export const CreatePromotionCommandSchema = z.object({
@@ -32,8 +32,9 @@ export class CreatePromotionUsecase {
 	async execute(command: CreatePromotionCommand) {
 		const parsedCommand = CreatePromotionCommandSchema.safeParse(command);
 		if (!parsedCommand.success) {
+			console.error(JSON.stringify(parsedCommand.error, null, 2));
 			throw new BadRequestError(
-				`Invalid command [${z.treeifyError(parsedCommand.error).errors.join(', ')}]`
+				`Invalid command [${parsedCommand.error.issues.map(i => i.message).join(', ')}]`
 			);
 		}
 		const { name, baseYear, students: studentDTOs, teacherId, promotionId } = parsedCommand.data;

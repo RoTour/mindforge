@@ -4,7 +4,7 @@ import { v7 as randomUUIDv7 } from 'uuid';
 
 export class TeacherId extends EntityId {
 	protected generateId(): string {
-		const uuid = randomUUIDv7;
+		const uuid = randomUUIDv7();
 		return `Teacher-${uuid}`;
 	}
 }

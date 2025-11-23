@@ -20,6 +20,14 @@ services:
     volumes:
       - mindforge_redis_data:/data
 
+  redis-loadtest:
+    image: 'redis:8.4-rc1-alpine'
+    container_name: mindforge_redis_loadtest
+    restart: on-failure
+    ports:
+      - '6380:6379'
+
+
   # BullMQ worker for processing background jobs
   worker:
     image: rotour/mindforge-worker:dev

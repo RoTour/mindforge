@@ -47,9 +47,9 @@ export class QuestionSession extends AggregateRoot<QuestionSessionId> {
 	}
 
 	public static create(
-		props: Omit<QuestionSessionProps, 'id' | 'answers' | 'status'>
+		props: Omit<QuestionSessionProps, 'id' | 'answers' | 'status'> & { id?: QuestionSessionId }
 	): QuestionSession {
-		const id = new QuestionSessionId();
+		const id = props.id ?? new QuestionSessionId();
 		const session = new QuestionSession(id, props);
 		// Potentially add a domain event here
 		return session;
