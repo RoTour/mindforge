@@ -3,12 +3,13 @@
 	import { Badge } from '$lib/components/ui/badge';
 	// Keep ScrollArea for the table if needed, but it's removed in the instruction. Let's remove it.
 	import { Button } from '$lib/components/ui/button';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import * as Select from '$lib/components/ui/select';
 	import * as Sheet from '$lib/components/ui/sheet';
 	import * as Table from '$lib/components/ui/table';
 	import { createTRPC } from '$lib/trpc';
 	import type { AnswerListItem } from '$quiz/question-session/application/interfaces/ITeacherAnswersQueries';
-	import { ChevronLeft, ChevronRight } from 'lucide-svelte';
+	import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 	import type { PageData } from './$types';
 	import GradingPanel from './GradingPanel.svelte';
@@ -125,14 +126,152 @@
 			toast.error('Failed to unpublish grade');
 		}
 	}
+
+	let selectedAnswerIds = $state<Set<string>>(new Set());
+	let isBulkActionRunning = $state(false);
+
+	function toggleSelectAll(checked: boolean) {
+		if (checked) {
+			selectedAnswerIds = new Set(filteredAnswers.map((a) => a.studentId));
+		} else {
+			selectedAnswerIds = new Set();
+		}
+	}
+
+	function toggleSelect(studentId: string, checked: boolean) {
+		const newSet = new Set(selectedAnswerIds);
+		if (checked) {
+			newSet.add(studentId);
+		} else {
+			newSet.delete(studentId);
+		}
+		selectedAnswerIds = newSet;
+	}
+
+	async function handleBulkPublishAuto() {
+		isBulkActionRunning = true;
+		const trpc = createTRPC();
+		const promises = Array.from(selectedAnswerIds).map(async (studentId) => {
+			const answer = filteredAnswers.find((a) => a.studentId === studentId);
+			if (!answer || !answer.autoGrade || answer.autoGrade.status !== 'COMPLETED') return;
+
+			try {
+				await trpc.teacher.answers.gradeAnswer.mutate({
+					questionSessionId: answer.questionSessionId,
+					studentId: answer.studentId,
+					grade: {
+						skillsMastered: answer.autoGrade.skillsMastered,
+						skillsToReinforce: answer.autoGrade.skillsToReinforce,
+						comment: answer.autoGrade.comment
+					},
+					shouldPublish: true
+				});
+			} catch (e) {
+				console.error(`Failed to publish auto grade for student ${studentId}`, e);
+			}
+		});
+
+		await Promise.all(promises);
+		toast.success('Selected auto grades published');
+		selectedAnswerIds = new Set();
+		isBulkActionRunning = false;
+		invalidateAll();
+	}
+
+	async function handleBulkPublishTeacher() {
+		isBulkActionRunning = true;
+		const trpc = createTRPC();
+		const promises = Array.from(selectedAnswerIds).map(async (studentId) => {
+			const answer = filteredAnswers.find((a) => a.studentId === studentId);
+			if (!answer) return;
+
+			try {
+				await trpc.teacher.answers.publishGrade.mutate({
+					questionSessionId: answer.questionSessionId,
+					studentId: answer.studentId
+				});
+			} catch (e) {
+				console.error(`Failed to publish teacher grade for student ${studentId}`, e);
+			}
+		});
+
+		await Promise.all(promises);
+		toast.success('Selected teacher grades published');
+		selectedAnswerIds = new Set();
+		isBulkActionRunning = false;
+		invalidateAll();
+	}
+
+	async function handleBulkUnpublish() {
+		isBulkActionRunning = true;
+		const trpc = createTRPC();
+		const promises = Array.from(selectedAnswerIds).map(async (studentId) => {
+			const answer = filteredAnswers.find((a) => a.studentId === studentId);
+			if (!answer) return;
+
+			try {
+				await trpc.teacher.answers.unpublishGrade.mutate({
+					questionSessionId: answer.questionSessionId,
+					studentId: answer.studentId
+				});
+			} catch (e) {
+				console.error(`Failed to unpublish grade for student ${studentId}`, e);
+			}
+		});
+
+		await Promise.all(promises);
+		toast.success('Selected grades unpublished');
+		selectedAnswerIds = new Set();
+		isBulkActionRunning = false;
+		invalidateAll();
+	}
 </script>
 
 <div class="flex h-full flex-col gap-4 p-4">
 	<div class="flex items-center justify-between">
 		<h1 class="text-2xl font-bold">Answer History</h1>
-		<div class="">
+		<div class="flex items-center gap-4">
+			{#if selectedAnswerIds.size > 0}
+				<div class="flex items-center gap-2">
+					<span class="text-muted-foreground text-sm">{selectedAnswerIds.size} selected</span>
+					<Button
+						variant="outline"
+						size="sm"
+						onclick={handleBulkPublishAuto}
+						disabled={isBulkActionRunning}
+					>
+						{#if isBulkActionRunning}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						{/if}
+						Publish Auto
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onclick={handleBulkPublishTeacher}
+						disabled={isBulkActionRunning}
+					>
+						{#if isBulkActionRunning}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						{/if}
+						Publish Teacher
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						class="text-red-600 hover:text-red-700"
+						onclick={handleBulkUnpublish}
+						disabled={isBulkActionRunning}
+					>
+						{#if isBulkActionRunning}
+							<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						{/if}
+						Unpublish
+					</Button>
+				</div>
+			{/if}
 			<Select.Root type="single" bind:value={selectedQuestionId}>
-				<Select.Trigger>
+				<Select.Trigger class="w-[200px]">
 					{selectedQuestionId === 'all'
 						? 'All Questions'
 						: (questions.find((q) => q.id === selectedQuestionId)?.text ?? 'Select Question')}
@@ -151,6 +290,13 @@
 		<Table.Root>
 			<Table.Header>
 				<Table.Row>
+					<Table.Head class="w-[50px]">
+						<Checkbox
+							checked={filteredAnswers.length > 0 &&
+								selectedAnswerIds.size === filteredAnswers.length}
+							onCheckedChange={(v) => toggleSelectAll(v as boolean)}
+						/>
+					</Table.Head>
 					<Table.Head>Student</Table.Head>
 					<Table.Head>Question</Table.Head>
 					<Table.Head>Answer</Table.Head>
@@ -166,6 +312,12 @@
 						class="hover:bg-muted/50 cursor-pointer"
 						onclick={() => handleAnswerClick(answer)}
 					>
+						<Table.Cell onclick={(e) => e.stopPropagation()}>
+							<Checkbox
+								checked={selectedAnswerIds.has(answer.studentId)}
+								onCheckedChange={(v) => toggleSelect(answer.studentId, v as boolean)}
+							/>
+						</Table.Cell>
 						<Table.Cell class="font-medium">{answer.studentName}</Table.Cell>
 						<Table.Cell>{answer.questionText}</Table.Cell>
 						<Table.Cell class="max-w-[300px] truncate" title={answer.answerText}>

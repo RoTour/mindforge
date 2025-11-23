@@ -12,6 +12,8 @@ import { PrismaPromotionRepository } from '$quiz/promotion/infra/PromotionReposi
 import { PrismaTeacherPromotionsQueries } from '$quiz/promotion/infra/queries/PrismaTeacherPromotionsQueries';
 import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
 import type { ITeacherAnswersQueries } from '$quiz/question-session/application/interfaces/ITeacherAnswersQueries';
+import { PublishGradeUsecase } from '$quiz/question-session/application/PublishGrade.usecase';
+import { UnpublishGradeUsecase } from '$quiz/question-session/application/UnpublishGrade.usecase';
 import type { IGradingService } from '$quiz/question-session/domain/IGradingService';
 import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
 import { OpenRouterGradingService } from '$quiz/question-session/infra/OpenRouterGradingService';
@@ -109,6 +111,8 @@ export class ServiceProviderFactory {
 			CheckAndLinkStudentByEmailUsecase: new CheckAndLinkStudentByEmailUsecase(
 				new PrismaStudentRepository(prisma)
 			),
+			UnpublishGradeUsecase: new UnpublishGradeUsecase(questionSessionRepository),
+			PublishGradeUsecase: new PublishGradeUsecase(questionSessionRepository),
 			MessageQueue: mq,
 			eventListeners: {
 				scheduleSessionOnPromotionQuestionPlanned: new ScheduleSessionOnPromotionQuestionPlanned(
@@ -155,6 +159,8 @@ export type ServiceProvider = {
 	StudentDashboardQueries: IStudentDashboardQueries;
 	UnlinkedStudentsQueries: IUnlinkedStudentsQueries;
 	CheckAndLinkStudentByEmailUsecase: CheckAndLinkStudentByEmailUsecase;
+	UnpublishGradeUsecase: UnpublishGradeUsecase;
+	PublishGradeUsecase: PublishGradeUsecase;
 	MessageQueue: IMessageQueue;
 	eventListeners: Record<string, IDomainEventListener>;
 	clients: {

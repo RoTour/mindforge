@@ -5,6 +5,8 @@ import { ScheduleSessionOnPromotionQuestionPlanned } from '$quiz/promotion/appli
 import { PrismaPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/PrismaPromotionRepository';
 import { PrismaTeacherPromotionsQueries } from '$quiz/promotion/infra/queries/PrismaTeacherPromotionsQueries';
 import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
+import { PublishGradeUsecase } from '$quiz/question-session/application/PublishGrade.usecase';
+import { UnpublishGradeUsecase } from '$quiz/question-session/application/UnpublishGrade.usecase';
 import type { IGradingService } from '$quiz/question-session/domain/IGradingService';
 import { MockGradingService } from '$quiz/question-session/infra/MockGradingService';
 import { PrismaTeacherAnswersQueries } from '$quiz/question-session/infra/queries/PrismaTeacherAnswersQueries';
@@ -83,6 +85,8 @@ export class LoadTestServiceProviderFactory {
 			CheckAndLinkStudentByEmailUsecase: new CheckAndLinkStudentByEmailUsecase(
 				new PrismaStudentRepository(prisma)
 			),
+			UnpublishGradeUsecase: new UnpublishGradeUsecase(questionSessionRepository),
+			PublishGradeUsecase: new PublishGradeUsecase(questionSessionRepository),
 			MessageQueue: mq,
 			eventListeners: {
 				scheduleSessionOnPromotionQuestionPlanned: new ScheduleSessionOnPromotionQuestionPlanned(

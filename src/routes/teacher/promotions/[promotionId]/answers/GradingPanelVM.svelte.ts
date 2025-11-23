@@ -54,4 +54,34 @@ export class GradingPanelVM {
 			this.isSaving = false;
 		}
 	}
+
+	async publishAutoGrade() {
+		if (!this.answer) return;
+
+		this.isSaving = true;
+		const trpc = createTRPC();
+		try {
+			await trpc.teacher.answers.publishGrade.mutate({
+				questionSessionId: this.answer.questionSessionId,
+				studentId: this.answer.studentId
+			});
+			toast.success('Auto grade published');
+			this.onGradeSaved();
+		} catch (e) {
+			console.error(e);
+			toast.error('Failed to publish auto grade');
+		} finally {
+			this.isSaving = false;
+		}
+	}
+
+	transferAutoGrade() {
+		if (!this.answer?.autoGrade) return;
+		
+		this.skillsMastered = this.answer.autoGrade.skillsMastered.join(', ');
+		this.skillsToReinforce = this.answer.autoGrade.skillsToReinforce.join(', ');
+		this.comment = this.answer.autoGrade.comment ?? '';
+		
+		toast.info('Auto grade content copied to teacher grade');
+	}
 }

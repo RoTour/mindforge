@@ -38,9 +38,25 @@
 			<Card.Header>
 				<div class="flex items-center justify-between">
 					<Card.Title>Auto Grade</Card.Title>
-					<Badge variant={answer.autoGrade.status === 'COMPLETED' ? 'default' : 'secondary'}>
-						{answer.autoGrade.status}
-					</Badge>
+					<div class="flex items-center gap-2">
+						{#if answer.autoGrade.status === 'COMPLETED'}
+							{#if answer.isPublished && !answer.teacherGrade}
+								<Badge variant="default" class="bg-green-600 hover:bg-green-700">Published</Badge>
+							{:else}
+								<Badge variant="secondary">Completed</Badge>
+								<Button
+									variant="outline"
+									size="sm"
+									onclick={() => vm.publishAutoGrade()}
+									disabled={vm.isSaving}
+								>
+									Publish
+								</Button>
+							{/if}
+						{:else}
+							<Badge variant="secondary">{answer.autoGrade.status}</Badge>
+						{/if}
+					</div>
 				</div>
 			</Card.Header>
 			<Card.Content class="space-y-4">
@@ -90,9 +106,28 @@
 		</Card.Root>
 	{/if}
 
+	{#if answer.autoGrade?.status === 'COMPLETED'}
+		<div class="flex justify-center">
+			<Button
+				variant="ghost"
+				size="sm"
+				class="text-muted-foreground"
+				onclick={() => vm.transferAutoGrade()}
+				title="Use auto grade as base"
+			>
+				↓ Use auto grade content
+			</Button>
+		</div>
+	{/if}
+
 	<Card.Root>
 		<Card.Header>
-			<Card.Title>Teacher Grade</Card.Title>
+			<div class="flex items-center justify-between">
+				<Card.Title>Teacher Grade</Card.Title>
+				{#if answer.isPublished && answer.teacherGrade}
+					<Badge variant="default" class="bg-green-600 hover:bg-green-700">Published</Badge>
+				{/if}
+			</div>
 		</Card.Header>
 		<Card.Content class="space-y-4">
 			<div class="grid gap-2">

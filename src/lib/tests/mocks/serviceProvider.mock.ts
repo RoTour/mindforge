@@ -134,6 +134,14 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 			getLastGradedQuestions: vi.fn(),
 			getStudentSkills: vi.fn(),
 			...overrides?.StudentDashboardQueries
-		}
+		},
+		PublishGradeUsecase: {
+			execute: vi.fn(),
+			...overrides?.PublishGradeUsecase
+		} as any,
+		UnpublishGradeUsecase: {
+			execute: vi.fn(),
+			...overrides?.UnpublishGradeUsecase
+		} as any
 	} satisfies ServiceProvider;
 }
