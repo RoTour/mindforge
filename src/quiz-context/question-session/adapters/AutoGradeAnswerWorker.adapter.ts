@@ -9,7 +9,8 @@ export const startAutoGradeAnswerWorker = (
 	connection: WorkerOptions['connection'],
 	questionSessionRepository: IQuestionSessionRepository,
 	questionRepository: IQuestionRepository,
-	gradingService: IGradingService
+	gradingService: IGradingService,
+	concurrency = 1
 ) => {
 	const usecase = new AutoGradeAnswerUsecase(
 		questionSessionRepository,
@@ -23,7 +24,7 @@ export const startAutoGradeAnswerWorker = (
 			console.log(`Processing auto-grading job ${job.id}`);
 			await usecase.execute(job.data);
 		},
-		{ connection }
+		{ connection, concurrency }
 	);
 
 	worker.on('completed', (job) => {

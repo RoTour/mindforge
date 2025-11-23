@@ -3,7 +3,8 @@ import type { IGradingService } from '$quiz/question-session/domain/IGradingServ
 
 export class MockGradingService implements IGradingService {
 	async gradeAnswer(questionText: string, answerText: string, keyNotions?: any): Promise<Grade> {
-		// Simulate some processing time if needed, or return immediately
+		// Simulate some processing time
+		await new Promise((resolve) => setTimeout(resolve, 1000));
 		return new Grade({
 			skillsMastered: ['Mock Skill 1', 'Mock Skill 2'],
 			skillsToReinforce: ['Mock Skill 3'],

@@ -1,7 +1,10 @@
 import dotenv from 'dotenv';
+import Redis from 'ioredis';
 import path from 'path';
 import { LoadTestServiceProviderFactory } from '../../src/lib/server/LoadTestServiceProvider';
+import { startAutoGradeAnswerWorker } from '../../src/quiz-context/question-session/adapters/AutoGradeAnswerWorker.adapter';
 import { CreateQuestionSessionUsecase } from '../../src/quiz-context/question-session/application/CreateQuestionSessionUsecase';
+import { ScheduleAnswerProcessingOnStudentAnswerSubmitted } from '../../src/quiz-context/question-session/application/listeners/ScheduleAnswerProcessing.listener';
 import { RegisterStudentAnswerUsecase } from '../../src/quiz-context/question-session/application/RegisterStudentAnswerUsecase';
 import { QuestionSessionId } from '../../src/quiz-context/question-session/domain/QuestionSessionId.valueObject';
 
@@ -48,7 +51,7 @@ async function main() {
 				data: {
 					text: 'What is the answer to life, the universe, and everything?',
 					authorId: promotion.teacherId.id(),
-					keyNotions: { notions: ['42'] }
+					keyNotions: [{ text: '42' }]
 				}
 			});
 		}
@@ -104,48 +107,28 @@ async function main() {
 
 	console.log(`Found ${studentsOnPromotion.length} students.`);
 
-	// Create answers using Use Case
-	const registerStudentAnswerUsecase = new RegisterStudentAnswerUsecase(
+	// Setup Redis connection for worker
+	const redisConnection = new Redis({
+		host: process.env.REDIS_HOST,
+		port: parseInt(process.env.REDIS_PORT || '6379', 10),
+		maxRetriesPerRequest: null
+	});
+
+	// Start the worker
+	console.log('Starting auto-grade worker with concurrency 5...');
+	const worker = startAutoGradeAnswerWorker(
+		redisConnection,
 		provider.QuestionSessionRepository,
-		provider.eventListeners.scheduleSessionOnPromotionQuestionPlanned // This listener is not relevant for answering but required by constructor?
-		// Wait, RegisterStudentAnswerUsecase constructor signature:
-		// constructor(
-		// 	private readonly questionSessionRepository: IQuestionSessionRepository,
-		// 	private readonly scheduleAutoGradingListener: IDomainEventListener
-		// )
-		// I need a listener for auto-grading.
-		// I should check what listener is used in ServiceProvider.
-		// In ServiceProvider.ts it's not explicitly instantiated for this use case in the `services` or `usecases` section,
-		// but `RegisterStudentAnswerUsecase` is usually instantiated inside a controller or router.
-		// I need to instantiate a listener.
-		// `ScheduleAutoGrading` listener?
-		// I'll check `src/quiz-context/question-session/application/listeners/ScheduleAutoGrading.listener.ts` if it exists.
-		// Or I can pass a dummy listener since I don't care about auto-grading scheduling in this script (or maybe I do?).
-		// If I want to test the full flow, I should pass a real listener.
-		// But `LoadTestServiceProvider` might not expose it.
-		// Let's check `LoadTestServiceProvider.ts` again.
+		provider.QuestionRepository,
+		provider.services.GradingService,
+		5 // concurrency
 	);
 
-	// I need to instantiate the listener.
-	// I'll import `ScheduleAutoGrading` listener.
-	// Wait, I don't see it in the file list I saw earlier.
-	// I'll assume it exists or I'll use a mock listener.
-	// Actually, `RegisterStudentAnswerUsecase` uses it to schedule auto-grading.
-	// If I want to avoid side effects or complex setup, I can pass a mock listener that does nothing.
-	// Or better, use the real one if possible.
-
-	// Let's try to find the listener first.
-	// If not found, I'll create a mock one inline.
-
-	const mockListener = {
-		handle: async (event: any) => {
-			// console.log('Mock listener handling event:', event);
-		}
-	};
+	const listener = new ScheduleAnswerProcessingOnStudentAnswerSubmitted(provider.MessageQueue);
 
 	const usecase = new RegisterStudentAnswerUsecase(
 		provider.QuestionSessionRepository,
-		mockListener as any // Cast to IDomainEventListener
+		listener
 	);
 
 	console.log('Submitting answers...');
@@ -153,9 +136,10 @@ async function main() {
 	let submittedCount = 0;
 	const errors: any[] = [];
 
-	// Run in parallel with some concurrency limit if needed, but Promise.all is fine for reasonable numbers
+	// Run in parallel
+	const startTime = Date.now();
 	await Promise.all(
-		studentsOnPromotion.map(async (student) => {
+		studentsOnPromotion.map(async (student: any) => {
 			try {
 				await usecase.execute({
 					questionSessionId: questionSessionId!,
@@ -169,11 +153,18 @@ async function main() {
 		})
 	);
 
-	console.log(`Submitted ${submittedCount} answers.`);
+	console.log(`Submitted ${submittedCount} answers in ${Date.now() - startTime}ms.`);
 	if (errors.length > 0) {
 		console.warn(`${errors.length} errors occurred.`);
-		// console.error(errors[0]);
 	}
+
+	console.log('Waiting for auto-grading to complete...');
+	// Wait enough time for 10 answers with 1s delay and concurrency 5 -> should take ~2s + overhead
+	await new Promise((resolve) => setTimeout(resolve, 5000));
+
+	await worker.close();
+	await redisConnection.quit();
+	console.log('Done.');
 }
 
 main()
