@@ -1,6 +1,7 @@
 <script lang="ts">
-	import Navbar from '$lib/components/layout/Navbar.svelte';
 	import { page } from '$app/state';
+	import Navbar from '$lib/components/layout/Navbar.svelte';
+	import { Toaster } from '$lib/components/ui/sonner';
 	import '../app.css';
 	import '../shadcn-theme.css';
 	import type { LayoutProps } from './$types';
@@ -13,3 +14,4 @@
 	<Navbar userIsATeacher={data.userIsATeacher} />
 {/if}
 {@render children()}
+<Toaster />
