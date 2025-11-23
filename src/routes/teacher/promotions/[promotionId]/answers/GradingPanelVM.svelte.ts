@@ -10,17 +10,32 @@ export class GradingPanelVM {
 	isSaving = $state(false);
 	onGradeSaved: () => void;
 
+	initialSkillsMastered = $state('');
+	initialSkillsToReinforce = $state('');
+	initialComment = $state('');
+
+	isDirty = $derived(
+		this.skillsMastered !== this.initialSkillsMastered ||
+			this.skillsToReinforce !== this.initialSkillsToReinforce ||
+			this.comment !== this.initialComment
+	);
+
 	constructor(answer: AnswerListItem, onGradeSaved: () => void) {
-		this.answer = answer;
 		this.onGradeSaved = onGradeSaved;
 		this.updateStateFromAnswer(answer);
 	}
 
 	updateStateFromAnswer(answer: AnswerListItem) {
+		if (this.answer === answer) return;
+
 		this.answer = answer;
 		this.skillsMastered = answer.teacherGrade?.skillsMastered.join(', ') ?? '';
 		this.skillsToReinforce = answer.teacherGrade?.skillsToReinforce.join(', ') ?? '';
 		this.comment = answer.teacherGrade?.comment ?? '';
+
+		this.initialSkillsMastered = this.skillsMastered;
+		this.initialSkillsToReinforce = this.skillsToReinforce;
+		this.initialComment = this.comment;
 	}
 
 	async handleSave(shouldPublish = false) {
@@ -46,6 +61,12 @@ export class GradingPanelVM {
 				shouldPublish
 			});
 			toast.success(shouldPublish ? 'Grade saved and published' : 'Grade saved successfully');
+
+			// Update initial state to match current state so isDirty becomes false
+			this.initialSkillsMastered = this.skillsMastered;
+			this.initialSkillsToReinforce = this.skillsToReinforce;
+			this.initialComment = this.comment;
+
 			this.onGradeSaved();
 		} catch (e) {
 			console.error(e);
@@ -77,11 +98,11 @@ export class GradingPanelVM {
 
 	transferAutoGrade() {
 		if (!this.answer?.autoGrade) return;
-		
+
 		this.skillsMastered = this.answer.autoGrade.skillsMastered.join(', ');
 		this.skillsToReinforce = this.answer.autoGrade.skillsToReinforce.join(', ');
 		this.comment = this.answer.autoGrade.comment ?? '';
-		
+
 		toast.info('Auto grade content copied to teacher grade');
 	}
 }

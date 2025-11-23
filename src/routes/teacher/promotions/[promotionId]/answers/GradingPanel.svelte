@@ -152,27 +152,42 @@
 			</div>
 		</Card.Content>
 		<Card.Footer class="flex flex-col gap-2">
-			<Button onclick={() => vm.handleSave(false)} disabled={vm.isSaving} class="w-full">
-				{#if vm.isSaving}
-					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-					Saving...
-				{:else}
-					Save Grade
-				{/if}
-			</Button>
-			<Button
-				variant="secondary"
-				onclick={() => vm.handleSave(true)}
-				disabled={vm.isSaving}
-				class="w-full"
-			>
-				{#if vm.isSaving}
-					<Loader2 class="mr-2 h-4 w-4 animate-spin" />
-					Saving...
-				{:else}
-					Save and Publish
-				{/if}
-			</Button>
+			{#if answer.isPublished}
+				<Button
+					onclick={() => vm.handleSave(true)}
+					disabled={vm.isSaving || !vm.isDirty}
+					class="w-full"
+				>
+					{#if vm.isSaving}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						Updating...
+					{:else}
+						Update Grade
+					{/if}
+				</Button>
+			{:else}
+				<Button onclick={() => vm.handleSave(false)} disabled={vm.isSaving} class="w-full">
+					{#if vm.isSaving}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						Saving...
+					{:else}
+						Save Grade
+					{/if}
+				</Button>
+				<Button
+					variant="secondary"
+					onclick={() => vm.handleSave(true)}
+					disabled={vm.isSaving}
+					class="w-full"
+				>
+					{#if vm.isSaving}
+						<Loader2 class="mr-2 h-4 w-4 animate-spin" />
+						Saving...
+					{:else}
+						Save and Publish
+					{/if}
+				</Button>
+			{/if}
 		</Card.Footer>
 	</Card.Root>
 </div>
