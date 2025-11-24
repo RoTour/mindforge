@@ -1,6 +1,6 @@
 // /Users/rotour/projects/mindforge/src/lib/server/bullmq/BullMQ.adapter.ts
-import { Queue, Worker, Job as BullMQJob, type QueueOptions, type JobsOptions } from 'bullmq';
 import type { IMessageQueue, Job } from '$ddd/interfaces/IMessageQueue';
+import { Job as BullMQJob, Queue, Worker, type JobsOptions, type QueueOptions } from 'bullmq';
 
 export class BullMQAdapter implements IMessageQueue {
 	private queues: Map<string, Queue> = new Map();
@@ -53,5 +53,9 @@ export class BullMQAdapter implements IMessageQueue {
 			}))
 		);
 		console.debug('[DEBUG] BullMQ Adapter', items);
+	}
+	async close(): Promise<void> {
+		await Promise.all(Array.from(this.queues.values()).map((q) => q.close()));
+		await Promise.all(Array.from(this.workers.values()).map((w) => w.close()));
 	}
 }

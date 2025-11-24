@@ -1,11 +1,12 @@
 // This is a separate process that runs in parallel to the main server process.
 import { startAutoGradeAnswerWorker } from '$quiz/question-session/adapters/AutoGradeAnswerWorker.adapter';
 import { startRegisterStudentAnswerWorker } from '$quiz/question-session/adapters/RegisterStudentAnswerWorker.adapter';
+import { startSaveAutoGradeWorker } from '$quiz/question-session/adapters/SaveAutoGradeWorker.adapter';
 import { startScheduleQuestionSessionWorker } from '$quiz/question-session/adapters/ScheduleQuestionSessionWorker.adapter';
+import { ScheduleAutoGradingOnStudentAnswerSubmitted } from '$quiz/question-session/application/listeners/ScheduleAutoGrading.listener';
 import type { WorkerOptions } from 'bullmq';
 import type { IEnvironment } from '../IEnvironment';
 import { ServiceProviderFactory } from '../ServiceProvider';
-import { ScheduleAutoGradingOnStudentAnswerSubmitted } from '$quiz/question-session/application/listeners/ScheduleAutoGrading.listener';
 
 // 1. Create an environment implementation specific to the worker
 class WorkerEnvironment implements IEnvironment {
@@ -70,6 +71,8 @@ export const workers = [
 		redisConnection,
 		serviceProvider.QuestionSessionRepository,
 		serviceProvider.QuestionRepository,
-		serviceProvider.services.GradingService
-	)
+		serviceProvider.services.GradingService,
+		serviceProvider.MessageQueue
+	),
+	startSaveAutoGradeWorker(redisConnection, serviceProvider.QuestionSessionRepository)
 ];

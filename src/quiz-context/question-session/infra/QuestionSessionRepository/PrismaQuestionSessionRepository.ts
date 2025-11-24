@@ -179,11 +179,88 @@ export class PrismaQuestionSessionRepository implements IQuestionSessionReposito
 		}
 	}
 
+	async saveAnswer(session: QuestionSession, answer: Answer): Promise<void> {
+		const gradePayload = (g: Grade) => ({
+			skillsMastered: g.skillsMastered,
+			skillsToReinforce: g.skillsToReinforce,
+			comment: g.comment
+		});
+
+		const answerUpdatePayload = {
+			text: answer.text,
+			submittedAt: answer.submittedAt,
+			isPublished: answer.isPublished,
+			autoGrade: answer.autoGrade
+				? {
+						upsert: {
+							create: gradePayload(answer.autoGrade),
+							update: gradePayload(answer.autoGrade)
+						}
+					}
+				: undefined,
+			teacherGrade: answer.teacherGrade
+				? {
+						upsert: {
+							create: gradePayload(answer.teacherGrade),
+							update: gradePayload(answer.teacherGrade)
+						}
+					}
+				: undefined
+		};
+
+		try {
+			await this.prisma.answer.upsert({
+				where: {
+					questionSessionId_studentId: {
+						questionSessionId: session.id.id(),
+						studentId: answer.studentId.id()
+					}
+				},
+				create: {
+					questionSession: { connect: { id: session.id.id() } },
+					student: { connect: { id: answer.studentId.id() } },
+					text: answer.text,
+					submittedAt: answer.submittedAt,
+					isPublished: answer.isPublished,
+					autoGrade: answer.autoGrade ? { create: gradePayload(answer.autoGrade) } : undefined,
+					teacherGrade: answer.teacherGrade
+						? { create: gradePayload(answer.teacherGrade) }
+						: undefined
+				},
+				update: answerUpdatePayload
+			});
+		} catch (e) {
+			console.error('Error in PrismaQuestionSessionRepository.saveAnswer', e);
+			throw e;
+		}
+	}
+
 	async findById(id: QuestionSessionId): Promise<QuestionSession | null> {
 		const session = await this.prisma.questionSession.findUnique({
 			where: { id: id.id() },
 			include: {
 				answers: {
+					include: {
+						autoGrade: true,
+						teacherGrade: true
+					}
+				}
+			}
+		});
+		if (!session) return null;
+
+		return QuestionSessionMapper.fromPrismaToDomain(session);
+	}
+
+	async findByIdForStudent(
+		id: QuestionSessionId,
+		studentId: StudentId
+	): Promise<QuestionSession | null> {
+		const session = await this.prisma.questionSession.findUnique({
+			where: { id: id.id() },
+			include: {
+				answers: {
+					where: { studentId: studentId.id() },
 					include: {
 						autoGrade: true,
 						teacherGrade: true

@@ -3,9 +3,11 @@ import Redis from 'ioredis';
 import path from 'path';
 import { LoadTestServiceProviderFactory } from '../../src/lib/server/LoadTestServiceProvider';
 import { startAutoGradeAnswerWorker } from '../../src/quiz-context/question-session/adapters/AutoGradeAnswerWorker.adapter';
+import { startRegisterStudentAnswerWorker } from '../../src/quiz-context/question-session/adapters/RegisterStudentAnswerWorker.adapter';
+import { startSaveAutoGradeWorker } from '../../src/quiz-context/question-session/adapters/SaveAutoGradeWorker.adapter';
+import { AcceptAnswerUsecase } from '../../src/quiz-context/question-session/application/AcceptAnswerUsecase';
 import { CreateQuestionSessionUsecase } from '../../src/quiz-context/question-session/application/CreateQuestionSessionUsecase';
-import { ScheduleAnswerProcessingOnStudentAnswerSubmitted } from '../../src/quiz-context/question-session/application/listeners/ScheduleAnswerProcessing.listener';
-import { RegisterStudentAnswerUsecase } from '../../src/quiz-context/question-session/application/RegisterStudentAnswerUsecase';
+import { ScheduleAutoGradingOnStudentAnswerSubmitted } from '../../src/quiz-context/question-session/application/listeners/ScheduleAutoGrading.listener';
 import { QuestionSessionId } from '../../src/quiz-context/question-session/domain/QuestionSessionId.valueObject';
 
 // Load environment variables from env.loadtest
@@ -114,34 +116,50 @@ async function main() {
 		maxRetriesPerRequest: null
 	});
 
-	// Start the worker
-	console.log('Starting auto-grade worker with concurrency 5...');
-	const worker = startAutoGradeAnswerWorker(
+	// Start the workers
+	console.log('Starting workers...');
+	
+	// 1. RegisterStudentAnswerWorker (Consumer)
+	// This worker picks up jobs from the queue and saves them to DB
+	// We can control concurrency here to test DB load
+	const registerWorker = startRegisterStudentAnswerWorker(
+		redisConnection,
+		provider.QuestionSessionRepository,
+		new ScheduleAutoGradingOnStudentAnswerSubmitted(provider.MessageQueue)
+	);
+
+	// 2. AutoGradeAnswerWorker (Consumer)
+	// This worker picks up grading jobs
+	const autoGradeWorker = startAutoGradeAnswerWorker(
 		redisConnection,
 		provider.QuestionSessionRepository,
 		provider.QuestionRepository,
 		provider.services.GradingService,
-		5 // concurrency
+		provider.MessageQueue,
+		100 // concurrency - Increased for load test speed
 	);
 
-	const listener = new ScheduleAnswerProcessingOnStudentAnswerSubmitted(provider.MessageQueue);
-
-	const usecase = new RegisterStudentAnswerUsecase(
+	// 3. SaveAutoGradeWorker (Consumer)
+	// This worker picks up save jobs
+	const saveAutoGradeWorker = startSaveAutoGradeWorker(
+		redisConnection,
 		provider.QuestionSessionRepository,
-		listener
+		50 // concurrency
 	);
 
-	console.log('Submitting answers...');
+	const acceptAnswerUsecase = new AcceptAnswerUsecase(provider.MessageQueue);
+
+	console.log('Submitting answers to queue...');
 
 	let submittedCount = 0;
 	const errors: any[] = [];
 
-	// Run in parallel
+	// Run in parallel - pushing to queue is fast and doesn't hit DB
 	const startTime = Date.now();
 	await Promise.all(
 		studentsOnPromotion.map(async (student: any) => {
 			try {
-				await usecase.execute({
+				await acceptAnswerUsecase.execute({
 					questionSessionId: questionSessionId!,
 					studentId: student.id,
 					answerText: `Simulated answer from ${student.firstName} at ${new Date().toISOString()}`
@@ -153,17 +171,82 @@ async function main() {
 		})
 	);
 
-	console.log(`Submitted ${submittedCount} answers in ${Date.now() - startTime}ms.`);
+	console.log(`Submitted ${submittedCount} answers to queue in ${Date.now() - startTime}ms.`);
 	if (errors.length > 0) {
 		console.warn(`${errors.length} errors occurred.`);
 	}
 
-	console.log('Waiting for auto-grading to complete...');
-	// Wait enough time for 10 answers with 1s delay and concurrency 5 -> should take ~2s + overhead
-	await new Promise((resolve) => setTimeout(resolve, 5000));
+	console.log('Waiting for processing to complete...');
+	
+	// Smart wait: Poll DB until all answers are processed and graded
+	const totalStudents = studentsOnPromotion.length;
+	let processedAnswers = 0;
+	let processedGrades = 0;
+	
+	const pollInterval = setInterval(async () => {
+		const session = await prisma.questionSession.findUnique({
+			where: { id: questionSessionId },
+			include: {
+				answers: {
+					include: {
+						autoGrade: true
+					}
+				}
+			}
+		});
 
-	await worker.close();
+		if (session) {
+			processedAnswers = session.answers.length;
+			processedGrades = session.answers.filter(a => a.autoGrade).length;
+			
+			process.stdout.write(`\rProgress: Answers ${processedAnswers}/${totalStudents} | Grades ${processedGrades}/${totalStudents}`);
+
+			if (processedGrades >= totalStudents) {
+				clearInterval(pollInterval);
+			}
+		}
+	}, 2000);
+
+	// Wait for the polling to finish
+	while (processedGrades < totalStudents) {
+		await new Promise(resolve => setTimeout(resolve, 1000));
+	}
+	console.log('\nProcessing complete.');
+
+	await registerWorker.close();
+	await autoGradeWorker.close();
+	await saveAutoGradeWorker.close();
+	if (provider.MessageQueue.close) {
+		await provider.MessageQueue.close();
+	}
 	await redisConnection.quit();
+	
+	// Final Stats
+	const finalSession = await prisma.questionSession.findUnique({
+		where: { id: questionSessionId },
+		include: {
+			answers: {
+				include: {
+					autoGrade: true
+				}
+			}
+		}
+	});
+
+	const answerCount = finalSession?.answers.length || 0;
+	const autoGradeCount = finalSession?.answers.filter(a => a.autoGrade).length || 0;
+	const gradeCount = autoGradeCount; // Assuming autoGrade implies a grade exists
+
+	console.log(`
+<results>
+${totalStudents} students inserted
+${answerCount} answers
+${autoGradeCount} answers where autoGradeId is NOT NULL
+${gradeCount} grades
+</results>
+`);
+
+	await prisma.$disconnect();
 	console.log('Done.');
 }
 

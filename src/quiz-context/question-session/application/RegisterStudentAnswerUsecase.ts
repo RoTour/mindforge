@@ -19,8 +19,9 @@ export class RegisterStudentAnswerUsecase {
 	) {}
 
 	async execute(command: RegisterStudentAnswerCommand): Promise<void> {
-		const session = await this.questionSessionRepository.findById(
-			new QuestionSessionId(command.questionSessionId)
+		const session = await this.questionSessionRepository.findByIdForStudent(
+			new QuestionSessionId(command.questionSessionId),
+			new StudentId(command.studentId)
 		);
 
 		if (!session) {
@@ -40,7 +41,7 @@ export class RegisterStudentAnswerUsecase {
 
 			session.submitAnswer(answer);
 
-			await this.questionSessionRepository.save(session);
+			await this.questionSessionRepository.saveAnswer(session, answer);
 
 			// Manually publish events
 			const events = session.getDomainEvents();

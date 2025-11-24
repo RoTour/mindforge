@@ -1,3 +1,4 @@
+import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
 import { AutoGradeAnswerCommand } from '$quiz/common/domain/commands/AutoGradeAnswer.command';
 import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
 import { Worker, type WorkerOptions } from 'bullmq';
@@ -10,12 +11,14 @@ export const startAutoGradeAnswerWorker = (
 	questionSessionRepository: IQuestionSessionRepository,
 	questionRepository: IQuestionRepository,
 	gradingService: IGradingService,
+	mq: IMessageQueue,
 	concurrency = 1
 ) => {
 	const usecase = new AutoGradeAnswerUsecase(
 		questionSessionRepository,
 		questionRepository,
-		gradingService
+		gradingService,
+		mq
 	);
 
 	const worker = new Worker(

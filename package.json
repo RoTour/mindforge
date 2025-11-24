@@ -25,7 +25,7 @@
 		"loadtest:setup": "bun scripts/load-test/setup.ts && docker compose -f docker-compose.dev.yaml up -d redis-loadtest",
 		"loadtest:users": "bun scripts/load-test/create-users.ts",
 		"loadtest:answers": "bun scripts/load-test/answer-questions.ts",
-		"loadtest:wipedb": "bun scripts/load-test/wipe-db.ts"
+		"loadtest:wipedb": "docker compose -f docker-compose.dev.yaml down redis-loadtest && bun scripts/load-test/wipe-db.ts"
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^4.1.1",
