@@ -1,12 +1,13 @@
 import { invalidateAll } from '$app/navigation';
 import { createTRPC } from '$lib/trpc';
 import type { StudentsFromPromotionDTO } from '$quiz/student/application/interfaces/IStudentsOverviewQueries';
+import { SvelteSet } from 'svelte/reactivity';
 
 export class StudentsViewModel {
 	students = $state<StudentsFromPromotionDTO[]>([]);
 	isEditMode = $state(false);
 	newStudent = $state<{ firstName: string; lastName: string; email: string } | null>(null);
-	selectedStudentIds = $state<Set<string>>(new Set());
+	selectedStudentIds = $state<Set<string>>(new SvelteSet());
 	promotionId: string;
 
 	private trpc = createTRPC();
@@ -20,12 +21,12 @@ export class StudentsViewModel {
 		this.isEditMode = !this.isEditMode;
 		if (!this.isEditMode) {
 			this.cancelAddingStudent();
-			this.selectedStudentIds = new Set(); // Clear selection when exiting edit mode
+			this.selectedStudentIds = new SvelteSet(); // Clear selection when exiting edit mode
 		}
 	}
 
 	toggleSelection(studentId: string) {
-		const newSelection = new Set(this.selectedStudentIds);
+		const newSelection = new SvelteSet(this.selectedStudentIds);
 		if (newSelection.has(studentId)) {
 			newSelection.delete(studentId);
 		} else {
@@ -36,9 +37,9 @@ export class StudentsViewModel {
 
 	toggleAll(checked: boolean) {
 		if (checked) {
-			this.selectedStudentIds = new Set(this.students.map((s) => s.id));
+			this.selectedStudentIds = new SvelteSet(this.students.map((s) => s.id));
 		} else {
-			this.selectedStudentIds = new Set();
+			this.selectedStudentIds = new SvelteSet();
 		}
 	}
 
@@ -83,7 +84,7 @@ export class StudentsViewModel {
 				studentId
 			});
 			this.selectedStudentIds.delete(studentId); // Remove from selection if present
-			this.selectedStudentIds = new Set(this.selectedStudentIds); // Trigger reactivity
+			this.selectedStudentIds = new SvelteSet(this.selectedStudentIds); // Trigger reactivity
 			await invalidateAll();
 		} catch (error) {
 			console.error('Failed to remove student:', error);
@@ -110,7 +111,7 @@ export class StudentsViewModel {
 					})
 				)
 			);
-			this.selectedStudentIds = new Set();
+			this.selectedStudentIds = new SvelteSet();
 			await invalidateAll();
 		} catch (error) {
 			console.error('Failed to remove selected students:', error);

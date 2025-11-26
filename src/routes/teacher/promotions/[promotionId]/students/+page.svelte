@@ -10,15 +10,17 @@
 	import { StudentsViewModel } from './StudentsViewModel.svelte';
 
 	import { formatRelativeTime } from '$lib/lib/utils';
+	import PromotionQrCodeDialog from './PromotionQrCodeDialog.svelte';
 
 	let { data }: PageProps = $props();
-	const vm = new StudentsViewModel(data.students, data.promotionId);
+	let vm = $derived(new StudentsViewModel(data.students, data.promotionId));
 </script>
 
 <main class="flex w-full flex-col gap-6 px-4 md:w-4/6">
 	<div class="flex items-center justify-between">
 		<h1 class="text-2xl font-bold">Students</h1>
 		<div class="flex items-center gap-4">
+			<PromotionQrCodeDialog promotionId={data.promotionId} />
 			{#if vm.selectedStudentIds.size > 0}
 				<Button variant="destructive" onclick={() => vm.removeSelectedStudents()}>
 					<Trash2 class="mr-2 h-4 w-4" />

@@ -30,6 +30,10 @@
 			await goto(resolve(`/teacher/promotions/${destPromotionId}/students`));
 		}
 	};
+
+	if (page.params.promotionId) {
+		selectedPromotion = promotions.find((p) => p.id === page.params.promotionId) || null;
+	}
 </script>
 
 <Sidebar.Menu>

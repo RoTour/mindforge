@@ -1,4 +1,5 @@
 import { goto } from '$app/navigation';
+import { resolve } from '$app/paths';
 import { createTRPC } from '$lib/trpc';
 
 type UserDetails = {
@@ -63,6 +64,6 @@ export class InviteVM {
 	private async onSuccess() {
 		// Redirect to promotion dashboard or show success message
 		// For now, let's redirect to the promotion page
-		await goto(`/teacher/promotions/${this.promotionId}`);
+		await goto(resolve(`/teacher/promotions/${this.promotionId}/students`));
 	}
 }
