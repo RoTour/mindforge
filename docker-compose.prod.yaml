@@ -1,0 +1,49 @@
+services:
+  app:
+    container_name: mindforge_app
+    image: rotour/mindforge-app:${GIT_SHORT_SHA}
+    build:
+      context: .
+      dockerfile: ./prod/Dockerfile
+    platform: linux/amd64
+    restart: always
+    env_file:
+      - .env.prod
+    depends_on:
+      - db
+      - redis
+
+  worker:
+    container_name: mindforge_worker
+    image: rotour/mindforge-app:${GIT_SHORT_SHA}
+    build:
+      context: .
+      dockerfile: ./prod/Dockerfile
+    platform: linux/amd64
+    restart: always
+    env_file:
+      - .env.prod
+    depends_on:
+      - redis
+
+  db:
+    container_name: mindforge_db
+    restart: always
+    image: 'postgres:18'
+    env_file:
+      - .env.prod
+    volumes:
+      - mindforge_db:/var/lib/postgresql/data
+
+  redis:
+    container_name: mindforge_redis_mq
+    image: 'redis:8.4-rc1-alpine'
+    restart: always
+    env_file:
+      - .env.prod
+    volumes:
+      - mindforge_redis_data:/data
+
+volumes:
+  mindforge_redis_data:
+  mindforge_db:

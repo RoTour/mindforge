@@ -2,7 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from 'vitest';
 import { getPrismaTestClient } from '../../../../../test/setupIntegration';
 import { PrismaStudentDashboardQueries } from './PrismaStudentDashboardQueries';
 
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '$prisma/client';
 
 describe('PrismaStudentDashboardQueries Integration Test', () => {
 	let prisma: PrismaClient;
@@ -29,7 +29,12 @@ describe('PrismaStudentDashboardQueries Integration Test', () => {
 		});
 
 		await prisma.student.create({
-			data: { id: studentId, authUserId: 'auth-' + studentId, email: 'student-dash@test.com', name: 'Student Dash' }
+			data: {
+				id: studentId,
+				authUserId: 'auth-' + studentId,
+				email: 'student-dash@test.com',
+				name: 'Student Dash'
+			}
 		});
 
 		await prisma.question.create({

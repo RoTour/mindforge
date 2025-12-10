@@ -1,12 +1,16 @@
+import { PrismaPg } from '@prisma/adapter-pg';
 import dotenv from 'dotenv';
 import path from 'path';
+import pg from 'pg';
 import { PrismaClient } from '../../prisma/generated/client';
 
 // Load environment variables from env.loadtest
 const envPath = path.resolve(process.cwd(), 'env.loadtest');
 dotenv.config({ path: envPath, override: true });
 
-const prisma = new PrismaClient();
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
 	console.log('Wiping database...');

@@ -1,9 +1,9 @@
 import type {
-    GradedQuestionItem,
-    IStudentDashboardQueries,
-    StudentSkills
+	GradedQuestionItem,
+	IStudentDashboardQueries,
+	StudentSkills
 } from '$quiz/student/application/interfaces/IStudentDashboardQueries';
-import type { PrismaClient } from '@prisma/client';
+import type { PrismaClient } from '$prisma/client';
 
 export class PrismaStudentDashboardQueries implements IStudentDashboardQueries {
 	constructor(private prisma: PrismaClient) {}

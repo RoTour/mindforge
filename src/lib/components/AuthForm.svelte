@@ -15,6 +15,7 @@
 		FieldSeparator
 	} from './ui/field/index.js';
 	import { Input } from './ui/input/index.js';
+	import { env } from '$env/dynamic/public';
 
 	let {
 		ref = $bindable(null),
@@ -24,8 +25,8 @@
 	}: WithElementRef<HTMLFormAttributes> & { type: 'signin' | 'signup' } = $props();
 	const id = $props.id();
 
-	let email = $state('rotour.dev@gmail.com');
-	let password = $state('Root1234!');
+	let email = $state(env.PUBLIC_PREFILLED_EMAIL ?? '');
+	let password = $state(env.PUBLIC_PREFILLED_PASSWORD ?? '');
 	let error = $state<string | null>(null);
 	let isLoading = $state(false);
 

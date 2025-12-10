@@ -1,15 +1,17 @@
+import { PrismaPg } from '@prisma/adapter-pg';
 import { PostgreSqlContainer, type StartedPostgreSqlContainer } from '@testcontainers/postgresql';
 import { RedisContainer, type StartedRedisContainer } from '@testcontainers/redis';
 import { execSync } from 'child_process';
 import dotenv from 'dotenv';
 import type { RedisOptions } from 'ioredis';
+import pg from 'pg';
 import {
-	Network,
-	// type ImagePullPolicy,
-	type StartedNetwork
-	// type StartedTestContainer,
-	// GenericContainer,
-	// Wait
+    Network,
+    // type ImagePullPolicy,
+    type StartedNetwork
+    // type StartedTestContainer,
+    // GenericContainer,
+    // Wait
 } from 'testcontainers';
 import { afterAll, beforeAll, beforeEach } from 'vitest';
 import { PrismaClient } from '../prisma/generated/client';
@@ -63,9 +65,9 @@ beforeAll(async () => {
 	// --- Setup PostgreSQL and Prisma ---
 	const dbUrl = postgresContainer.getConnectionUri();
 	console.log('DB URL:', dbUrl);
-	prisma = new PrismaClient({
-		datasourceUrl: dbUrl
-	});
+	const pool = new pg.Pool({ connectionString: dbUrl });
+	const adapter = new PrismaPg(pool);
+	prisma = new PrismaClient({ adapter });
 	await prisma.$connect();
 	console.log('Prisma connected.');
 	// We apply migrations using the prisma client from the testcontainers, but we need to set the env var for the worker container
