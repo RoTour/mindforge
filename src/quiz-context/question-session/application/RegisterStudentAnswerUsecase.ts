@@ -1,12 +1,14 @@
+// src/quiz-context/question-session/application/RegisterStudentAnswerUsecase.ts
 import { DomainEventPublisher } from '$ddd/events/DomainEventPublisher';
 import type { IDomainEventListener } from '$ddd/interfaces/IDomainEventListener';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 import { Answer } from '../domain/Answer.entity';
-import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';
-import { QuestionSessionId } from '../domain/QuestionSessionId.valueObject';
+import type { ILiveSessionRepository } from '../domain/ILiveSessionRepository';
+import { LiveSessionId } from '../domain/LiveSessionId.valueObject';
 
 export type RegisterStudentAnswerCommand = {
-	questionSessionId: string;
+	liveSessionId: string;
+	slotOrder: number;
 	studentId: string;
 	answerText: string;
 };
@@ -14,18 +16,18 @@ export type RegisterStudentAnswerCommand = {
 // Called by message queue consumer to register student answers without concurrency issues
 export class RegisterStudentAnswerUsecase {
 	constructor(
-		private readonly questionSessionRepository: IQuestionSessionRepository,
+		private readonly liveSessionRepository: ILiveSessionRepository,
 		private readonly scheduleAutoGradingListener: IDomainEventListener
 	) {}
 
 	async execute(command: RegisterStudentAnswerCommand): Promise<void> {
-		const session = await this.questionSessionRepository.findByIdForStudent(
-			new QuestionSessionId(command.questionSessionId),
+		const session = await this.liveSessionRepository.findByIdForStudent(
+			new LiveSessionId(command.liveSessionId),
 			new StudentId(command.studentId)
 		);
 
 		if (!session) {
-			console.error('QuestionSession not found in RegisterStudentAnswerUsecase', { command });
+			console.error('LiveSession not found in RegisterStudentAnswerUsecase', { command });
 			return;
 		}
 
@@ -39,9 +41,9 @@ export class RegisterStudentAnswerUsecase {
 				isPublished: false
 			});
 
-			session.submitAnswer(answer);
+			session.submitAnswer(command.slotOrder, answer);
 
-			await this.questionSessionRepository.saveAnswer(session, answer);
+			await this.liveSessionRepository.saveAnswer(session, command.slotOrder, answer);
 
 			// Manually publish events
 			const events = session.getDomainEvents();
@@ -58,3 +60,4 @@ export class RegisterStudentAnswerUsecase {
 		}
 	}
 }
+

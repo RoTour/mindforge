@@ -1,8 +1,8 @@
 // src/quiz-context/student/infra/queries/PrismaStudentQueries.ts
 import type { PrismaClient } from '$prisma/client';
 import type { StudentPromotionDto } from '../../application/dtos/StudentPromotionsDto';
-import type { IStudentQueries } from '../../application/interfaces/IStudentQueries';
 import type { StudentSummaryStatsDto } from '../../application/dtos/StudentSummaryStatsDto';
+import type { IStudentQueries } from '../../application/interfaces/IStudentQueries';
 
 export class PrismaStudentQueries implements IStudentQueries {
 	constructor(private readonly client: PrismaClient) {}
@@ -90,15 +90,20 @@ export class PrismaStudentQueries implements IStudentQueries {
 								_count: {
 									select: { students: true, plannedQuestions: true }
 								},
-								questionSessions: {
+								liveSessions: {
 									select: {
 										id: true,
-										answers: {
-											where: {
-												studentId: studentId
-											},
+										slots: {
 											select: {
-												id: true
+												id: true,
+												answers: {
+													where: {
+														studentId: studentId
+													},
+													select: {
+														id: true
+													}
+												}
 											}
 										}
 									}
@@ -117,9 +122,15 @@ export class PrismaStudentQueries implements IStudentQueries {
 		const studentPromotions = studentWithPromotions.promotions.map((sop) => {
 			const promotion = sop.promotion;
 
-			const completedQuestions = promotion.questionSessions.filter(
-				(qs) => qs.answers.length > 0
-			).length;
+			// Count slots where student has answered
+			let completedQuestions = 0;
+			for (const session of promotion.liveSessions) {
+				for (const slot of session.slots) {
+					if (slot.answers.length > 0) {
+						completedQuestions++;
+					}
+				}
+			}
 
 			return {
 				id: promotion.id,

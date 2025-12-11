@@ -1,3 +1,4 @@
+// src/quiz-context/question-session/adapters/TeacherAnswersRouter.ts
 import { serviceProvider } from '$lib/server/container';
 import { router } from '$lib/server/trpc/init';
 import { teacherProcedure } from '$lib/server/trpc/procedures/teacherProcedure';
@@ -22,7 +23,8 @@ export const TeacherAnswersRouter = router({
 	gradeAnswer: teacherProcedure
 		.input(
 			z.object({
-				questionSessionId: z.string(),
+				liveSessionId: z.string(),
+				slotOrder: z.number(),
 				studentId: z.string(),
 				grade: z.object({
 					skillsMastered: z.array(z.string()),
@@ -33,37 +35,40 @@ export const TeacherAnswersRouter = router({
 			})
 		)
 		.mutation(async ({ input }) => {
-			const { questionSessionId, studentId, grade, shouldPublish } = input;
-			const useCase = new TeacherGradeAnswerUsecase(serviceProvider.QuestionSessionRepository);
-			await useCase.execute(questionSessionId, studentId, grade);
+			const { liveSessionId, slotOrder, studentId, grade, shouldPublish } = input;
+			const useCase = new TeacherGradeAnswerUsecase(serviceProvider.LiveSessionRepository);
+			await useCase.execute(liveSessionId, slotOrder, studentId, grade);
 
 			if (shouldPublish) {
-				const publishUseCase = new PublishGradeUsecase(serviceProvider.QuestionSessionRepository);
-				await publishUseCase.execute(questionSessionId, studentId);
+				const publishUseCase = new PublishGradeUsecase(serviceProvider.LiveSessionRepository);
+				await publishUseCase.execute(liveSessionId, slotOrder, studentId);
 			}
 		}),
 	publishGrade: teacherProcedure
 		.input(
 			z.object({
-				questionSessionId: z.string(),
+				liveSessionId: z.string(),
+				slotOrder: z.number(),
 				studentId: z.string()
 			})
 		)
 		.mutation(async ({ input }) => {
-			const { questionSessionId, studentId } = input;
-			const useCase = new PublishGradeUsecase(serviceProvider.QuestionSessionRepository);
-			await useCase.execute(questionSessionId, studentId);
+			const { liveSessionId, slotOrder, studentId } = input;
+			const useCase = new PublishGradeUsecase(serviceProvider.LiveSessionRepository);
+			await useCase.execute(liveSessionId, slotOrder, studentId);
 		}),
 	unpublishGrade: teacherProcedure
 		.input(
 			z.object({
-				questionSessionId: z.string(),
+				liveSessionId: z.string(),
+				slotOrder: z.number(),
 				studentId: z.string()
 			})
 		)
 		.mutation(async ({ input }) => {
-			const { questionSessionId, studentId } = input;
-			const useCase = new UnpublishGradeUsecase(serviceProvider.QuestionSessionRepository);
-			await useCase.execute(questionSessionId, studentId);
+			const { liveSessionId, slotOrder, studentId } = input;
+			const useCase = new UnpublishGradeUsecase(serviceProvider.LiveSessionRepository);
+			await useCase.execute(liveSessionId, slotOrder, studentId);
 		})
 });
+

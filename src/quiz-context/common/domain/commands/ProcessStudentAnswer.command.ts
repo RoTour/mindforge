@@ -4,9 +4,11 @@ export class ProcessStudentAnswerCommand {
 
 	constructor(
 		public readonly payload: {
-			questionSessionId: string;
+			liveSessionId: string;
+			slotOrder: number;
 			studentId: string;
 			answerText: string;
 		}
 	) {}
 }
+

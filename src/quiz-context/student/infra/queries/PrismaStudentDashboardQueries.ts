@@ -1,9 +1,9 @@
-import type {
-	GradedQuestionItem,
-	IStudentDashboardQueries,
-	StudentSkills
-} from '$quiz/student/application/interfaces/IStudentDashboardQueries';
 import type { PrismaClient } from '$prisma/client';
+import type {
+    GradedQuestionItem,
+    IStudentDashboardQueries,
+    StudentSkills
+} from '$quiz/student/application/interfaces/IStudentDashboardQueries';
 
 export class PrismaStudentDashboardQueries implements IStudentDashboardQueries {
 	constructor(private prisma: PrismaClient) {}
@@ -19,7 +19,7 @@ export class PrismaStudentDashboardQueries implements IStudentDashboardQueries {
 			},
 			take: limit,
 			include: {
-				questionSession: {
+				questionSlot: {
 					include: {
 						question: true
 					}
@@ -34,8 +34,8 @@ export class PrismaStudentDashboardQueries implements IStudentDashboardQueries {
 			const grade = answer.teacherGrade || answer.autoGrade;
 
 			return {
-				questionId: answer.questionSession.questionId,
-				questionText: answer.questionSession.question.text,
+				questionId: answer.questionSlot.questionId,
+				questionText: answer.questionSlot.question.text,
 				submittedAt: answer.submittedAt,
 				grade: {
 					score: 0, // We don't really use score yet

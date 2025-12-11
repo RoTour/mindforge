@@ -5,17 +5,20 @@ export class StudentAnswerSubmitted implements IDomainEvent {
 	public readonly occurredOn: Date;
 	public readonly type = 'StudentAnswerSubmitted';
 	public readonly payload: {
-		questionSessionId: string;
+		liveSessionId: string;
+		slotOrder: number;
 		studentId: string;
 		answerText: string;
 	};
 
-	constructor(questionSessionId: string, studentId: string, answerText: string) {
+	constructor(liveSessionId: string, slotOrder: number, studentId: string, answerText: string) {
 		this.occurredOn = new Date();
 		this.payload = {
-			questionSessionId,
+			liveSessionId,
+			slotOrder,
 			studentId,
 			answerText
 		};
 	}
 }
+

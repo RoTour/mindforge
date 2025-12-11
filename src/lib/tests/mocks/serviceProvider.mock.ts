@@ -45,12 +45,14 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 			findByAuthorId: vi.fn(),
 			...overrides?.QuestionRepository
 		},
-		QuestionSessionRepository: {
+		LiveSessionRepository: {
 			save: vi.fn(),
 			findById: vi.fn(),
+			findByIdForStudent: vi.fn(),
 			findActiveByPromotionId: vi.fn(),
 			findActiveByPromotionIdForStudent: vi.fn(),
-			...overrides?.QuestionSessionRepository
+			saveAnswer: vi.fn(),
+			...overrides?.LiveSessionRepository
 		},
 		StudentListParser: {
 			parse: vi.fn(),
@@ -129,6 +131,10 @@ export function createMockServiceProvider(overrides?: Partial<ServiceProvider>):
 		TeacherAnswersQueries: {
 			getAnswersForPromotion: vi.fn(),
 			...overrides?.TeacherAnswersQueries
+		},
+		TeacherSessionQueries: {
+			getSessionsForPromotion: vi.fn(),
+			...overrides?.TeacherSessionQueries
 		},
 		StudentDashboardQueries: {
 			getLastGradedQuestions: vi.fn(),

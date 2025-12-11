@@ -1,3 +1,4 @@
+// src/lib/server/jobs/worker.ts
 // This is a separate process that runs in parallel to the main server process.
 import { startAutoGradeAnswerWorker } from '$quiz/question-session/adapters/AutoGradeAnswerWorker.adapter';
 import { startRegisterStudentAnswerWorker } from '$quiz/question-session/adapters/RegisterStudentAnswerWorker.adapter';
@@ -61,18 +62,19 @@ console.log(`Connecting to Redis at ${redisConnection.host}:${redisConnection.po
 console.log('Starting workers...');
 // 4. Start the worker, injecting the required repository from the service provider
 export const workers = [
-	startScheduleQuestionSessionWorker(redisConnection, serviceProvider.QuestionSessionRepository),
+	startScheduleQuestionSessionWorker(redisConnection, serviceProvider.LiveSessionRepository),
 	startRegisterStudentAnswerWorker(
 		redisConnection,
-		serviceProvider.QuestionSessionRepository,
+		serviceProvider.LiveSessionRepository,
 		new ScheduleAutoGradingOnStudentAnswerSubmitted(serviceProvider.MessageQueue)
 	),
 	startAutoGradeAnswerWorker(
 		redisConnection,
-		serviceProvider.QuestionSessionRepository,
+		serviceProvider.LiveSessionRepository,
 		serviceProvider.QuestionRepository,
 		serviceProvider.services.GradingService,
 		serviceProvider.MessageQueue
 	),
-	startSaveAutoGradeWorker(redisConnection, serviceProvider.QuestionSessionRepository)
+	startSaveAutoGradeWorker(redisConnection, serviceProvider.LiveSessionRepository)
 ];
+

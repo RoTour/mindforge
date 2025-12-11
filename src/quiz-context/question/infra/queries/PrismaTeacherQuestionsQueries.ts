@@ -1,12 +1,12 @@
 // src/quiz-context/infra/queries/PrismaTeacherQuestionsQueries.ts
 import type { PrismaClient, Question as PrismaQuestion } from '$prisma/client';
+import type { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import type {
-	ITeacherQuestionsQueries,
-	PlannedQuestionDTO,
-	TeacherQuestionDTO
+    ITeacherQuestionsQueries,
+    PlannedQuestionDTO,
+    TeacherQuestionDTO
 } from '$quiz/question/application/interfaces/ITeacherQuestionsQueries';
 import type { KeyNotionProps } from '$quiz/question/domain/KeyNotion.valueObject';
-import type { PromotionId } from '$quiz/promotion/domain/PromotionId.valueObject';
 import type { TeacherId } from '$quiz/teacher/domain/TeacherId.valueObject';
 
 const toDTO = (question: PrismaQuestion): TeacherQuestionDTO => {
@@ -28,9 +28,11 @@ export class PrismaTeacherQuestionsQueries implements ITeacherQuestionsQueries {
 		const questions = await this.prisma.question.findMany({
 			where: {
 				authorId: teacherId.id(),
-				questionSessions: {
+				questionSlots: {
 					some: {
-						promotionId: promotionId.id()
+						liveSession: {
+							promotionId: promotionId.id()
+						}
 					}
 				}
 			},

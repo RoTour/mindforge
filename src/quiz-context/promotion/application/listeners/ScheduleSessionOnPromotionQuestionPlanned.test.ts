@@ -1,107 +1,83 @@
-import { ScheduleQuestionSessionCommand } from '$quiz/common/domain/commands/ScheduleQuestionSession.command';
-import { afterEach, beforeEach, describe, expect, test, vi, type Mock } from 'vitest';
+// src/quiz-context/promotion/application/listeners/ScheduleSessionOnPromotionQuestionPlanned.test.ts
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PromotionQuestionPlanned } from '../../domain/events/PromotionQuestionPlanned.event';
 import { ScheduleSessionOnPromotionQuestionPlanned } from './ScheduleSessionOnPromotionQUestionPlanned.listener';
-import type { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
-import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
 
 describe('Listener: ScheduleSessionOnPromotionQuestionPlanned', () => {
 	let listener: ScheduleSessionOnPromotionQuestionPlanned;
-	let mockQueue: IMessageQueue;
-	let addJobSpy: Mock;
-	let mockQuestionSessionCreator: CreateQuestionSessionUsecase;
+	let mockQueue: { add: ReturnType<typeof vi.fn> };
+	let mockUsecase: { execute: ReturnType<typeof vi.fn> };
+
+	const promotionId = 'promo-123';
+	const questionId = 'question-456';
+	const futureStartDate = new Date(Date.now() + 86400000); // 1 day from now
+	const futureEndDate = new Date(Date.now() + 86400000 + 3600000); // 1 day + 1 hour
 
 	beforeEach(() => {
-		// Create a mock instance of the creator service
-		mockQuestionSessionCreator = {
-			execute: vi.fn()
-		} as unknown as CreateQuestionSessionUsecase;
-
-		addJobSpy = vi.fn();
-		mockQueue = {
-			add: addJobSpy,
-			process: vi.fn() // Not used in this test
-		} as unknown as IMessageQueue;
-
-		listener = new ScheduleSessionOnPromotionQuestionPlanned(mockQueue, mockQuestionSessionCreator);
-
-		// Use fake timers to control time-based logic like calculating the delay.
-		vi.useFakeTimers();
-	});
-
-	afterEach(() => {
-		vi.restoreAllMocks();
-		vi.useRealTimers();
-	});
-
-	test('Given a future-dated event, When handled, Then a delayed job should be scheduled', async () => {
-		// --- GIVEN (Arrange) ---
-		const now = new Date('2025-10-01T10:00:00.000Z');
-		const startingOn = new Date('2025-10-01T11:00:00.000Z'); // 1 hour from now
-		const endingOn = new Date('2025-10-01T12:00:00.000Z'); // 2 hours from now
-		vi.setSystemTime(now);
-
-		const promotionId = 'promo-123';
-		const questionId = 'question-456';
-		const event = new PromotionQuestionPlanned(promotionId, questionId, startingOn, endingOn);
-
-		// --- WHEN (Act) ---
-		await listener.handle(event);
-
-		// --- THEN (Assert) ---
-		expect(addJobSpy).toHaveBeenCalledOnce();
-		expect(mockQuestionSessionCreator.execute).not.toHaveBeenCalled();
-	});
-
-	test('Given a past-dated event, When handled, Then no job should be scheduled and no session created', async () => {
-		// --- GIVEN (Arrange) ---
-		const now = new Date('2025-10-01T10:00:00.000Z');
-		const pastStartingOn = new Date('2025-10-01T09:00:00.000Z'); // 1 hour in the past
-		const pastEndingOn = new Date('2025-10-01T09:30:00.000Z'); // also in the past
-		vi.setSystemTime(now);
-
-		const event = new PromotionQuestionPlanned(
-			'promo-123',
-			'question-456',
-			pastStartingOn,
-			pastEndingOn
+		vi.resetAllMocks();
+		mockQueue = { add: vi.fn() };
+		mockUsecase = { execute: vi.fn().mockResolvedValue(undefined) };
+		listener = new ScheduleSessionOnPromotionQuestionPlanned(
+			mockQueue as any,
+			mockUsecase as any
 		);
-
-		// --- WHEN (Act) ---
-		await listener.handle(event);
-
-		// --- THEN (Assert) ---
-		expect(addJobSpy).not.toHaveBeenCalled();
-		expect(mockQuestionSessionCreator.execute).not.toHaveBeenCalled();
 	});
 
-	test('Given a currently active event, When handled, Then a session should be created immediately', async () => {
-		// --- GIVEN (Arrange) ---
-		const now = new Date('2025-10-01T10:00:00.000Z');
-		const pastStartingOn = new Date('2025-10-01T09:00:00.000Z'); // 1 hour in the past
-		const futureEndingOn = new Date('2025-10-01T11:00:00.000Z'); // 1 hour in the future
-		vi.setSystemTime(now);
-
-		const promotionId = 'promo-123';
-		const questionId = 'question-456';
+	it('should create a LiveSession immediately when a question is planned with future dates', async () => {
+		// GIVEN
 		const event = new PromotionQuestionPlanned(
 			promotionId,
 			questionId,
-			pastStartingOn,
-			futureEndingOn
+			futureStartDate,
+			futureEndDate
 		);
 
-		// --- WHEN (Act) ---
+		// WHEN
 		await listener.handle(event);
 
-		// --- THEN (Assert) ---
-		expect(addJobSpy).not.toHaveBeenCalled();
-		expect(mockQuestionSessionCreator.execute).toHaveBeenCalledOnce();
-		expect(mockQuestionSessionCreator.execute).toHaveBeenCalledWith({
+		// THEN - Session is created immediately, not just scheduled
+		expect(mockUsecase.execute).toHaveBeenCalledOnce();
+		expect(mockUsecase.execute).toHaveBeenCalledWith({
 			promotionId,
-			questionId,
-			startedAt: pastStartingOn,
-			endsAt: futureEndingOn
+			questionIds: [questionId],
+			scheduledDate: futureStartDate,
+			endsAt: futureEndDate
 		});
+	});
+
+	it('should create a LiveSession when a question is planned with past start but future end', async () => {
+		// GIVEN
+		const pastStartDate = new Date(Date.now() - 3600000); // 1 hour ago
+		const futureEnd = new Date(Date.now() + 3600000); // 1 hour from now
+		const event = new PromotionQuestionPlanned(
+			promotionId,
+			questionId,
+			pastStartDate,
+			futureEnd
+		);
+
+		// WHEN
+		await listener.handle(event);
+
+		// THEN
+		expect(mockUsecase.execute).toHaveBeenCalledOnce();
+		expect(mockUsecase.execute).toHaveBeenCalledWith({
+			promotionId,
+			questionIds: [questionId],
+			scheduledDate: pastStartDate,
+			endsAt: futureEnd
+		});
+	});
+
+	it('should ignore events that are not PromotionQuestionPlanned', async () => {
+		// GIVEN
+		const wrongEvent = { type: 'SomeOtherEvent', payload: {} };
+
+		// WHEN
+		await listener.handle(wrongEvent as any);
+
+		// THEN
+		expect(mockUsecase.execute).not.toHaveBeenCalled();
+		expect(mockQueue.add).not.toHaveBeenCalled();
 	});
 });

@@ -1,17 +1,24 @@
 // src/routes/students/promotion/[promotionId]/lobby/+page.server.ts
-import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (event) => {
 	const { parent } = event;
-	const { activeSession } = await parent();
+	const { lobbyData } = await parent();
 	const { promotionId } = event.params;
 
-	if (activeSession) {
-		// Redirect to the question page
-		throw redirect(303, `/students/promotion/${promotionId}/question/${activeSession.questionId}`);
+	// If there's a current slot that student hasn't answered - redirect to answer it
+	if (lobbyData?.currentSlot && !lobbyData.currentSlot.answered) {
+		throw redirect(
+			303,
+			`/students/promotion/${promotionId}/question/${lobbyData.currentSlot.questionId}`
+		);
 	}
 
-	// No active session, stay in lobby
-	return { promotionId };
+	// Otherwise, stay in lobby with the lobby view data
+	return {
+		promotionId,
+		lobbyData
+	};
 };
+

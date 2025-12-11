@@ -1,8 +1,8 @@
 // /src/quiz-context/infra/queries/PrismaStudentsOverviewQueries.ts
 import type { PrismaClient } from '$prisma/client';
 import type {
-	IStudentsOverviewQueries,
-	StudentsFromPromotionDTO
+    IStudentsOverviewQueries,
+    StudentsFromPromotionDTO
 } from '../../application/interfaces/IStudentsOverviewQueries';
 
 export class PrismaStudentsOverviewQueries implements IStudentsOverviewQueries {
@@ -24,8 +24,10 @@ export class PrismaStudentsOverviewQueries implements IStudentsOverviewQueries {
 					include: {
 						answers: {
 							where: {
-								questionSession: {
-									promotionId: promotionId
+								questionSlot: {
+									liveSession: {
+										promotionId: promotionId
+									}
 								}
 							},
 							select: {
@@ -37,9 +39,12 @@ export class PrismaStudentsOverviewQueries implements IStudentsOverviewQueries {
 			}
 		});
 
-		const totalQuestions = await this.client.questionSession.count({
+		// Count question slots for this promotion
+		const totalSlots = await this.client.questionSlot.count({
 			where: {
-				promotionId: promotionId
+				liveSession: {
+					promotionId: promotionId
+				}
 			}
 		});
 
@@ -49,7 +54,7 @@ export class PrismaStudentsOverviewQueries implements IStudentsOverviewQueries {
 			}
 		});
 
-		const total = totalQuestions + totalPlanned;
+		const total = totalSlots + totalPlanned;
 
 		const authIds = studentsOnPromotions
 			.map((sop) => sop.student.authUserId)
@@ -89,3 +94,4 @@ export class PrismaStudentsOverviewQueries implements IStudentsOverviewQueries {
 		});
 	}
 }
+

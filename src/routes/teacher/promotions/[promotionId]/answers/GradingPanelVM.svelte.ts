@@ -45,7 +45,8 @@ export class GradingPanelVM {
 		const trpc = createTRPC();
 		try {
 			await trpc.teacher.answers.gradeAnswer.mutate({
-				questionSessionId: this.answer.questionSessionId,
+				liveSessionId: this.answer.liveSessionId,
+				slotOrder: this.answer.slotOrder,
 				studentId: this.answer.studentId,
 				grade: {
 					skillsMastered: this.skillsMastered
@@ -83,7 +84,8 @@ export class GradingPanelVM {
 		const trpc = createTRPC();
 		try {
 			await trpc.teacher.answers.publishGrade.mutate({
-				questionSessionId: this.answer.questionSessionId,
+				liveSessionId: this.answer.liveSessionId,
+				slotOrder: this.answer.slotOrder,
 				studentId: this.answer.studentId
 			});
 			toast.success('Auto grade published');

@@ -4,13 +4,14 @@ import { ProcessStudentAnswerCommand } from '$quiz/common/domain/commands/Proces
 import { v7 as randomUUIDv7 } from 'uuid';
 
 export type AcceptAnswerCommand = {
-	questionSessionId: string;
+	liveSessionId: string;
+	slotOrder: number;
 	studentId: string;
 	answerText: string;
 };
 
 // Ligthweight usecase that enqueues a job to process the student's answer
-// This delegate update of QuestionSession to the queue to avoid concurrency issues
+// This delegate update of LiveSession to the queue to avoid concurrency issues
 export class AcceptAnswerUsecase {
 	constructor(private readonly mq: IMessageQueue) {}
 
@@ -20,8 +21,9 @@ export class AcceptAnswerUsecase {
 			name: ProcessStudentAnswerCommand.type,
 			data: processCommand.payload,
 			opts: {
-				jobId: `${command.questionSessionId}-${command.studentId}-${randomUUIDv7()}`
+				jobId: `${command.liveSessionId}-${command.slotOrder}-${command.studentId}-${randomUUIDv7()}`
 			}
 		});
 	}
 }
+

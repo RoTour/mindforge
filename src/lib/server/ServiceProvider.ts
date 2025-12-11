@@ -10,15 +10,17 @@ import { ScheduleSessionOnPromotionQuestionPlanned } from '$quiz/promotion/appli
 import type { IPromotionRepository } from '$quiz/promotion/domain/interfaces/IPromotionRepository';
 import { PrismaPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/PrismaPromotionRepository';
 import { PrismaTeacherPromotionsQueries } from '$quiz/promotion/infra/queries/PrismaTeacherPromotionsQueries';
-import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
+import { CreateLiveSessionUsecase } from '$quiz/question-session/application/CreateLiveSessionUsecase';
 import type { ITeacherAnswersQueries } from '$quiz/question-session/application/interfaces/ITeacherAnswersQueries';
+import type { ITeacherSessionQueries } from '$quiz/question-session/application/interfaces/ITeacherSessionQueries';
 import { PublishGradeUsecase } from '$quiz/question-session/application/PublishGrade.usecase';
 import { UnpublishGradeUsecase } from '$quiz/question-session/application/UnpublishGrade.usecase';
 import type { IGradingService } from '$quiz/question-session/domain/IGradingService';
-import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
+import type { ILiveSessionRepository } from '$quiz/question-session/domain/ILiveSessionRepository';
+import { PrismaLiveSessionRepository } from '$quiz/question-session/infra/LiveSessionRepository/PrismaLiveSessionRepository';
 import { OpenRouterGradingService } from '$quiz/question-session/infra/OpenRouterGradingService';
 import { PrismaTeacherAnswersQueries } from '$quiz/question-session/infra/queries/PrismaTeacherAnswersQueries';
-import { PrismaQuestionSessionRepository } from '$quiz/question-session/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
+import { PrismaTeacherSessionQueries } from '$quiz/question-session/infra/queries/PrismaTeacherSessionQueries';
 import type { ITeacherQuestionsQueries } from '$quiz/question/application/interfaces/ITeacherQuestionsQueries';
 import type { IStudentQuestionQueries } from '$quiz/question/application/queries/IStudentQuestionQueries';
 import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
@@ -73,7 +75,7 @@ export class ServiceProviderFactory {
 		});
 
 		const mq = new BullMQAdapter(redisConnection);
-		const questionSessionRepository = new PrismaQuestionSessionRepository(prisma);
+		const liveSessionRepository = new PrismaLiveSessionRepository(prisma);
 
 		const imageStudentListParser = new ImageStudentListParser({
 			apiKey: this.env.OPENROUTER_API_KEY,
@@ -94,7 +96,7 @@ export class ServiceProviderFactory {
 			StudentRepository: new PrismaStudentRepository(prisma),
 			TeacherRepository: new PrismaTeacherRepository(prisma),
 			QuestionRepository: new PrismaQuestionRepository(prisma),
-			QuestionSessionRepository: questionSessionRepository,
+			LiveSessionRepository: liveSessionRepository,
 			StudentListParser: imageStudentListParser,
 			PromotionStudentsQueries: new PrismaPromotionStudentsQueries(prisma),
 			EnrollQueries: new PrismaEnrollQueries(prisma),
@@ -106,18 +108,19 @@ export class ServiceProviderFactory {
 			StudentQueries: new PrismaStudentQueries(prisma),
 			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
 			TeacherAnswersQueries: new PrismaTeacherAnswersQueries(prisma),
+			TeacherSessionQueries: new PrismaTeacherSessionQueries(prisma),
 			StudentDashboardQueries: new PrismaStudentDashboardQueries(prisma),
 			UnlinkedStudentsQueries: new PrismaUnlinkedStudentsQueries(prisma),
 			CheckAndLinkStudentByEmailUsecase: new CheckAndLinkStudentByEmailUsecase(
 				new PrismaStudentRepository(prisma)
 			),
-			UnpublishGradeUsecase: new UnpublishGradeUsecase(questionSessionRepository),
-			PublishGradeUsecase: new PublishGradeUsecase(questionSessionRepository),
+			UnpublishGradeUsecase: new UnpublishGradeUsecase(liveSessionRepository),
+			PublishGradeUsecase: new PublishGradeUsecase(liveSessionRepository),
 			MessageQueue: mq,
 			eventListeners: {
 				scheduleSessionOnPromotionQuestionPlanned: new ScheduleSessionOnPromotionQuestionPlanned(
 					mq,
-					new CreateQuestionSessionUsecase(questionSessionRepository)
+					new CreateLiveSessionUsecase(liveSessionRepository)
 				)
 			},
 			clients: {
@@ -144,7 +147,7 @@ export type ServiceProvider = {
 	StudentRepository: IStudentRepository;
 	TeacherRepository: ITeacherRepository;
 	QuestionRepository: IQuestionRepository;
-	QuestionSessionRepository: IQuestionSessionRepository;
+	LiveSessionRepository: ILiveSessionRepository;
 	StudentListParser: IStudentListParser;
 	PromotionStudentsQueries: IPromotionStudentsQueries;
 	EnrollQueries: IEnrollQueries;
@@ -156,6 +159,7 @@ export type ServiceProvider = {
 	StudentQueries: IStudentQueries;
 	StudentQuestionQueries: IStudentQuestionQueries;
 	TeacherAnswersQueries: ITeacherAnswersQueries;
+	TeacherSessionQueries: ITeacherSessionQueries;
 	StudentDashboardQueries: IStudentDashboardQueries;
 	UnlinkedStudentsQueries: IUnlinkedStudentsQueries;
 	CheckAndLinkStudentByEmailUsecase: CheckAndLinkStudentByEmailUsecase;

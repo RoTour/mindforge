@@ -30,7 +30,7 @@ model Promotion {
   teacher          Teacher                @relation(fields: [teacherId], references: [id])
   teacherId        String
   students         StudentsOnPromotions[]
-  questionSessions QuestionSession[]
+  liveSessions     LiveSession[]
   plannedQuestions PlannedQuestion[]
 }
 
@@ -127,8 +127,8 @@ model Question {
   keyNotions Json?
 
   // A single Question template can be used in many live sessions
-  questionSessions QuestionSession[]
-  plannedIn        PlannedQuestion[]
+  questionSlots QuestionSlot[]
+  plannedIn     PlannedQuestion[]
 }
 
 model PlannedQuestion {
@@ -144,28 +144,43 @@ model PlannedQuestion {
   endingOn   DateTime?
 }
 
-model QuestionSession {
+model LiveSession {
   id String @id @default(cuid())
-
-  questionId String
-  question   Question @relation(fields: [questionId], references: [id])
 
   promotionId String
   promotion   Promotion @relation(fields: [promotionId], references: [id])
 
-  startedAt DateTime // When the session was started
-  endsAt    DateTime // When students can no longer answer
-  status    String // e.g., "PENDING", "ACTIVE", "CLOSED", "GRADING"
+  scheduledDate        DateTime // The date of the class/lecture
+  endsAt               DateTime // When students can no longer answer
+  status               String // e.g., "PENDING", "ACTIVE", "CLOSED"
+  lockPreviousOnUnlock Boolean  @default(false)
 
-  // A session aggregates all the answers
+  // Ordered list of question slots
+  slots QuestionSlot[]
+}
+
+model QuestionSlot {
+  id String @id @default(cuid())
+
+  liveSessionId String
+  liveSession   LiveSession @relation(fields: [liveSessionId], references: [id], onDelete: Cascade)
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+
+  order  Int // 1-indexed order within the session
+  status String // e.g., "LOCKED", "UNLOCKED", "CLOSED"
+
   answers Answer[]
+
+  @@unique([liveSessionId, order])
 }
 
 model Answer {
   id String @id @default(cuid())
 
-  questionSessionId String
-  questionSession   QuestionSession @relation(fields: [questionSessionId], references: [id], onDelete: Cascade)
+  questionSlotId String
+  questionSlot   QuestionSlot @relation(fields: [questionSlotId], references: [id], onDelete: Cascade)
 
   studentId String
   student   Student @relation(fields: [studentId], references: [id])
@@ -173,8 +188,7 @@ model Answer {
   text        String   @db.Text // The student's answer
   submittedAt DateTime @default(now())
 
-  // Fields for the future LLM assessment
-  // Fields for the future LLM assessment
+  // Fields for the LLM assessment (feedback only, no score)
   autoGradeId String? @unique
   autoGrade   Grade?  @relation("AutoGrade", fields: [autoGradeId], references: [id])
 
@@ -183,8 +197,8 @@ model Answer {
 
   isPublished Boolean @default(false)
 
-  // Enforce that a student can only answer once per session
-  @@unique([questionSessionId, studentId])
+  // Enforce that a student can only answer once per slot
+  @@unique([questionSlotId, studentId])
 }
 
 model OTP {

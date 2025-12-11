@@ -101,7 +101,8 @@
 		const trpc = createTRPC();
 		try {
 			await trpc.teacher.answers.publishGrade.mutate({
-				questionSessionId: answer.questionSessionId,
+				liveSessionId: answer.liveSessionId,
+				slotOrder: answer.slotOrder,
 				studentId: answer.studentId
 			});
 			toast.success('Grade published');
@@ -116,7 +117,8 @@
 		const trpc = createTRPC();
 		try {
 			await trpc.teacher.answers.unpublishGrade.mutate({
-				questionSessionId: answer.questionSessionId,
+				liveSessionId: answer.liveSessionId,
+				slotOrder: answer.slotOrder,
 				studentId: answer.studentId
 			});
 			toast.success('Grade unpublished');
@@ -157,7 +159,8 @@
 
 			try {
 				await trpc.teacher.answers.gradeAnswer.mutate({
-					questionSessionId: answer.questionSessionId,
+					liveSessionId: answer.liveSessionId,
+					slotOrder: answer.slotOrder,
 					studentId: answer.studentId,
 					grade: {
 						skillsMastered: answer.autoGrade.skillsMastered,
@@ -187,7 +190,8 @@
 
 			try {
 				await trpc.teacher.answers.publishGrade.mutate({
-					questionSessionId: answer.questionSessionId,
+					liveSessionId: answer.liveSessionId,
+					slotOrder: answer.slotOrder,
 					studentId: answer.studentId
 				});
 			} catch (e) {
@@ -211,7 +215,8 @@
 
 			try {
 				await trpc.teacher.answers.unpublishGrade.mutate({
-					questionSessionId: answer.questionSessionId,
+					liveSessionId: answer.liveSessionId,
+					slotOrder: answer.slotOrder,
 					studentId: answer.studentId
 				});
 			} catch (e) {

@@ -1,3 +1,4 @@
+// src/quiz-context/question-session/application/interfaces/ITeacherAnswersQueries.ts
 export type AnswerListItem = {
 	studentId: string;
 	studentName: string;
@@ -5,7 +6,8 @@ export type AnswerListItem = {
 	questionText: string;
 	answerText: string;
 	submittedAt: Date;
-	questionSessionId: string;
+	liveSessionId: string;
+	slotOrder: number;
 	autoGrade?: {
 		score: number;
 		status: 'PENDING' | 'COMPLETED' | 'FAILED';
@@ -25,3 +27,4 @@ export type AnswerListItem = {
 export interface ITeacherAnswersQueries {
 	getAnswersForPromotion(promotionId: string): Promise<AnswerListItem[]>;
 }
+

@@ -26,11 +26,13 @@ export class PlanQuestionUsecase {
 
 	async execute(command: PlanQuestionCommand): Promise<void> {
 		const { id, promotionId, questionId, startingOn, endingOn } = command;
+		console.log('[PlanQuestionUsecase] Input promotionId:', promotionId);
 
 		const promotion = await this.promotionRepository.findById(promotionId);
 		if (!promotion) {
 			throw new NotFoundError(`Promotion with ID ${promotionId} not found`);
 		}
+		console.log('[PlanQuestionUsecase] Loaded promotion.id:', promotion.id.id());
 
 		const question = await this.questionRepository.findById(new QuestionId(questionId));
 		if (!question) {

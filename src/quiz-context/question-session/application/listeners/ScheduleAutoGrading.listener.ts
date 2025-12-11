@@ -1,3 +1,4 @@
+// src/quiz-context/question-session/application/listeners/ScheduleAutoGrading.listener.ts
 import type { IDomainEventListener } from '$lib/ddd/interfaces/IDomainEventListener';
 import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
 import { AutoGradeAnswerCommand } from '$quiz/common/domain/commands/AutoGradeAnswer.command';
@@ -8,18 +9,20 @@ export class ScheduleAutoGradingOnStudentAnswerSubmitted implements IDomainEvent
 
 	public async handle(event: StudentAnswerSubmitted): Promise<void> {
 		const command = new AutoGradeAnswerCommand({
-			questionSessionId: event.payload.questionSessionId,
+			liveSessionId: event.payload.liveSessionId,
+			slotOrder: event.payload.slotOrder,
 			studentId: event.payload.studentId
 		});
 		await this.mq.add({
 			name: AutoGradeAnswerCommand.type,
 			data: command.payload,
 			opts: {
-				jobId: `grade-${event.payload.questionSessionId}-${event.payload.studentId}`
+				jobId: `grade-${event.payload.liveSessionId}-${event.payload.slotOrder}-${event.payload.studentId}`
 			}
 		});
 		console.log(
-			`Scheduled BullMQ job for auto-grading answer for student ${event.payload.studentId} on session ${event.payload.questionSessionId}`
+			`Scheduled BullMQ job for auto-grading answer for student ${event.payload.studentId} on session ${event.payload.liveSessionId}`
 		);
 	}
 }
+

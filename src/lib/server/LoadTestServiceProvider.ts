@@ -1,16 +1,18 @@
+// src/lib/server/LoadTestServiceProvider.ts
 import { GenerateAndSendOtpUsecase } from '$auth/otp/application/GenerateAndSendOtp.usecase';
 import { VerifyOtpUsecase } from '$auth/otp/application/VerifyOtp.usecase';
 import { PrismaOTPRepository } from '$auth/otp/infra/OTPRepository/PrismaOTPRepository';
 import { ScheduleSessionOnPromotionQuestionPlanned } from '$quiz/promotion/application/listeners/ScheduleSessionOnPromotionQUestionPlanned.listener';
 import { PrismaPromotionRepository } from '$quiz/promotion/infra/PromotionRepository/PrismaPromotionRepository';
 import { PrismaTeacherPromotionsQueries } from '$quiz/promotion/infra/queries/PrismaTeacherPromotionsQueries';
-import { CreateQuestionSessionUsecase } from '$quiz/question-session/application/CreateQuestionSessionUsecase';
+import { CreateLiveSessionUsecase } from '$quiz/question-session/application/CreateLiveSessionUsecase';
 import { PublishGradeUsecase } from '$quiz/question-session/application/PublishGrade.usecase';
 import { UnpublishGradeUsecase } from '$quiz/question-session/application/UnpublishGrade.usecase';
 import type { IGradingService } from '$quiz/question-session/domain/IGradingService';
+import { PrismaLiveSessionRepository } from '$quiz/question-session/infra/LiveSessionRepository/PrismaLiveSessionRepository';
 import { MockGradingService } from '$quiz/question-session/infra/MockGradingService';
 import { PrismaTeacherAnswersQueries } from '$quiz/question-session/infra/queries/PrismaTeacherAnswersQueries';
-import { PrismaQuestionSessionRepository } from '$quiz/question-session/infra/QuestionSessionRepository/PrismaQuestionSessionRepository';
+import { PrismaTeacherSessionQueries } from '$quiz/question-session/infra/queries/PrismaTeacherSessionQueries';
 import { PrismaStudentQuestionQueries } from '$quiz/question/infra/queries/PrismaStudentQuestionQueries';
 import { PrismaTeacherQuestionsQueries } from '$quiz/question/infra/queries/PrismaTeacherQuestionsQueries';
 import { PrismaQuestionRepository } from '$quiz/question/infra/repositories/PrismaQuestionRepository';
@@ -50,7 +52,7 @@ export class LoadTestServiceProviderFactory {
 		});
 
 		const mq = new BullMQAdapter(redisConnection);
-		const questionSessionRepository = new PrismaQuestionSessionRepository(prisma);
+		const liveSessionRepository = new PrismaLiveSessionRepository(prisma);
 
 		const imageStudentListParser = new ImageStudentListParser({
 			apiKey: 'mock-key',
@@ -68,7 +70,7 @@ export class LoadTestServiceProviderFactory {
 			StudentRepository: new PrismaStudentRepository(prisma),
 			TeacherRepository: new PrismaTeacherRepository(prisma),
 			QuestionRepository: new PrismaQuestionRepository(prisma),
-			QuestionSessionRepository: questionSessionRepository,
+			LiveSessionRepository: liveSessionRepository,
 			StudentListParser: imageStudentListParser,
 			PromotionStudentsQueries: new PrismaPromotionStudentsQueries(prisma),
 			EnrollQueries: new PrismaEnrollQueries(prisma),
@@ -80,18 +82,19 @@ export class LoadTestServiceProviderFactory {
 			StudentQueries: new PrismaStudentQueries(prisma),
 			StudentQuestionQueries: new PrismaStudentQuestionQueries(prisma),
 			TeacherAnswersQueries: new PrismaTeacherAnswersQueries(prisma),
+			TeacherSessionQueries: new PrismaTeacherSessionQueries(prisma),
 			StudentDashboardQueries: new PrismaStudentDashboardQueries(prisma),
 			UnlinkedStudentsQueries: new PrismaUnlinkedStudentsQueries(prisma),
 			CheckAndLinkStudentByEmailUsecase: new CheckAndLinkStudentByEmailUsecase(
 				new PrismaStudentRepository(prisma)
 			),
-			UnpublishGradeUsecase: new UnpublishGradeUsecase(questionSessionRepository),
-			PublishGradeUsecase: new PublishGradeUsecase(questionSessionRepository),
+			UnpublishGradeUsecase: new UnpublishGradeUsecase(liveSessionRepository),
+			PublishGradeUsecase: new PublishGradeUsecase(liveSessionRepository),
 			MessageQueue: mq,
 			eventListeners: {
 				scheduleSessionOnPromotionQuestionPlanned: new ScheduleSessionOnPromotionQuestionPlanned(
 					mq,
-					new CreateQuestionSessionUsecase(questionSessionRepository)
+					new CreateLiveSessionUsecase(liveSessionRepository)
 				)
 			},
 			clients: {
@@ -112,3 +115,4 @@ export class LoadTestServiceProviderFactory {
 		};
 	}
 }
+

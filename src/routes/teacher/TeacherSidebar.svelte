@@ -1,18 +1,23 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import type { TeacherPromotionsListItem } from '$quiz/promotion/application/interfaces/ITeacherPromotionsQueries';
 	import type { ComponentProps } from 'svelte';
 	import PromotionSelector from './PromotionSelector.svelte';
 	import SearchForm from './SearchForm.svelte';
-	import { resolve } from '$app/paths';
 
 	let {
 		ref = $bindable(null),
 		promotions,
 		...restProps
 	}: ComponentProps<typeof Sidebar.Root> & { promotions: TeacherPromotionsListItem[] } = $props();
-	let selectedPromotion = $derived(promotions.at(0) ?? null);
+
+	// Extract promotionId from URL to match the correct promotion
+	let currentPromotionId = $derived(page.params.promotionId ?? null);
+	let selectedPromotion = $derived(
+		promotions.find((p) => p.id === currentPromotionId) ?? promotions.at(0) ?? null
+	);
 
 	const data = $derived({
 		navMain: [
@@ -41,6 +46,16 @@
 					{
 						title: 'Add Questions',
 						url: `/teacher/promotions/${selectedPromotion?.id}/questions/add`
+					}
+				]
+			},
+			{
+				title: 'Sessions',
+				shown: !!selectedPromotion,
+				items: [
+					{
+						title: 'Live Sessions',
+						url: `/teacher/promotions/${selectedPromotion?.id}/sessions`
 					}
 				]
 			}

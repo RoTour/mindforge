@@ -1,14 +1,15 @@
+// src/quiz-context/question-session/adapters/SaveAutoGradeWorker.adapter.ts
 import { SaveAutoGradeCommand } from '$quiz/common/domain/commands/SaveAutoGrade.command';
 import { Worker, type WorkerOptions } from 'bullmq';
 import { SaveAutoGradeUsecase } from '../application/SaveAutoGradeUsecase';
-import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';
+import type { ILiveSessionRepository } from '../domain/ILiveSessionRepository';
 
 export const startSaveAutoGradeWorker = (
 	connection: WorkerOptions['connection'],
-	questionSessionRepository: IQuestionSessionRepository,
+	liveSessionRepository: ILiveSessionRepository,
 	concurrency = 50
 ) => {
-	const usecase = new SaveAutoGradeUsecase(questionSessionRepository);
+	const usecase = new SaveAutoGradeUsecase(liveSessionRepository);
 
 	const worker = new Worker(
 		SaveAutoGradeCommand.type,
@@ -29,3 +30,4 @@ export const startSaveAutoGradeWorker = (
 
 	return worker;
 };
+

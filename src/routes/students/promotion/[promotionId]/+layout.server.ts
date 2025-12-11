@@ -1,21 +1,21 @@
 // src/routes/students/promotion/[promotionId]/+layout.server.ts
-import type { LayoutServerLoad } from './$types';
+import { serialize } from '$lib/lib/utils';
+import { createContext } from '$lib/server/trpc/context';
 import { redirectOnTRPCError } from '$lib/server/trpc/guard';
 import { StudentLobbyRouter } from '$quiz/student/adapters/StudentLobbyRouter';
-import { createContext } from '$lib/server/trpc/context';
-import { serialize } from '$lib/lib/utils';
+import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async (event) => {
 	const { params } = event;
 	const { promotionId } = params;
 
 	try {
-		const activeSession = await StudentLobbyRouter.createCaller(() =>
+		const lobbyData = await StudentLobbyRouter.createCaller(() =>
 			createContext(event)
 		).getActiveSession({ promotionId });
 
 		return {
-			activeSession: activeSession ? serialize(activeSession) : null
+			lobbyData: lobbyData ? serialize(lobbyData) : null
 		};
 	} catch (e) {
 		redirectOnTRPCError(e, {
@@ -24,3 +24,4 @@ export const load: LayoutServerLoad = async (event) => {
 		});
 	}
 };
+

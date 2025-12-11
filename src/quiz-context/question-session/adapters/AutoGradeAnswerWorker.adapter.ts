@@ -1,21 +1,22 @@
+// src/quiz-context/question-session/adapters/AutoGradeAnswerWorker.adapter.ts
 import type { IMessageQueue } from '$lib/ddd/interfaces/IMessageQueue';
 import { AutoGradeAnswerCommand } from '$quiz/common/domain/commands/AutoGradeAnswer.command';
 import type { IQuestionRepository } from '$quiz/question/domain/interfaces/IQuestionRepository';
 import { Worker, type WorkerOptions } from 'bullmq';
 import { AutoGradeAnswerUsecase } from '../application/AutoGradeAnswer.usecase';
 import type { IGradingService } from '../domain/IGradingService';
-import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';
+import type { ILiveSessionRepository } from '../domain/ILiveSessionRepository';
 
 export const startAutoGradeAnswerWorker = (
 	connection: WorkerOptions['connection'],
-	questionSessionRepository: IQuestionSessionRepository,
+	liveSessionRepository: ILiveSessionRepository,
 	questionRepository: IQuestionRepository,
 	gradingService: IGradingService,
 	mq: IMessageQueue,
 	concurrency = 1
 ) => {
 	const usecase = new AutoGradeAnswerUsecase(
-		questionSessionRepository,
+		liveSessionRepository,
 		questionRepository,
 		gradingService,
 		mq
@@ -40,3 +41,4 @@ export const startAutoGradeAnswerWorker = (
 
 	return worker;
 };
+

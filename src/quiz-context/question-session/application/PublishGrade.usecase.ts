@@ -1,21 +1,23 @@
-import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
-import { QuestionSessionId } from '$quiz/question-session/domain/QuestionSessionId.valueObject';
+// src/quiz-context/question-session/application/PublishGrade.usecase.ts
+import type { ILiveSessionRepository } from '$quiz/question-session/domain/ILiveSessionRepository';
+import { LiveSessionId } from '$quiz/question-session/domain/LiveSessionId.valueObject';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 
 export class PublishGradeUsecase {
-	constructor(private questionSessionRepository: IQuestionSessionRepository) {}
+	constructor(private liveSessionRepository: ILiveSessionRepository) {}
 
-	async execute(questionSessionId: string, studentId: string): Promise<void> {
-		const session = await this.questionSessionRepository.findById(
-			new QuestionSessionId(questionSessionId)
+	async execute(liveSessionId: string, slotOrder: number, studentId: string): Promise<void> {
+		const session = await this.liveSessionRepository.findById(
+			new LiveSessionId(liveSessionId)
 		);
 
 		if (!session) {
-			throw new Error('Question session not found');
+			throw new Error('Live session not found');
 		}
 
-		session.publishGrade(new StudentId(studentId));
+		session.publishGrade(slotOrder, new StudentId(studentId));
 
-		await this.questionSessionRepository.save(session);
+		await this.liveSessionRepository.save(session);
 	}
 }
+

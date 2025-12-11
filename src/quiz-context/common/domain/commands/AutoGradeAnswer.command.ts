@@ -1,5 +1,7 @@
+// src/quiz-context/common/domain/commands/AutoGradeAnswer.command.ts
 export type AutoGradeAnswerCommandPayload = {
-	questionSessionId: string;
+	liveSessionId: string;
+	slotOrder: number;
 	studentId: string;
 };
 
@@ -8,3 +10,4 @@ export class AutoGradeAnswerCommand {
 
 	constructor(public readonly payload: AutoGradeAnswerCommandPayload) {}
 }
+

@@ -1,7 +1,8 @@
+// src/quiz-context/student/infra/queries/PrismaStudentHistoryQueries.ts
 import type { PrismaClient } from '$prisma/client';
 import type {
-	IStudentHistoryQueries,
-	StudentHistoryDTO
+    IStudentHistoryQueries,
+    StudentHistoryDTO
 } from '../../application/interfaces/IStudentHistoryQueries';
 
 export class PrismaStudentHistoryQueries implements IStudentHistoryQueries {
@@ -15,14 +16,17 @@ export class PrismaStudentHistoryQueries implements IStudentHistoryQueries {
 		const answers = await this.client.answer.findMany({
 			where: {
 				studentId,
-				questionSession: {
-					promotionId
+				questionSlot: {
+					liveSession: {
+						promotionId
+					}
 				}
 			},
 			include: {
-				questionSession: {
+				questionSlot: {
 					include: {
-						question: true
+						question: true,
+						liveSession: true
 					}
 				}
 			},
@@ -40,14 +44,15 @@ export class PrismaStudentHistoryQueries implements IStudentHistoryQueries {
 			},
 			answers: answers.map((a) => ({
 				id: a.id,
-				questionText: a.questionSession.question.text,
+				questionText: a.questionSlot.question.text,
 				answerText: a.text,
 				submittedAt: a.submittedAt,
 				session: {
-					startedAt: a.questionSession.startedAt,
-					status: a.questionSession.status
+					startedAt: a.questionSlot.liveSession.scheduledDate,
+					status: a.questionSlot.liveSession.status
 				}
 			}))
 		};
 	}
 }
+

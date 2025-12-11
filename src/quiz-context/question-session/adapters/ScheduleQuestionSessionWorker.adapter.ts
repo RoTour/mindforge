@@ -1,14 +1,15 @@
-import { Worker, type WorkerOptions } from 'bullmq';
+// src/quiz-context/question-session/adapters/ScheduleQuestionSessionWorker.adapter.ts
 import { ScheduleQuestionSessionCommand } from '$quiz/common/domain/commands/ScheduleQuestionSession.command';
-import { CreateQuestionSessionUsecase } from '../application/CreateQuestionSessionUsecase';
 import type { PromotionQuestionPlanned } from '$quiz/promotion/domain/events/PromotionQuestionPlanned.event';
-import type { IQuestionSessionRepository } from '../domain/IQuestionSessionRepository';
+import { Worker, type WorkerOptions } from 'bullmq';
+import { CreateLiveSessionUsecase } from '../application/CreateLiveSessionUsecase';
+import type { ILiveSessionRepository } from '../domain/ILiveSessionRepository';
 
 export const startScheduleQuestionSessionWorker = (
 	connection: WorkerOptions['connection'],
-	questionSessionRepository: IQuestionSessionRepository
+	liveSessionRepository: ILiveSessionRepository
 ) => {
-	const usecase = new CreateQuestionSessionUsecase(questionSessionRepository);
+	const usecase = new CreateLiveSessionUsecase(liveSessionRepository);
 
 	const worker = new Worker(
 		ScheduleQuestionSessionCommand.type,
@@ -24,10 +25,11 @@ export const startScheduleQuestionSessionWorker = (
 				}
 			);
 
+			// Create a LiveSession with this single question
 			await usecase.execute({
 				promotionId,
-				questionId,
-				startedAt: new Date(startingOn),
+				questionIds: [questionId],
+				scheduledDate: new Date(startingOn),
 				endsAt: new Date(endingOn)
 			});
 		},
@@ -50,3 +52,4 @@ export const startScheduleQuestionSessionWorker = (
 
 	return worker;
 };
+

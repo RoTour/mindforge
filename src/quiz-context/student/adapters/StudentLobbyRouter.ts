@@ -1,30 +1,33 @@
 // src/quiz-context/student/adapters/StudentLobbyRouter.ts
+import { serviceProvider } from '$lib/server/container';
 import { router } from '$lib/server/trpc/init';
 import { studentIsPartOfPromotionProcedure } from '$lib/server/trpc/procedures/studentIsPartOfPromotionProcedure';
-import { GetActiveQuestionSessionForStudentUsecase } from '$quiz/question-session/application/GetActiveQuestionSessionForStudentUsecase';
-import { serviceProvider } from '$lib/server/container';
+import { GetActiveLiveSessionForStudentUsecase } from '$quiz/question-session/application/GetActiveLiveSessionForStudentUsecase';
 
-const getActiveQuestionSession = new GetActiveQuestionSessionForStudentUsecase(
-	serviceProvider.QuestionSessionRepository
+const getActiveLiveSession = new GetActiveLiveSessionForStudentUsecase(
+	serviceProvider.LiveSessionRepository
 );
 
 export const StudentLobbyRouter = router({
 	getActiveSession: studentIsPartOfPromotionProcedure.query(async ({ ctx }) => {
 		const { promotionId, student } = ctx;
 
-		const activeSession = await getActiveQuestionSession.execute({
+		const lobbyView = await getActiveLiveSession.execute({
 			promotionId,
 			studentId: student.id
 		});
 
-		if (!activeSession) {
+		if (!lobbyView) {
 			return null;
 		}
 
 		return {
-			id: activeSession.id.id(),
-			questionId: activeSession.questionId.id(),
-			endsAt: activeSession.endsAt
+			sessionId: lobbyView.session.id.id(),
+			endsAt: lobbyView.session.endsAt,
+			previousSlots: lobbyView.previousSlots,
+			currentSlot: lobbyView.currentSlot,
+			hasNextQuestion: lobbyView.hasNextQuestion
 		};
 	})
 });
+

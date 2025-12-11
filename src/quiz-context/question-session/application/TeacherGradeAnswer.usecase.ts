@@ -1,13 +1,15 @@
+// src/quiz-context/question-session/application/TeacherGradeAnswer.usecase.ts
 import { Grade } from '$quiz/question-session/domain/Grade.valueObject';
-import type { IQuestionSessionRepository } from '$quiz/question-session/domain/IQuestionSessionRepository';
-import { QuestionSessionId } from '$quiz/question-session/domain/QuestionSessionId.valueObject';
+import type { ILiveSessionRepository } from '$quiz/question-session/domain/ILiveSessionRepository';
+import { LiveSessionId } from '$quiz/question-session/domain/LiveSessionId.valueObject';
 import { StudentId } from '$quiz/student/domain/StudentId.valueObject';
 
 export class TeacherGradeAnswerUsecase {
-	constructor(private readonly questionSessionRepository: IQuestionSessionRepository) {}
+	constructor(private readonly liveSessionRepository: ILiveSessionRepository) {}
 
 	async execute(
-		questionSessionId: string,
+		liveSessionId: string,
+		slotOrder: number,
 		studentId: string,
 		grade: {
 			skillsMastered: string[];
@@ -15,12 +17,12 @@ export class TeacherGradeAnswerUsecase {
 			comment: string | null;
 		}
 	): Promise<void> {
-		const session = await this.questionSessionRepository.findById(
-			new QuestionSessionId(questionSessionId)
+		const session = await this.liveSessionRepository.findById(
+			new LiveSessionId(liveSessionId)
 		);
 
 		if (!session) {
-			throw new Error('Question session not found');
+			throw new Error('Live session not found');
 		}
 
 		const gradeValueObject = Grade.create({
@@ -29,8 +31,9 @@ export class TeacherGradeAnswerUsecase {
 			comment: grade.comment ?? undefined
 		});
 
-		session.teacherGradeAnswer(new StudentId(studentId), gradeValueObject);
+		session.teacherGradeAnswer(slotOrder, new StudentId(studentId), gradeValueObject);
 
-		await this.questionSessionRepository.save(session);
+		await this.liveSessionRepository.save(session);
 	}
 }
+
