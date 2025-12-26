@@ -6,10 +6,16 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = async (event) => {
 	const { promotionId } = event.params;
 	const caller = TeacherRouter.createCaller(() => createContext(event));
-	const sessions = await caller.sessions.getSessions({ promotionId });
+	
+	const [sessions, questions] = await Promise.all([
+		caller.sessions.getSessions({ promotionId }),
+		caller.getAllOwnQuestions()
+	]);
 
 	return {
 		sessions,
+		questions,
 		promotionId
 	};
 };
+

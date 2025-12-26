@@ -172,6 +172,15 @@ export class PrismaLiveSessionRepository implements ILiveSessionRepository {
 				}
 			});
 
+			// Delete any slots that are in DB but not in domain (removed slots)
+			const domainSlotIds = session.slots.map((s) => s.id.id());
+			await this.prisma.questionSlot.deleteMany({
+				where: {
+					liveSessionId: session.id.id(),
+					id: { notIn: domainSlotIds }
+				}
+			});
+
 			// Upsert each slot
 			for (const slot of session.slots) {
 				await this.prisma.questionSlot.upsert({

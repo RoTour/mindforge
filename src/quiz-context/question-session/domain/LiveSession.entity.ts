@@ -107,6 +107,53 @@ export class LiveSession extends AggregateRoot<LiveSessionId> {
 		});
 	}
 
+	public addQuestion(questionId: QuestionId): void {
+		if (this.status !== 'PENDING') {
+			throw new SessionIsNotPendingError();
+		}
+		const nextOrder = this.slots.length + 1;
+		const newSlot = QuestionSlot.create({
+			questionId,
+			order: nextOrder
+		});
+		this.slots.push(newSlot);
+	}
+
+	public removeQuestion(slotOrder: number): void {
+		if (this.status !== 'PENDING') {
+			throw new SessionIsNotPendingError();
+		}
+		const slotIndex = this.slots.findIndex((s) => s.order === slotOrder);
+		if (slotIndex === -1) {
+			throw new SlotNotFoundError();
+		}
+		this.slots.splice(slotIndex, 1);
+		// Reindex remaining slots
+		this.slots.forEach((slot, index) => {
+			slot.order = index + 1;
+		});
+	}
+
+	public reorderQuestions(newOrder: number[]): void {
+		if (this.status !== 'PENDING') {
+			throw new SessionIsNotPendingError();
+		}
+		if (newOrder.length !== this.slots.length) {
+			throw new Error('New order must contain all slots');
+		}
+		// Create a map of current slots by order
+		const slotMap = new Map(this.slots.map((s) => [s.order, s]));
+		// Reorder based on newOrder array
+		this.slots = newOrder.map((oldOrder, newIndex) => {
+			const slot = slotMap.get(oldOrder);
+			if (!slot) {
+				throw new SlotNotFoundError();
+			}
+			slot.order = newIndex + 1;
+			return slot;
+		});
+	}
+
 	public unlockSlot(order: number): void {
 		if (this.status !== 'ACTIVE') {
 			throw new SessionIsNotActiveError();

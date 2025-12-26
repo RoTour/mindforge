@@ -22,6 +22,26 @@
 	const data = $derived({
 		navMain: [
 			{
+				title: 'Sessions',
+				shown: !!selectedPromotion,
+				items: [
+					{
+						title: 'Session Editor',
+						url: `/teacher/promotions/${selectedPromotion?.id}/sessions`
+					}
+				]
+			},
+			{
+				title: 'Questions',
+				shown: !!selectedPromotion,
+				items: [
+					{
+						title: 'Add Questions',
+						url: `/teacher/promotions/${selectedPromotion?.id}/questions/add`
+					}
+				]
+			},
+			{
 				title: 'Students',
 				shown: !!selectedPromotion,
 				items: [
@@ -32,30 +52,6 @@
 					{
 						title: 'Answer History',
 						url: `/teacher/promotions/${selectedPromotion?.id}/answers`
-					}
-				]
-			},
-			{
-				title: 'Questions',
-				shown: !!selectedPromotion,
-				items: [
-					{
-						title: 'Manage Questions',
-						url: `/teacher/promotions/${selectedPromotion?.id}/questions`
-					},
-					{
-						title: 'Add Questions',
-						url: `/teacher/promotions/${selectedPromotion?.id}/questions/add`
-					}
-				]
-			},
-			{
-				title: 'Sessions',
-				shown: !!selectedPromotion,
-				items: [
-					{
-						title: 'Live Sessions',
-						url: `/teacher/promotions/${selectedPromotion?.id}/sessions`
 					}
 				]
 			}

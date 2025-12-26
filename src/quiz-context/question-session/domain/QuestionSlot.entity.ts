@@ -18,7 +18,7 @@ export type QuestionSlotProps = {
 export class QuestionSlot {
 	public readonly id: QuestionSlotId;
 	public readonly questionId: QuestionId;
-	public readonly order: number;
+	public order: number;
 	public status: QuestionSlotStatus;
 	public answers: Answer[] = [];
 
